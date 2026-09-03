@@ -1,18 +1,19 @@
 <?php
-    session_start();
+session_start();
 
-    if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-        echo '<script>
+if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
+    echo '<script>
             alert("Por favor, inicie sesión para acceder a esta página.");
             window.location.href = "index.php";
             </script>';
 
-        session_destroy();
-        die();
-    }
+    session_destroy();
+    die();
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,10 +27,11 @@
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
 
-    <?php $theme_seccion = 'home'; require_once __DIR__ . '/php/theme.php'; ?>
+    <?php $theme_seccion = 'home';
+    require_once __DIR__ . '/php/theme.php'; ?>
 
     <link rel="stylesheet"
-        href="assets/css/pages/index.css?v=<?php echo filemtime(__DIR__ . '/assets/css/pages/index.css'); ?>">
+        href="assets/css/pages/home.css?v=<?php echo filemtime(__DIR__ . '/assets/css/pages/home.css'); ?>">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.css">
     <link rel="stylesheet"
@@ -39,9 +41,9 @@
 <body class="d-flex flex-column min-vh-100">
     <?php
     $show_tutorial_help = true;
-    $nav_back_url  = 'home.php';
+    $nav_back_url = 'home.php';
     $nav_back_text = 'Atrás';
-    $nav_base      = '';
+    $nav_base = '';
     require_once __DIR__ . '/php/navbar.php';
     ?>
 
@@ -57,99 +59,127 @@
             </p>
         </section>
 
-        <section class="py-0 resources-section">
-            <div class="hero-intro">
-                <div class="resources-badge"><i class="bi bi-stars"></i> Centro de recursos</div>
+        <div class="hero-intro">
+            <div class="resources-badge"><i class="bi bi-stars"></i> Que necesitas hacer?</div>
+        </div>
+
+        <section class="orientation-panel" aria-labelledby="orientation-title">
+
+            <div class="orientation-grid">
+                <a href="views/games/juegos.php" class="orientation-item">
+                    <span aria-hidden="true">📦</span>
+                    <span><strong>Cobrar una compra normal</strong><small>Pago Básico</small></span>
+                </a>
+                <a href="views/plataformas/suscripciones.php" class="orientation-item">
+                    <span aria-hidden="true">🔄</span>
+                    <span><strong>Realizar cobros periódicos</strong><small>Pago Recurrente</small></span>
+                </a>
+                <a href="views/plataformas/suscripciones.php" class="orientation-item">
+                    <span aria-hidden="true">💳</span>
+                    <span><strong>Guardar una tarjeta para cobros futuros</strong><small>Suscripción</small></span>
+                </a>
+                <a href="views/dispersiones/tickets.php" class="orientation-item">
+                    <span aria-hidden="true">🏪</span>
+                    <span><strong>Dividir el pago entre varios beneficiarios</strong><small>Pago con
+                            Dispersión</small></span>
+                </a>
+                <a href="views/reservaciones/hotel.php" class="orientation-item">
+                    <span aria-hidden="true">🏨</span>
+                    <span><strong>Bloquear fondos y capturar después</strong><small>Preautorización</small></span>
+                </a>
             </div>
+        </section>
 
-            <div class="row row-cols-1 row-cols-md-3 g-4" id="tarjetas">
-                <div class="col">
-                    <div class="resource-card-wrap">
-                        <a href="sesiones.php" id="sesiones" class="resource-card">
-                            <div class="resource-icon">
-                                <i class="bi bi-lightbulb-fill"></i>
-                            </div>
-                            <h3>Ejemplos de integraciones</h3>
-                            <p>Aquí podrás ver como seria el proceso de compra dentro del sitio web de un comercio y que
-                                tipo de integración con Place to Pay se asocia ese flujo.</p>
-                            <span class="resource-cta">Ver ejemplos <i class="bi bi-arrow-right"></i></span>
-                        </a>
-                        <div class="resource-help-wrap">
-                            <button class="resource-help" type="button"
-                                aria-label="Más información sobre ejemplos de integraciones"
-                                aria-describedby="help-sesiones">
-                                <i class="bi bi-question-lg" aria-hidden="true"></i>
-                            </button>
-                            <div class="resource-help-popover" id="help-sesiones" role="tooltip">
-                                <strong>¿Qué encontrarás aquí?</strong>
-                                <p>Podrás recorrer una compra como la que viviría un cliente: elegir un producto,
-                                    iniciar el pago y observar qué ocurre detrás de cada paso hasta recibir la respuesta
-                                    de Place to Pay.</p>
-                            </div>
-                        </div>
-                    </div>
+        <section class="hero-card p-4 p-lg-5">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-7">
+                    <h1 class="display-5 fw-bold mt-3 mb-3">Explora las integraciones de Place to Pay</h1>
+                    <p class="lead mb-0">Selecciona una categoría</p>
                 </div>
-
-                <div class="col">
-                    <div class="resource-card-wrap">
-                        <a href="views/guias/guia.php" id="guia-user" class="resource-card">
-                            <div class="resource-icon">
-                                <i class="bi bi-book-half"></i>
-                            </div>
-                            <h3>Guía de usuario</h3>
-                            <p>Aprende sobre PlacetoPay y conoce los principales conceptos, términos y
-                                soluciones relacionados con la integración de comercios, pagos, suscripciones y
-                                transacciones en la plataforma.</p>
-                            <span class="resource-cta">Leer guía <i class="bi bi-arrow-right"></i></span>
-                        </a>
-                        <div class="resource-help-wrap">
-                            <button class="resource-help" type="button"
-                                aria-label="Más información sobre la guía de usuario" aria-describedby="help-guia-user">
-                                <i class="bi bi-question-lg" aria-hidden="true"></i>
+                <div class="col-lg-4">
+                    <div class="hero-panel" id="lista-integraciones">
+                        <div class="servicio-toggle" role="group" aria-label="Filtrar integraciones por servicio">
+                            <button type="button" class="servicio-btn active" data-filter="web" aria-pressed="true">
+                                Web Checkout
                             </button>
-                            <div class="resource-help-popover" id="help-guia-user" role="tooltip">
-                                <strong>¿Qué encontrarás aquí?</strong>
-                                <p>Es un punto de partida para familiarizarte con el vocabulario y las decisiones
-                                    habituales de un pago digital, incluso si todavía no sabes cómo se conectan los
-                                    sistemas.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="resource-card-wrap">
-                        <a href="views/guias/guia-dev/lab_index.php" id="guia-developer" class="resource-card">
-                            <div class="resource-icon">
-                                <i class="bi bi-code-slash"></i>
-                            </div>
-                            <h3>Guía developer</h3>
-                            <p>Accede a la parte técnica de la integración, estructura del proyecto y
-                                recursos clave para implementar los servicios de PlacetoPay de forma ordenada.</p>
-                            <span class="resource-cta">Interactuar con la guía <i class="bi bi-arrow-right"></i></span>
-                        </a>
-                        <div class="resource-help-wrap">
-                            <button class="resource-help" type="button"
-                                aria-label="Más información sobre la guía developer"
-                                aria-describedby="help-guia-developer">
-                                <i class="bi bi-question-lg" aria-hidden="true"></i>
+                            <button type="button" class="servicio-btn" data-filter="api" aria-pressed="false">
+                                API Gateway
                             </button>
-                            <div class="resource-help-popover" id="help-guia-developer" role="tooltip">
-                                <strong>¿Qué encontrarás aquí?</strong>
-                                <p>Cuando quieras pasar de entender el flujo a construirlo, aquí verás la estructura
-                                    técnica, los recursos necesarios y la forma de llevar la integración a tu propio
-                                    comercio.</p>
-                            </div>
+                            <button type="button" class="servicio-btn" data-filter="link" aria-pressed="false">
+                                Link de Pagos
+                            </button>
                         </div>
+
+                        <ul class="mb-0 ps-3 hero-panel-list" data-servicio="web">
+                            <li><a href="views/games/juegos.php">Pago Básico</a></li>
+                            <li><a href="views/plataformas/suscripciones.php">Pagos Mixto</a></li>
+                            <li><a href="views/textil/textiles.php">Pago Recurrente</a></li>
+                            <li><a href="views/dispersiones/tickets.php">Pago con Dispersion</a></li>
+                            <li><a href="views/reservaciones/hotel.php">Pago con Preautorización</a></li>
+                            <li><a href="views/reservaciones/hotel.php">Suscripcion</a></li>
+                        </ul>
+
+                        <ul class="mb-0 ps-3 hero-panel-list" data-servicio="api" hidden>
+                            <li><a href="views/games/juegos.php">Pago Básico</a></li>
+                            <li><a href="views/plataformas/suscripciones.php">Recurrencia y Suscripción</a></li>
+                            <li><a href="views/dispersiones/tickets.php">Dispersiones</a></li>
+                            <li><a href="views/reservaciones/hotel.php">Preautorización</a></li>
+                        </ul>
+
+                        <ul class="mb-0 ps-3 hero-panel-list" data-servicio="link" hidden>
+                            <li><a href="views/games/juegos.php">Link de Pagos</a></li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </section>
 
+
+
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const buttons = Array.from(document.querySelectorAll('.servicio-btn'));
+            const lists = Array.from(document.querySelectorAll('[data-servicio]'));
+
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const selectedService = button.dataset.filter;
+                    const currentList = lists.find(list => !list.hidden);
+                    const nextList = lists.find(
+                        list => list.dataset.servicio === selectedService
+                    );
+
+                    if (!nextList || currentList === nextList) {
+                        return;
+                    }
+
+                    buttons.forEach(item => {
+                        const isActive = item === button;
+                        item.classList.toggle('active', isActive);
+                        item.setAttribute('aria-pressed', String(isActive));
+                    });
+
+                    currentList.classList.add('is-leaving');
+
+                    setTimeout(() => {
+                        currentList.hidden = true;
+                        currentList.classList.remove('is-leaving');
+
+                        nextList.hidden = false;
+                        nextList.classList.add('is-entering');
+
+                        setTimeout(() => {
+                            nextList.classList.remove('is-entering');
+                        }, 220);
+                    }, 180);
+                });
+            });
+        });
+    </script>
     <!-- Librería Driver.js: debe cargarse antes del tour -->
     <script src="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.js.iife.js"></script>
     <script src="assets/js/components/driver-tours/tour-index.js"></script>
