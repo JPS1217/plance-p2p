@@ -9,61 +9,136 @@
 
 /* Título de la vista */
 .demo-title-bar {
-  padding: 1rem var(--space-lg, 1.25rem) 0.75rem;
+  padding: 2.25rem 1.25rem 1.75rem;
   border-bottom: 1px solid var(--border);
   background: var(--surface);
+  text-align: center;
 }
 .demo-title-bar h1 {
   font-family: var(--display, "Barlow Condensed", sans-serif);
-  font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+  font-size: clamp(2.8rem, 7vw, 6rem);
   font-weight: 800;
-  letter-spacing: 0.01em;
-  margin: 0;
+  letter-spacing: 0.04em;
+  line-height: 0.95;
+  margin: 0 0 0.5rem;
   color: var(--text);
+  text-transform: uppercase;
 }
 .demo-title-bar p {
-  margin: 0.35rem 0 0;
+  width: 100%;
+  max-width: 820px;
+  margin: 0 auto;
   color: var(--muted);
-  font-size: 0.9rem;
-  max-width: 70ch;
+  font-size: 1.05rem;
+  line-height: 1.6;
 }
 
-/* Grid principal: sidebar | columna derecha apilada */
+/* Dos filas: configuracion arriba y resultado abajo. */
 .demo-layout {
+  --demo-columns: minmax(260px, 0.9fr) minmax(340px, 1.2fr) minmax(300px, 1fr);
   display: grid;
-  grid-template-columns: var(--sidebar-width, clamp(280px, 20vw, 360px)) minmax(
-      0,
-      1fr
-    );
-  grid-template-rows: minmax(0, 1fr);
-  min-height: calc(100vh - var(--nav-height, 57px));
+  gap: 1px;
   width: 100%;
   background: var(--bg);
 }
 
-/* La columna derecha apila Request Body (arriba) y Response (abajo) */
-.demo-right-col {
+.demo-layout-top,
+.demo-layout-bottom {
   display: grid;
-  grid-template-rows: minmax(240px, 1fr) minmax(220px, 0.9fr);
-  min-height: 0;
+  gap: 1px;
   min-width: 0;
 }
 
-.demo-right-col .panel-center {
-  border-right: none;
-  border-bottom: 1px solid var(--border);
-  min-height: 0;
+.demo-layout-top {
+  grid-template-columns: var(--demo-columns);
 }
 
-.demo-right-col .panel-right {
-  border-left: none;
-  min-height: 0;
+.demo-layout-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
 }
 
-/* En el demo el panel central ocupa el ancho completo de la columna derecha */
-.demo-layout .panel-center,
-.demo-layout .panel-right {
+.demo-bottom-panels {
+  display: grid;
+  grid-template-columns: var(--demo-columns);
+  gap: 1px;
+  min-width: 0;
+}
+
+.demo-section-panel,
+.auth-help,
+.demo-bottom-panels > .panel-center,
+.demo-bottom-panels > .panel-right {
   width: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.demo-section-panel {
+  border-right: 1px solid var(--border);
+}
+
+.demo-bottom-panels > .panel-center {
+  border-right: 1px solid var(--border);
+}
+
+.demo-bottom-panels > .panel-right {
+  border-left: 0;
+}
+
+.demo-layout-bottom > .btn-send {
+  margin: 0;
+}
+
+.demo-bottom-panels > .panel-right .btn-clear {
+  flex-shrink: 0;
+  margin: var(--space-sm, 0.75rem);
+  width: auto;
+}
+
+.auth-help {
+  padding: var(--space-lg, 1.25rem);
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.auth-help-kicker {
+  color: var(--accent);
+  font-family: var(--display);
+  font-size: var(--font-xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.auth-help h2 {
+  margin: 0.45rem 0 0.6rem;
+  color: var(--text);
+  font-family: var(--display);
+  font-size: clamp(1.35rem, 2.2vw, 2rem);
+}
+
+.auth-help p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.auth-help-example {
+  margin: 1rem 0 0;
+  padding: 0.8rem;
+  overflow-x: auto;
+  color: var(--accent);
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: var(--mono);
+  font-size: var(--font-xs);
+  white-space: pre-wrap;
 }
 
 /* Solo Raw JSON: ocultamos las pestañas Preview y Editar y su contenido */
@@ -85,6 +160,12 @@
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
+  cursor: pointer;
+  transition: color var(--transition-speed) var(--ease);
+}
+#secAuth .field-label:hover,
+#secAuth .field-label:focus-within {
+  color: var(--text);
 }
 #secAuth .field-label .info-action {
   padding: 0.15rem;
@@ -94,26 +175,41 @@
   font-size: 0.9rem;
 }
 
-/* Sidebar oculta (toggle) */
-.demo-layout.sidebar-hidden {
-  grid-template-columns: 0 minmax(0, 1fr);
-}
-.demo-layout.sidebar-hidden .panel-left {
-  display: none;
+/* En pantallas medianas cada fila conserva sus grupos, pero apila el resultado. */
+@media (max-width: 1100px) {
+  .demo-layout-top,
+  .demo-bottom-panels {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .auth-help {
+    grid-column: 1 / -1;
+    min-height: 220px;
+  }
+
+  .demo-bottom-panels > .panel-right {
+    grid-column: 1 / -1;
+  }
 }
 
-/* Responsive: apila todo en una sola columna */
-@media (max-width: 1100px) {
-  .demo-layout {
+@media (max-width: 700px) {
+  .demo-title-bar h1 {
+    font-size: clamp(2.4rem, 14vw, 4rem);
+  }
+
+  .demo-layout-top,
+  .demo-bottom-panels {
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
   }
-  .demo-right-col {
-    grid-template-rows: auto auto;
+
+  .auth-help,
+  .demo-bottom-panels > .panel-right {
+    grid-column: auto;
   }
-  .demo-layout .panel-left {
-    display: block;
-    border-right: none;
+
+  .demo-section-panel,
+  .demo-bottom-panels > .panel-center {
+    border-right: 0;
     border-bottom: 1px solid var(--border);
   }
 }

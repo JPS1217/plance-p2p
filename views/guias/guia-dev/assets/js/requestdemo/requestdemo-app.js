@@ -26,6 +26,48 @@ import { $, $$ } from "../core/utils.js";
 // popup, para reutilizar el mecanismo existente (data-info-key).
 Object.assign(OPTION_INFO, AUTH_FIELD_INFO);
 
+const AUTH_FIELD_EXAMPLES = {
+  auth_login: '"login": "2d9eaf1e662518756a3d78806543af5b"',
+  auth_secret: '"secretKey": "3YC5brb5eAR4xBGQ"',
+  auth_seed: '"seed": "2023-06-21T09:56:06-05:00"',
+  auth_nonce: '"nonce": "OTI3MzQyMTk3"',
+  auth_trankey:
+    '"tranKey": "Base64(SHA-256(nonce + seed + secretKey))"',
+};
+
+function initAuthHelp() {
+  const title = $("#authHelpTitle");
+  const text = $("#authHelpText");
+  const example = $("#authHelpExample");
+
+  if (!title || !text || !example) return;
+
+  $$("#secAuth .field-label").forEach((label) => {
+    label.setAttribute("tabindex", "0");
+
+    const showHelp = () => {
+      const key = label.querySelector("[data-info-key]")?.dataset.infoKey;
+      const info = key ? AUTH_FIELD_INFO[key] : null;
+      if (!info) return;
+
+      title.textContent = info.title;
+      text.textContent = info.text;
+      example.textContent = AUTH_FIELD_EXAMPLES[key] || "";
+    };
+
+    label.addEventListener("click", (event) => {
+      if (event.target.closest(".info-action")) return;
+      showHelp();
+    });
+    label.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        showHelp();
+      }
+    });
+  });
+}
+
 function boot() {
   initTheme();
 
@@ -48,7 +90,7 @@ function boot() {
   });
 
   initPopup();
-
+  initAuthHelp();
   // Sincroniza el estado inicial de la sección Operación (URL, tipo de pago).
   onEpChange({ updateAll: () => requestApi.updateAll?.() });
 
