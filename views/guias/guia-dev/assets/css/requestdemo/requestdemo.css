@@ -1,0 +1,119 @@
+/* ============================================================
+   Request Demo — layout específico
+   Estructura pedida:
+     - Panel izquierdo (sidebar) se queda a la IZQUIERDA.
+     - A su derecha, arriba: Request Body (solo Raw JSON).
+     - Debajo del Request Body y también a la derecha: Response.
+   Reutiliza los componentes CSS del explorer (sidebar/request/response/popup).
+   ============================================================ */
+
+/* Título de la vista */
+.demo-title-bar {
+  padding: 1rem var(--space-lg, 1.25rem) 0.75rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.demo-title-bar h1 {
+  font-family: var(--display, "Barlow Condensed", sans-serif);
+  font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  margin: 0;
+  color: var(--text);
+}
+.demo-title-bar p {
+  margin: 0.35rem 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  max-width: 70ch;
+}
+
+/* Grid principal: sidebar | columna derecha apilada */
+.demo-layout {
+  display: grid;
+  grid-template-columns: var(--sidebar-width, clamp(280px, 20vw, 360px)) minmax(
+      0,
+      1fr
+    );
+  grid-template-rows: minmax(0, 1fr);
+  min-height: calc(100vh - var(--nav-height, 57px));
+  width: 100%;
+  background: var(--bg);
+}
+
+/* La columna derecha apila Request Body (arriba) y Response (abajo) */
+.demo-right-col {
+  display: grid;
+  grid-template-rows: minmax(240px, 1fr) minmax(220px, 0.9fr);
+  min-height: 0;
+  min-width: 0;
+}
+
+.demo-right-col .panel-center {
+  border-right: none;
+  border-bottom: 1px solid var(--border);
+  min-height: 0;
+}
+
+.demo-right-col .panel-right {
+  border-left: none;
+  min-height: 0;
+}
+
+/* En el demo el panel central ocupa el ancho completo de la columna derecha */
+.demo-layout .panel-center,
+.demo-layout .panel-right {
+  width: 100%;
+}
+
+/* Solo Raw JSON: ocultamos las pestañas Preview y Editar y su contenido */
+.demo-layout .json-tab[data-tab="preview"],
+.demo-layout .json-tab[data-tab="edit"],
+.demo-layout #jsonPreview,
+.demo-layout #editorContainer,
+.demo-layout #editBanner {
+  display: none !important;
+}
+
+/* La única pestaña visible (Raw) se muestra activa siempre */
+.demo-layout .json-tab[data-tab="raw"] {
+  cursor: default;
+}
+
+/* Botón de info alineado con el texto del label en Autenticación */
+#secAuth .field-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+#secAuth .field-label .info-action {
+  padding: 0.15rem;
+  margin-left: auto;
+}
+#secAuth .field-label .info-action i {
+  font-size: 0.9rem;
+}
+
+/* Sidebar oculta (toggle) */
+.demo-layout.sidebar-hidden {
+  grid-template-columns: 0 minmax(0, 1fr);
+}
+.demo-layout.sidebar-hidden .panel-left {
+  display: none;
+}
+
+/* Responsive: apila todo en una sola columna */
+@media (max-width: 1100px) {
+  .demo-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+  }
+  .demo-right-col {
+    grid-template-rows: auto auto;
+  }
+  .demo-layout .panel-left {
+    display: block;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+}

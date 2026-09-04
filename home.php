@@ -66,7 +66,7 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
         <section class="orientation-panel" aria-labelledby="orientation-title">
 
             <div class="orientation-grid">
-                <a href="views/games/juegos.php" class="orientation-item">
+                <a href="views/guias/guia-dev/requestdemo.php" class="orientation-item">
                     <span aria-hidden="true">📦</span>
                     <span><strong>Cobrar una compra normal</strong><small>Pago Básico</small></span>
                 </a>
