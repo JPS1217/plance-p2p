@@ -4,14 +4,18 @@ import { $ } from "../../core/utils.js";
 export function initPopup() {
   const api = { showOptionInfo, closeOptionInfo };
 
-  // Botones info (data-info-key)
-  document.querySelectorAll(".info-action[data-info-key]").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      const key = btn.dataset.infoKey;
-      api.showOptionInfo(key);
+  // Botones info (data-info-key). Los de Autenticación (.auth-info) NO abren
+  // popup: su click muestra la descripción en la tarjeta "Explora la
+  // autenticación" (ver initAuthHelp en requestdemo-app.js).
+  document
+    .querySelectorAll(".info-action[data-info-key]:not(.auth-info)")
+    .forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const key = btn.dataset.infoKey;
+        api.showOptionInfo(key);
+      });
     });
-  });
 
   // Cerrar popup
   const closeBtn = document.getElementById("optionInfoCloseBtn");

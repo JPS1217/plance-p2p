@@ -381,51 +381,51 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
             <div class="section-body">
               <div class="field-group">
                 <label class="field-label">
-                  Login <span class="req">*</span>
-                  <button type="button" class="info-action" data-info-key="auth_login"
+                  <button type="button" class="info-action auth-info" data-info-key="auth_login"
                     aria-label="¿Cómo se genera el login?">
                     <i class="bi bi-info-circle"></i>
                   </button>
+                  Login <span class="req">*</span>
                 </label>
                 <input type="text" class="field-input" id="fLogin" value="2d9eaf1e662518756a3d78806543af5b" />
               </div>
               <div class="field-group">
                 <label class="field-label">
-                  Secret Key <span class="req">*</span>
-                  <button type="button" class="info-action" data-info-key="auth_secret"
+                  <button type="button" class="info-action auth-info" data-info-key="auth_secret"
                     aria-label="¿Cómo se genera el secret key?">
                     <i class="bi bi-info-circle"></i>
                   </button>
+                  Secret Key <span class="req">*</span>
                 </label>
                 <input type="password" class="field-input" id="fSecret" value="3YC5brb5eAR4xBGQ" />
               </div>
               <div class="field-group">
                 <label class="field-label">
-                  Seed <span class="auto-tag">AUTO</span>
-                  <button type="button" class="info-action" data-info-key="auth_seed"
+                  <button type="button" class="info-action auth-info" data-info-key="auth_seed"
                     aria-label="¿Cómo se genera el seed?">
                     <i class="bi bi-info-circle"></i>
                   </button>
+                  Seed <span class="auto-tag">AUTO</span>
                 </label>
                 <input type="text" class="field-input auto" id="fSeed" readonly />
               </div>
               <div class="field-group">
                 <label class="field-label">
-                  Nonce <span class="auto-tag">AUTO</span>
-                  <button type="button" class="info-action" data-info-key="auth_nonce"
+                  <button type="button" class="info-action auth-info" data-info-key="auth_nonce"
                     aria-label="¿Cómo se genera el nonce?">
                     <i class="bi bi-info-circle"></i>
                   </button>
+                  Nonce <span class="auto-tag">AUTO</span>
                 </label>
                 <input type="text" class="field-input auto" id="fNonce" readonly />
               </div>
               <div class="field-group">
                 <label class="field-label">
-                  TranKey <span class="auto-tag">AUTO</span>
-                  <button type="button" class="info-action" data-info-key="auth_trankey"
+                  <button type="button" class="info-action auth-info" data-info-key="auth_trankey"
                     aria-label="¿Cómo se genera el tranKey?">
                     <i class="bi bi-info-circle"></i>
                   </button>
+                  TranKey <span class="auto-tag">AUTO</span>
                 </label>
                 <input type="text" class="field-input auto" id="fTranKey" readonly />
                 
@@ -472,7 +472,6 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
           </p>
           <ol id="authHelpSteps" class="auth-help-steps"></ol>
           <div id="authHelpResult" class="auth-help-result"></div>
-          <pre id="authHelpExample" class="auth-help-example"></pre>
         </aside>
       </div>
 

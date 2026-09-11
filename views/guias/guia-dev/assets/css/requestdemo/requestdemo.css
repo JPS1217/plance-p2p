@@ -106,8 +106,10 @@
   height: var(--card-h);
 }
 
-/* El panel de Autenticación hace scroll interno si su contenido excede el alto */
-.demo-layout-auth > .demo-section-panel {
+/* El panel de Autenticación y la tarjeta "Explora la autenticación" hacen
+   scroll interno si su contenido excede el alto fijo de la tarjeta. */
+.demo-layout-auth > .demo-section-panel,
+.demo-layout-auth > .auth-help {
   overflow-y: auto;
 }
 
@@ -161,50 +163,66 @@
 .auth-help p {
   margin: 0;
   color: var(--muted);
-  line-height: 1.55;
+  font-size: var(--font-base);
+  line-height: 1.6;
 }
 
 .auth-help-steps {
   margin: 0.9rem 0 0;
-  padding-left: 1.25rem;
+  padding-left: 1.35rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.6rem;
+  list-style: disc;
   color: var(--muted);
-  font-size: var(--font-sm);
-  line-height: 1.5;
+  font-size: var(--font-base);
+  line-height: 1.55;
 }
 
 .auth-help-steps li {
-  padding-left: 0.25rem;
+  padding-left: 0.3rem;
 }
 
 .auth-help-steps li::marker {
   color: var(--accent);
-  font-weight: var(--weight-bold);
 }
 
 .auth-help-result {
   margin: 0.9rem 0 0;
-  padding: 0.7rem 0.85rem;
-  border-left: 3px solid var(--accent);
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--accent);
   border-radius: var(--radius-sm);
-  background: var(--accent-s);
+  background: transparent;
   color: var(--text);
-  font-size: var(--font-sm);
-  line-height: 1.5;
 }
 
-.auth-help-example {
-  margin: 1rem 0 0;
-  padding: 0.8rem;
-  overflow-x: auto;
+.auth-help-result-list {
+  margin: 0;
+  padding-left: 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  list-style: disc;
+  font-size: var(--font-base);
+  line-height: 1.55;
+}
+
+.auth-help-result-list li {
+  padding-left: 0.3rem;
+}
+
+.auth-help-result-list li::marker {
   color: var(--accent);
-  background: var(--input-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+}
+
+/* Ejemplo JSON como viñeta monoespaciada dentro de la caja con borde naranja */
+.auth-help-result-code {
+  display: inline-block;
+  margin-top: 0.1rem;
+  color: var(--accent);
   font-family: var(--mono);
-  font-size: var(--font-xs);
+  font-size: var(--font-sm);
+  word-break: break-all;
   white-space: pre-wrap;
 }
 
@@ -226,20 +244,22 @@
 #secAuth .field-label {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  cursor: pointer;
+  gap: 0.4rem;
   transition: color var(--transition-speed) var(--ease);
-}
-#secAuth .field-label:hover,
-#secAuth .field-label:focus-within {
-  color: var(--text);
 }
 #secAuth .field-label .info-action {
   padding: 0.15rem;
-  margin-left: auto;
+  order: -1;
+  cursor: pointer;
+  color: var(--muted);
+  transition: color var(--transition-speed) var(--ease);
+}
+#secAuth .field-label .info-action:hover,
+#secAuth .field-label .info-action:focus-visible {
+  color: var(--accent);
 }
 #secAuth .field-label .info-action i {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 
 /* Responsive: las filas de 2 columnas se apilan en pantallas estrechas. */

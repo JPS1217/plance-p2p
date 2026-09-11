@@ -30,8 +30,10 @@ export const AUTH_FIELD_INFO = {
       "Copia el valor del campo \"login\" tal cual, sin espacios ni saltos de línea.",
       "Pégalo en el campo Login. El mismo login se usa en todas tus peticiones.",
     ],
-    result:
-      "Un texto fijo (siempre el mismo para tu sitio) que se envía sin cifrar dentro de \"auth\".",
+    result: [
+      "Es un texto fijo: siempre el mismo para tu sitio.",
+      "Se envía sin cifrar dentro del objeto \"auth\".",
+    ],
   },
 
   auth_secret: {
@@ -44,8 +46,10 @@ export const AUTH_FIELD_INFO = {
       "Guárdala solo en tu servidor (por ejemplo en una variable de entorno), nunca en el código que corre en el navegador.",
       "Úsala únicamente como ingrediente para calcular el tranKey (ver el campo TranKey); no la incluyas en el JSON que envías.",
     ],
-    result:
-      "Un valor secreto que se queda en tu servidor y jamás aparece en la petición.",
+    result: [
+      "Es un valor secreto que se queda solo en tu servidor.",
+      "Jamás aparece en la petición que se envía a Place to Pay.",
+    ],
   },
 
   auth_seed: {
@@ -58,8 +62,10 @@ export const AUTH_FIELD_INFO = {
       "Inclúyela con la zona horaria (la parte -05:00 del ejemplo) en formato ISO 8601.",
       "Envíala en el campo \"seed\". Debe coincidir con la hora real: si tu reloj está desfasado más de 5 minutos, Place to Pay rechaza la petición con el error 103.",
     ],
-    result:
-      "Una marca de tiempo como \"2023-06-21T09:56:06-05:00\". Aquí se rellena automáticamente.",
+    result: [
+      "Una marca de tiempo como \"2023-06-21T09:56:06-05:00\".",
+      "Aquí se rellena automáticamente en cada envío.",
+    ],
   },
 
   auth_nonce: {
@@ -72,8 +78,10 @@ export const AUTH_FIELD_INFO = {
       "Conviértelo a texto Base64 antes de enviarlo. Guarda también el valor ORIGINAL (sin codificar): lo necesitarás para calcular el tranKey.",
       "Envía la versión en Base64 en el campo \"nonce\".",
     ],
-    result:
-      "El nonce original se usa para el tranKey; en el JSON viaja su versión Base64, p. ej. \"OTI3MzQyMTk3\".",
+    result: [
+      "El nonce ORIGINAL se usa para calcular el tranKey.",
+      "En el JSON viaja su versión en Base64, p. ej. \"OTI3MzQyMTk3\".",
+    ],
   },
 
   auth_trankey: {
@@ -87,9 +95,10 @@ export const AUTH_FIELD_INFO = {
       "Codifica esos bytes en Base64.",
       "El texto resultante es el tranKey. Ponlo en el campo \"tranKey\" junto al login, el nonce (Base64) y el seed.",
     ],
-    result:
-      "Un texto en Base64, distinto en cada petición, p. ej. \"cm96cHI0dWE2cDhtcTBjaXVkYWQ=\". " +
-      "Ejemplo del cálculo: nonce=\"927342197\", seed=\"2023-06-21T09:56:06-05:00\", secretKey=\"3YC5brb5eAR4xBGQ\"  →  " +
-      "tranKey = Base64(SHA-256(\"927342197\" + \"2023-06-21T09:56:06-05:00\" + \"3YC5brb5eAR4xBGQ\")).",
+    result: [
+      "Obtienes un texto en Base64, distinto en cada petición, p. ej. \"cm96cHI0dWE2cDhtcTBjaXVkYWQ=\".",
+      "Ejemplo — ingredientes: nonce = \"927342197\", seed = \"2023-06-21T09:56:06-05:00\", secretKey = \"3YC5brb5eAR4xBGQ\".",
+      "Ejemplo — fórmula: tranKey = Base64(SHA-256(\"927342197\" + \"2023-06-21T09:56:06-05:00\" + \"3YC5brb5eAR4xBGQ\")).",
+    ],
   },
 };

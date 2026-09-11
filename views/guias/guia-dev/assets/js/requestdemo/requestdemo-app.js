@@ -21,7 +21,7 @@ import { initTheme } from "../components/theme/theme.js";
 import { OPTION_INFO } from "../core/constants.js";
 import { AUTH_FIELD_INFO } from "./demo-constants.js";
 import { initDemoDropdowns } from "./demo-dropdowns.js";
-import { $, $$ } from "../core/utils.js";
+import { $, $$, selectSingleOption } from "../core/utils.js";
 
 // Fusiona la info de los campos de autenticación en el catálogo que usa el
 // popup, para reutilizar el mecanismo existente (data-info-key).
@@ -41,15 +41,15 @@ function initAuthHelp() {
   const text = $("#authHelpText");
   const steps = $("#authHelpSteps");
   const result = $("#authHelpResult");
-  const example = $("#authHelpExample");
 
-  if (!title || !text || !example) return;
+  if (!title || !text) return;
 
-  $$("#secAuth .field-label").forEach((label) => {
-    label.setAttribute("tabindex", "0");
-
+  // Ahora el disparador es el icono ⓘ (.info-action.auth-info) de cada campo,
+  // no la etiqueta. Al hacer clic muestra la descripción en la tarjeta 3 y ya
+  // NO abre popup (popup.js excluye los .auth-info).
+  $$("#secAuth .info-action.auth-info").forEach((btn) => {
     const showHelp = () => {
-      const key = label.querySelector("[data-info-key]")?.dataset.infoKey;
+      const key = btn.dataset.infoKey;
       const info = key ? AUTH_FIELD_INFO[key] : null;
       if (!info) return;
 
@@ -71,31 +71,78 @@ function initAuthHelp() {
         }
       }
 
-      // Resultado / cómo se ve el valor final — opcional
+      // Resultado / cómo se ve el valor final — opcional.
+      // Se admite string o array; se muestra como viñetas dentro de la caja
+      // con borde naranja. El ejemplo JSON del campo se agrega como una
+      // viñeta final (en monoespaciado) dentro de la MISMA caja.
       if (result) {
-        if (info.result) {
-          result.textContent = info.result;
+        result.replaceChildren();
+        const items = Array.isArray(info.result)
+          ? info.result.slice()
+          : info.result
+            ? [info.result]
+            : [];
+
+        const ul = document.createElement("ul");
+        ul.className = "auth-help-result-list";
+
+        items.forEach((r) => {
+          const li = document.createElement("li");
+          li.textContent = r;
+          ul.appendChild(li);
+        });
+
+        // Ejemplo JSON como última viñeta en monoespaciado.
+        const jsonExample = AUTH_FIELD_EXAMPLES[key];
+        if (jsonExample) {
+          const li = document.createElement("li");
+          const code = document.createElement("code");
+          code.className = "auth-help-result-code";
+          code.textContent = jsonExample;
+          li.appendChild(code);
+          ul.appendChild(li);
+        }
+
+        if (ul.children.length) {
+          result.appendChild(ul);
           result.style.display = "";
         } else {
-          result.textContent = "";
           result.style.display = "none";
         }
       }
-
-      example.textContent = AUTH_FIELD_EXAMPLES[key] || "";
     };
 
-    label.addEventListener("click", (event) => {
-      if (event.target.closest(".info-action")) return;
+    btn.addEventListener("click", (event) => {
+      event.stopPropagation();
       showHelp();
     });
-    label.addEventListener("keydown", (event) => {
+    btn.addEventListener("keydown", (event) => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
         showHelp();
       }
     });
   });
+}
+
+/**
+ * Preselecciona el "Tipo de pago" según el parámetro de consulta ?tipo=
+ * (p. ej. requestdemo.php?tipo=basico al llegar desde una tarjeta de home.php).
+ *
+ * Supuesto actual: todas las opciones corresponden al servicio Web Checkout,
+ * así que solo se ajusta paymentType; el servicio permanece en "wc_session".
+ * El valor debe coincidir con un input[name="paymentType"] existente; si no
+ * coincide, no se hace nada (se conserva la opción por defecto "basico").
+ */
+function preselectFromQuery() {
+  const params = new URLSearchParams(window.location.search);
+  const tipo = params.get("tipo");
+  if (!tipo) return;
+
+  const input = document.querySelector(
+    `input[name="paymentType"][value="${CSS.escape(tipo)}"]`,
+  );
+  if (input) selectSingleOption(input, "paymentType");
 }
 
 function boot() {
@@ -123,6 +170,11 @@ function boot() {
   initAuthHelp();
   // Sincroniza el estado inicial de la sección Operación (URL, tipo de pago).
   onEpChange({ updateAll: () => requestApi.updateAll?.() });
+
+  // Preselección según el parámetro ?tipo= (p. ej. al llegar desde home.php).
+  // Debe ir ANTES de initDemoDropdowns para que la etiqueta del desplegable
+  // refleje la opción elegida.
+  preselectFromQuery();
 
   // Convierte Servicio / Tipo de pago / Simular respuesta en desplegables.
   initDemoDropdowns();

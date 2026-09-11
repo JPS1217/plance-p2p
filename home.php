@@ -66,24 +66,24 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
         <section class="orientation-panel" aria-labelledby="orientation-title">
 
             <div class="orientation-grid">
-                <a href="views/guias/guia-dev/requestdemo.php" class="orientation-item">
+                <a href="views/guias/guia-dev/requestdemo.php?tipo=basico" class="orientation-item">
                     <span aria-hidden="true">📦</span>
                     <span><strong>Cobrar una compra normal</strong><small>Pago Básico</small></span>
                 </a>
-                <a href="views/plataformas/suscripciones.php" class="orientation-item">
+                <a href="views/guias/guia-dev/requestdemo.php?tipo=recurrencia" class="orientation-item">
                     <span aria-hidden="true">🔄</span>
                     <span><strong>Realizar cobros periódicos</strong><small>Pago Recurrente</small></span>
                 </a>
-                <a href="views/plataformas/suscripciones.php" class="orientation-item">
+                <a href="views/guias/guia-dev/requestdemo.php?tipo=suscripcion" class="orientation-item">
                     <span aria-hidden="true">💳</span>
                     <span><strong>Guardar una tarjeta para cobros futuros</strong><small>Suscripción</small></span>
                 </a>
-                <a href="views/dispersiones/tickets.php" class="orientation-item">
+                <a href="views/guias/guia-dev/requestdemo.php?tipo=dispersion" class="orientation-item">
                     <span aria-hidden="true">🏪</span>
                     <span><strong>Dividir el pago entre varios beneficiarios</strong><small>Pago con
                             Dispersión</small></span>
                 </a>
-                <a href="views/reservaciones/hotel.php" class="orientation-item">
+                <a href="views/guias/guia-dev/requestdemo.php?tipo=preauth" class="orientation-item">
                     <span aria-hidden="true">🏨</span>
                     <span><strong>Bloquear fondos y capturar después</strong><small>Preautorización</small></span>
                 </a>
