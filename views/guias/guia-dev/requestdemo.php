@@ -83,7 +83,8 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
     </div>
 
     <div class="demo-layout" id="labLayout">
-      <div class="demo-layout-top">
+      <!-- Fila 1: Panel de operación (Servicio / Tipo de pago / Simular respuesta) -->
+      <div class="demo-layout-op">
         <!-- ===================== OPERACION ===================== -->
         <section class="panel-left demo-section-panel">
           <div class="url-bar">
@@ -91,90 +92,285 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
             <span class="url-text" id="urlDisplay">https://checkout-test.placetopay.com/api/session</span>
           </div>
 
-          <!-- Operación -->
-          <div class="section" id="secOperacion">
-            <div class="section-head" data-section-toggle="secOperacion">
-              <span class="panel-title">Operación</span>
-              <i class="bi bi-chevron-down chev"></i>
-            </div>
-            <div class="section-body">
-              <div class="field-group">
-                <label class="field-label">Servicio</label>
-                <div class="option-grid" id="serviceOptions">
-                  <div class="checkbox-option checked">
-                    <input type="checkbox" name="serviceOption" value="wc_session" checked />
-                    <span>Web Checkout — Crear sesión</span>
-                    <button type="button" class="info-action" data-info-key="wc_session" aria-label="Información">
-                      <i class="bi bi-info-circle"></i>
-                    </button>
-                  </div>
+          <!-- Operación (campos como desplegables de opción única) -->
+          <div class="field-group">
+            <label class="field-label">Servicio</label>
+            <div class="demo-dropdown">
+              <button type="button" class="demo-dropdown-trigger" aria-haspopup="listbox">
+                <span class="dd-label">Web Checkout — Crear sesión</span>
+                <i class="bi bi-chevron-down dd-chev"></i>
+              </button>
+              <div class="option-grid demo-dropdown-menu" id="serviceOptions" role="listbox">
+                <div class="checkbox-option checked">
+                  <input type="checkbox" name="serviceOption" value="wc_session" checked />
+                  <span>Web Checkout — Crear sesión</span>
+                  <button type="button" class="info-action" data-info-key="wc_session" aria-label="Información">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
                 </div>
-              </div>
-
-              <div class="field-group tipo-pago-group show" id="tipoPagoGroup">
-                <label class="field-label">Tipo de pago</label>
-                <div class="option-grid" id="paymentTypeOptions">
-                  <div class="checkbox-option checked">
-                    <input type="checkbox" name="paymentType" value="basico" checked /><span>Pago básico</span><button
-                      type="button" class="info-action" data-info-key="basico">
-                      <i class="bi bi-info-circle"></i>
-                    </button>
-                  </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="serviceOption" value="gw_process" />
+                  <span>API Gateway — Procesar pago</span>
+                  <button type="button" class="info-action" data-info-key="gw_process" aria-label="Información">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
                 </div>
-              </div>
-
-              <div class="field-group">
-                <label class="field-label">Simular respuesta</label>
-                <div class="option-grid" id="simModeOptions">
-                  <div class="checkbox-option checked">
-                    <input type="checkbox" name="simMode" value="auto" checked /><span>Automático (según
-                      tarjeta)</span><button type="button" class="info-action" data-info-key="auto">
-                      <i class="bi bi-info-circle"></i>
-                    </button>
-                  </div>
-                  <div class="checkbox-option">
-                    <input type="checkbox" name="simMode" value="e100" /><span>100 · UsernameToken no
-                      proporcionado.</span><button type="button" class="info-action" data-info-key="e100">
-                      <i class="bi bi-info-circle"></i>
-                    </button>
-                  </div>
-                  <div class="checkbox-option">
-                    <input type="checkbox" name="simMode" value="e101" /><span>101 · Identificador de sitio no
-                      existe.</span><button type="button" class="info-action" data-info-key="e101">
-                      <i class="bi bi-info-circle"></i>
-                    </button>
-                  </div>
-                  <div class="checkbox-option">
-                    <input type="checkbox" name="simMode" value="e102" /><span>102 · El hash de TranKey no
-                      coincide.</span><button type="button" class="info-action" data-info-key="e102">
-                      <i class="bi bi-info-circle"></i>
-                    </button>
-                  </div>
-                  <div class="checkbox-option">
-                    <input type="checkbox" name="simMode" value="e103" /><span>103 · Fecha de la semilla mayor de 5
-                      minutos.</span><button type="button" class="info-action" data-info-key="e103">
-                      <i class="bi bi-info-circle"></i>
-                    </button>
-                  </div>
-                  <div class="checkbox-option">
-                    <input type="checkbox" name="simMode" value="e104" /><span>104 · Sitio inactivo.</span><button
-                      type="button" class="info-action" data-info-key="e104">
-                      <i class="bi bi-info-circle"></i>
-                    </button>
-                  </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="serviceOption" value="link" />
+                  <span>Link de Pagos — Generar link</span>
+                  <button type="button" class="info-action" data-info-key="link" aria-label="Información">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
                 </div>
-                <div class="field-hint">
-                  Fuerza el código de respuesta que devolverá el mock.
-                </div>
-
-                <button class="btn-send" id="btnSend">
-                  <i class="bi bi-send-fill"></i> Enviar request
-                </button>
               </div>
             </div>
           </div>
 
+          <div class="field-group tipo-pago-group show" id="tipoPagoGroup">
+            <label class="field-label">Tipo de pago</label>
+            <div class="demo-dropdown">
+              <button type="button" class="demo-dropdown-trigger" aria-haspopup="listbox">
+                <span class="dd-label">Pago básico</span>
+                <i class="bi bi-chevron-down dd-chev"></i>
+              </button>
+              <div class="option-grid demo-dropdown-menu" id="paymentTypeOptions" role="listbox">
+                <div class="checkbox-option checked">
+                  <input type="checkbox" name="paymentType" value="basico" checked /><span>Pago básico</span><button
+                    type="button" class="info-action" data-info-key="basico">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="paymentType" value="partial" /><span>Pagos Parciales</span><button
+                    type="button" class="info-action" data-info-key="partial">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="paymentType" value="recurrencia" /><span>Pago Recurrente</span><button
+                    type="button" class="info-action" data-info-key="recurrencia">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="paymentType" value="dispersion" /><span>Pago con Dispersión</span><button
+                    type="button" class="info-action" data-info-key="dispersion">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="paymentType" value="preauth" /><span>Pago con
+                    Preautorización</span><button type="button" class="info-action" data-info-key="preauth">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="paymentType" value="token" /><span>Suscripción + Token
+                    (tokenización)</span><button type="button" class="info-action" data-info-key="token">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="paymentType" value="suscripcion" /><span>Pago +
+                    Suscripción</span><button type="button" class="info-action" data-info-key="suscripcion">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Simular respuesta</label>
+            <div class="demo-dropdown">
+              <button type="button" class="demo-dropdown-trigger" aria-haspopup="listbox">
+                <span class="dd-label">Automático (según tarjeta)</span>
+                <i class="bi bi-chevron-down dd-chev"></i>
+              </button>
+              <div class="option-grid demo-dropdown-menu" id="simModeOptions" role="listbox">
+                <div class="checkbox-option checked">
+                  <input type="checkbox" name="simMode" value="auto" checked /><span>Automático (según
+                    tarjeta)</span><button type="button" class="info-action" data-info-key="auto">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="simMode" value="ok" /><span>Aprobada (00)</span><button type="button"
+                    class="info-action" data-info-key="ok">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="simMode" value="pending" /><span>Pendiente (?-)</span><button
+                    type="button" class="info-action" data-info-key="pending">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="simMode" value="e100" /><span>100 · UsernameToken no
+                    proporcionado.</span><button type="button" class="info-action" data-info-key="e100">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="simMode" value="e101" /><span>101 · Identificador de sitio no
+                    existe.</span><button type="button" class="info-action" data-info-key="e101">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="simMode" value="e102" /><span>102 · El hash de TranKey no
+                    coincide.</span><button type="button" class="info-action" data-info-key="e102">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="simMode" value="e103" /><span>103 · Fecha de la semilla mayor de 5
+                    minutos.</span><button type="button" class="info-action" data-info-key="e103">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="simMode" value="e104" /><span>104 · Sitio inactivo.</span><button
+                    type="button" class="info-action" data-info-key="e104">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="simMode" value="e105" /><span>105 · Sitio expirado.</span><button
+                    type="button" class="info-action" data-info-key="e105">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="simMode" value="e106" /><span>106 · Credenciales
+                    expiradas.</span><button type="button" class="info-action" data-info-key="e106">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="simMode" value="e107" /><span>107 · UsernameToken mal
+                    definido.</span><button type="button" class="info-action" data-info-key="e107">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="simMode" value="e200" /><span>200 · Saltar encabezado
+                    SOAP.</span><button type="button" class="info-action" data-info-key="e200">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="simMode" value="e10001" /><span>10001 · Contacte a
+                    Soporte.</span><button type="button" class="info-action" data-info-key="e10001">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="simMode" value="e96" /><span>96 · Malfuncionamiento del
+                    sistema.</span><button type="button" class="info-action" data-info-key="e96">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="simMode" value="e68" /><span>68 · Respuesta tardía.</span><button
+                    type="button" class="info-action" data-info-key="e68">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="simMode" value="R1" /><span>R1 · Autorización revocada.</span><button
+                    type="button" class="info-action" data-info-key="R1">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="simMode" value="R3" /><span>R3 · Todas las autorizaciones
+                    revocadas.</span><button type="button" class="info-action" data-info-key="R3">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="simMode" value="e13" /><span>13 · Monto inválido.</span><button
+                    type="button" class="info-action" data-info-key="e13">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="simMode" value="e61" /><span>61 · Monto máximo
+                    excedido.</span><button type="button" class="info-action" data-info-key="e61">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="simMode" value="XR" /><span>XR · Respuesta inválida.</span><button
+                    type="button" class="info-action" data-info-key="XR">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="simMode" value="XE" /><span>XE · Tipo de tarjeta
+                    inválido.</span><button type="button" class="info-action" data-info-key="XE">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="simMode" value="XX" /><span>XX · Configuraciones
+                    inválidas.</span><button type="button" class="info-action" data-info-key="XX">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="simMode" value="eBR" /><span>BR · Solicitud incorrecta.</span><button
+                    type="button" class="info-action" data-info-key="eBR">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="simMode" value="eX3" /><span>X3 · Error de validación.</span><button
+                    type="button" class="info-action" data-info-key="eX3">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="simMode" value="eXA" /><span>XA · Rechazo financiero.</span><button
+                    type="button" class="info-action" data-info-key="eXA">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="simMode" value="eNF" /><span>NF · No encontrado.</span><button
+                    type="button" class="info-action" data-info-key="eNF">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="simMode" value="e05" /><span>05 · Error externo.</span><button
+                    type="button" class="info-action" data-info-key="e05">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+                <div class="checkbox-option">
+                  <input type="checkbox" name="simMode" value="eXH" /><span>XH · Error interno.</span><button
+                    type="button" class="info-action" data-info-key="eXH">
+                    <i class="bi bi-info-circle"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="field-hint">
+              Fuerza el código de respuesta que devolverá el mock.
+            </div>
+
+            <button class="btn-send" id="btnSend">
+              <i class="bi bi-send-fill"></i> Enviar request
+            </button>
+          </div>
+
         </section>
+      </div>
+      <!-- Fila 2: Autenticación + Explora la autenticación -->
+      <div class="demo-layout-auth">
 
         <!-- ===================== AUTENTICACION ===================== -->
         <section class="panel-left demo-section-panel">
@@ -237,6 +433,34 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
             </div>
           </div>
 
+          <!-- ===================== DATOS DEL PAGO (mismo nivel que Autenticación) ===================== -->
+          <div class="section" id="secPago">
+            <div class="section-head" data-section-toggle="secPago">
+              <span class="panel-title">Datos del pago</span><i class="bi bi-chevron-down chev"></i>
+            </div>
+            <div class="section-body">
+              <div class="field-group">
+                <label class="field-label">Referencia <span class="req">*</span></label><input type="text"
+                  class="field-input" id="fRef" value="LAB-001" />
+              </div>
+              <div class="field-group">
+                <label class="field-label">Descripción</label><input type="text" class="field-input" id="fDesc"
+                  value="Prueba de pago" />
+              </div>
+              <div class="field-group">
+                <label class="field-label">Moneda</label><select class="field-select" id="fCurrency">
+                  <option value="COP">COP — Peso colombiano</option>
+                  <option value="USD">USD — Dólar (Panamá / Belize)</option>
+                  <option value="CRC">CRC — Colón costarricense</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label class="field-label">Monto <span class="req">*</span></label><input type="number"
+                  class="field-input" id="fAmount" value="50000" />
+              </div>
+            </div>
+          </div>
+
         </section>
 
         <aside class="auth-help" id="authHelp" aria-live="polite">
@@ -246,44 +470,15 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
             Selecciona una etiqueta de autenticación para ver cómo se forma el
             campo y un ejemplo de su valor.
           </p>
+          <ol id="authHelpSteps" class="auth-help-steps"></ol>
+          <div id="authHelpResult" class="auth-help-result"></div>
           <pre id="authHelpExample" class="auth-help-example"></pre>
         </aside>
       </div>
 
-      <div class="demo-layout-bottom">
-        <div class="demo-bottom-panels">
-          <!-- ===================== DATOS DEL PAGO ===================== -->
-          <section class="panel-left demo-section-panel payment-panel">
-            <div class="section" id="secPago">
-              <div class="section-head" data-section-toggle="secPago">
-                <span class="panel-title">Datos del pago</span><i class="bi bi-chevron-down chev"></i>
-              </div>
-              <div class="section-body">
-                <div class="field-group">
-                  <label class="field-label">Referencia <span class="req">*</span></label><input type="text"
-                    class="field-input" id="fRef" value="LAB-001" />
-                </div>
-                <div class="field-group">
-                  <label class="field-label">Descripción</label><input type="text" class="field-input" id="fDesc"
-                    value="Prueba de pago" />
-                </div>
-                <div class="field-group">
-                  <label class="field-label">Moneda</label><select class="field-select" id="fCurrency">
-                    <option value="COP">COP — Peso colombiano</option>
-                    <option value="USD">USD — Dólar (Panamá / Belize)</option>
-                    <option value="CRC">CRC — Colón costarricense</option>
-                  </select>
-                </div>
-                <div class="field-group">
-                  <label class="field-label">Monto <span class="req">*</span></label><input type="number"
-                    class="field-input" id="fAmount" value="50000" />
-                </div>
-                
-              </div>
-            </div>
-          </section>
-
-          <!-- Request Body — solo Raw JSON -->
+      <!-- Fila 3: Request Body + Response -->
+      <div class="demo-layout-io">
+        <!-- Request Body — solo Raw JSON -->
           <section class="panel-center">
             <div class="pcenter-header">
               <span class="panel-title" style="margin: 0">Request Body</span>
@@ -347,9 +542,6 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
               <i class="bi bi-arrow-counterclockwise"></i> Limpiar respuesta
             </button>
           </section>
-        </div>
-
-
       </div>
     </div>
 

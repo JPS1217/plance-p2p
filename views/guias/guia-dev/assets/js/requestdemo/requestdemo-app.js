@@ -20,6 +20,7 @@ import { initPopup } from "../components/popup/popup.js";
 import { initTheme } from "../components/theme/theme.js";
 import { OPTION_INFO } from "../core/constants.js";
 import { AUTH_FIELD_INFO } from "./demo-constants.js";
+import { initDemoDropdowns } from "./demo-dropdowns.js";
 import { $, $$ } from "../core/utils.js";
 
 // Fusiona la info de los campos de autenticación en el catálogo que usa el
@@ -38,6 +39,8 @@ const AUTH_FIELD_EXAMPLES = {
 function initAuthHelp() {
   const title = $("#authHelpTitle");
   const text = $("#authHelpText");
+  const steps = $("#authHelpSteps");
+  const result = $("#authHelpResult");
   const example = $("#authHelpExample");
 
   if (!title || !text || !example) return;
@@ -52,6 +55,33 @@ function initAuthHelp() {
 
       title.textContent = info.title;
       text.textContent = info.text;
+
+      // Pasos (lista numerada) — opcional
+      if (steps) {
+        steps.replaceChildren();
+        if (Array.isArray(info.steps) && info.steps.length) {
+          info.steps.forEach((s) => {
+            const li = document.createElement("li");
+            li.textContent = s;
+            steps.appendChild(li);
+          });
+          steps.style.display = "";
+        } else {
+          steps.style.display = "none";
+        }
+      }
+
+      // Resultado / cómo se ve el valor final — opcional
+      if (result) {
+        if (info.result) {
+          result.textContent = info.result;
+          result.style.display = "";
+        } else {
+          result.textContent = "";
+          result.style.display = "none";
+        }
+      }
+
       example.textContent = AUTH_FIELD_EXAMPLES[key] || "";
     };
 
@@ -93,6 +123,9 @@ function boot() {
   initAuthHelp();
   // Sincroniza el estado inicial de la sección Operación (URL, tipo de pago).
   onEpChange({ updateAll: () => requestApi.updateAll?.() });
+
+  // Convierte Servicio / Tipo de pago / Simular respuesta en desplegables.
+  initDemoDropdowns();
 
   // Render inicial del Raw JSON.
   requestApi.updateAll?.();
