@@ -22,17 +22,23 @@ export const AUTH_FIELD_INFO = {
   auth_login: {
     title: "Login",
     text:
-      "Es el identificador público de tu comercio ante Place to Pay: piensa en él como tu \"usuario\". " +
-      "No es secreto — viaja como texto plano dentro del objeto \"auth\" en cada petición, así que Place to Pay sabe quién está enviando la solicitud. " +
-      "Place to Pay te lo entrega cuando terminas el proceso de certificación de tu integración; no lo inventas tú.",
+      "Es el identificador público de tu comercio ante Place to Pay. Puedes pensar en él como tu \"usuario\". " +
+      "que permite identificar quién está enviando cada solicitud." +
+      "Place to Pay te lo entrega como parte de las credenciales de testing o productivas; no debes crearlo ni modificarlo.",
+
+
+    highlight:
+      "Place to Pay te lo entrega como parte de las credenciales de testing o productivas",
+
+
     steps: [
-      "Ubica el correo o documento de credenciales que te entregó Place to Pay al certificar tu sitio.",
+      "Busca el correo o documento de credenciales entregado por Place to Pay.",
       "Copia el valor del campo \"login\" tal cual, sin espacios ni saltos de línea.",
-      "Pégalo en el campo Login. El mismo login se usa en todas tus peticiones.",
+      "Utiliza el mismo Login en todas las peticiones realizadas desde tu integración",
     ],
     result: [
       "Es un texto fijo: siempre el mismo para tu sitio.",
-      "Se envía sin cifrar dentro del objeto \"auth\".",
+      "Se envía dentro del objeto \"auth\".",
     ],
   },
 

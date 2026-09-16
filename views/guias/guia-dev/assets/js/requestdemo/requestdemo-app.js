@@ -54,7 +54,24 @@ function initAuthHelp() {
       if (!info) return;
 
       title.textContent = info.title;
-      text.textContent = info.text;
+
+      // Resalta el fragmento de texto indicado en info.highlight (si existe) dentro del párrafo principal.
+      text.replaceChildren();
+
+      const textParts = info.text.split(info.highlight);
+
+      text.appendChild(document.createTextNode(textParts[0]));
+
+      if (info.highlight) {
+        text.appendChild(document.createElement("br"));
+
+        const highlight = document.createElement("span");
+        highlight.className = "auth-help-highlight";
+        highlight.textContent = info.highlight;
+        text.appendChild(highlight);
+      }
+
+      text.appendChild(document.createTextNode(textParts[1] || ""));
 
       // Pasos (lista numerada) — opcional
       if (steps) {

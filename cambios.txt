@@ -1,0 +1,5 @@
+Requestdemo.php
+
+-la estrucutra del request no cambia segun las opciones que se escojan.
+-El scroll bar esta interfiriendo con el borde de la tarjeta.
+-las estructuras de archivos no estan correctas.

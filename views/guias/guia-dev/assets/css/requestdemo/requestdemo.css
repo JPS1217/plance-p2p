@@ -7,6 +7,23 @@
    Reutiliza los componentes CSS del explorer (sidebar/request/response/popup).
    ============================================================ */
 
+body {
+  min-height: 100vh;
+  background: url("../../../../../../assets/images/bg40.webp") center / cover fixed no-repeat;
+}
+
+
+.demo-title-bar,
+.demo-layout {
+  background: transparent;
+}
+
+/* Resaltado de texto en el contenido de la ayuda */
+.auth-help-highlight {
+  color: var(--accent);
+  font-weight: 600;
+}
+
 /* Título de la vista */
 .demo-title-bar {
   padding: 2.25rem 1.25rem 1.75rem;
@@ -240,6 +257,13 @@
   cursor: default;
 }
 
+#paneltopTitle {
+  margin: 0 0 0.6rem;
+  color: var(--accent);
+  font-family: var(--display);
+  font-size: clamp(1.35rem, 2.2vw, 2rem);
+}
+
 /* Botón de info alineado con el texto del label en Autenticación */
 #secAuth .field-label {
   display: inline-flex;
@@ -399,3 +423,17 @@
   height: 0;
   pointer-events: none;
 }
+
+#appShell,
+.demo-title-bar,
+.demo-layout {
+  background: transparent;
+}
+
+/* .demo-layout-op > .demo-section-panel,
+.demo-layout-auth > .demo-section-panel,
+.demo-layout-auth > .auth-help,
+.demo-layout-io > .panel-center,
+.demo-layout-io > .panel-right {
+  background: rgba(17, 17, 17, 0.86);
+} */

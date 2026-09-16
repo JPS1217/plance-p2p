@@ -77,7 +77,7 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
     <div class="demo-title-bar">
       <h1>Construye tu petición</h1>
       <p>
-        Puedes examinar los elementos que conforman un request de ejemplo para crear una sesión. Ajusta los valores y
+        Comprende y prepara correctamente los elementos que conforman una petición. Ajusta los campos y valores en el ejemplo y luego
         envía la petición para ver la respuesta del mock.
       </p>
     </div>
@@ -87,37 +87,34 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
       <div class="demo-layout-op">
         <!-- ===================== OPERACION ===================== -->
         <section class="panel-left demo-section-panel">
-          <div class="url-bar">
-            <span class="method-pill">POST</span>
-            <span class="url-text" id="urlDisplay">https://checkout-test.placetopay.com/api/session</span>
-          </div>
+          <h2 id="paneltopTitle">Escoge el flujo de petición</h2>
 
           <!-- Operación (campos como desplegables de opción única) -->
           <div class="field-group">
             <label class="field-label">Servicio</label>
             <div class="demo-dropdown">
               <button type="button" class="demo-dropdown-trigger" aria-haspopup="listbox">
-                <span class="dd-label">Web Checkout — Crear sesión</span>
+                <span class="dd-label">Web Checkout</span>
                 <i class="bi bi-chevron-down dd-chev"></i>
               </button>
               <div class="option-grid demo-dropdown-menu" id="serviceOptions" role="listbox">
                 <div class="checkbox-option checked">
                   <input type="checkbox" name="serviceOption" value="wc_session" checked />
-                  <span>Web Checkout — Crear sesión</span>
+                  <span>Web Checkout</span>
                   <button type="button" class="info-action" data-info-key="wc_session" aria-label="Información">
                     <i class="bi bi-info-circle"></i>
                   </button>
                 </div>
                 <div class="checkbox-option">
                   <input type="checkbox" name="serviceOption" value="gw_process" />
-                  <span>API Gateway — Procesar pago</span>
+                  <span>API Gateway</span>
                   <button type="button" class="info-action" data-info-key="gw_process" aria-label="Información">
                     <i class="bi bi-info-circle"></i>
                   </button>
                 </div>
                 <div class="checkbox-option">
                   <input type="checkbox" name="serviceOption" value="link" />
-                  <span>Link de Pagos — Generar link</span>
+                  <span>Link de Pagos</span>
                   <button type="button" class="info-action" data-info-key="link" aria-label="Información">
                     <i class="bi bi-info-circle"></i>
                   </button>
