@@ -27,15 +27,6 @@ import { $, $$, selectSingleOption } from "../core/utils.js";
 // popup, para reutilizar el mecanismo existente (data-info-key).
 Object.assign(OPTION_INFO, AUTH_FIELD_INFO);
 
-const AUTH_FIELD_EXAMPLES = {
-  auth_login: '"login": "2d9eaf1e662518756a3d78806543af5b"',
-  auth_secret: '"secretKey": "3YC5brb5eAR4xBGQ"',
-  auth_seed: '"seed": "2023-06-21T09:56:06-05:00"',
-  auth_nonce: '"nonce": "OTI3MzQyMTk3"',
-  auth_trankey:
-    '"tranKey": "Base64(SHA-256(nonce + seed + secretKey))"',
-};
-
 function initAuthHelp() {
   const title = $("#authHelpTitle");
   const text = $("#authHelpText");
@@ -88,10 +79,9 @@ function initAuthHelp() {
         }
       }
 
-      // Resultado / cómo se ve el valor final — opcional.
+      // Resultado / errores comunes — opcional.
       // Se admite string o array; se muestra como viñetas dentro de la caja
-      // con borde naranja. El ejemplo JSON del campo se agrega como una
-      // viñeta final (en monoespaciado) dentro de la MISMA caja.
+      // con borde naranja.
       if (result) {
         result.replaceChildren();
         const items = Array.isArray(info.result)
@@ -99,6 +89,11 @@ function initAuthHelp() {
           : info.result
             ? [info.result]
             : [];
+
+        const heading = document.createElement("h3");
+        heading.className = "auth-help-result-title";
+        heading.textContent = "Errores comunes";
+        result.appendChild(heading);
 
         const ul = document.createElement("ul");
         ul.className = "auth-help-result-list";
@@ -108,17 +103,6 @@ function initAuthHelp() {
           li.textContent = r;
           ul.appendChild(li);
         });
-
-        // Ejemplo JSON como última viñeta en monoespaciado.
-        const jsonExample = AUTH_FIELD_EXAMPLES[key];
-        if (jsonExample) {
-          const li = document.createElement("li");
-          const code = document.createElement("code");
-          code.className = "auth-help-result-code";
-          code.textContent = jsonExample;
-          li.appendChild(code);
-          ul.appendChild(li);
-        }
 
         if (ul.children.length) {
           result.appendChild(ul);

@@ -213,6 +213,14 @@ body {
   color: var(--text);
 }
 
+.auth-help-result-title {
+  margin: 0 0 0.65rem;
+  color: var(--accent);
+  font-family: var(--display);
+  font-size: var(--font-base);
+  text-transform: uppercase;
+}
+
 .auth-help-result-list {
   margin: 0;
   padding-left: 1.35rem;
@@ -230,17 +238,6 @@ body {
 
 .auth-help-result-list li::marker {
   color: var(--accent);
-}
-
-/* Ejemplo JSON como viñeta monoespaciada dentro de la caja con borde naranja */
-.auth-help-result-code {
-  display: inline-block;
-  margin-top: 0.1rem;
-  color: var(--accent);
-  font-family: var(--mono);
-  font-size: var(--font-sm);
-  word-break: break-all;
-  white-space: pre-wrap;
 }
 
 /* Solo Raw JSON: ocultamos las pestañas Preview y Editar y su contenido */

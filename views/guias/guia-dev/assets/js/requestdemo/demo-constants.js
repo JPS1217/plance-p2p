@@ -24,7 +24,7 @@ export const AUTH_FIELD_INFO = {
     text:
       "Es el identificador público de tu comercio ante Place to Pay. Puedes pensar en él como tu \"usuario\". " +
       "que permite identificar quién está enviando cada solicitud." +
-      "Place to Pay te lo entrega como parte de las credenciales de testing o productivas; no debes crearlo ni modificarlo.",
+      "Place to Pay te lo entrega como parte de las credenciales de testing o productivas; no debes crearlo tú ni modificarlo.",
 
 
     highlight:
@@ -59,7 +59,7 @@ export const AUTH_FIELD_INFO = {
   },
 
   auth_seed: {
-    title: "Seed (AUTO)",
+    title: "Seed",
     text:
       "Es la fecha y hora exactas en que armaste la petición, escritas en formato ISO 8601 (por ejemplo 2023-06-21T09:56:06-05:00). " +
       "Sirve para que Place to Pay sepa que la solicitud es reciente. En esta guía se genera sola en cada envío, así que no tienes que escribirla a mano.",
@@ -75,7 +75,7 @@ export const AUTH_FIELD_INFO = {
   },
 
   auth_nonce: {
-    title: "Nonce (AUTO)",
+    title: "Nonce",
     text:
       "Es un número al azar que hace que cada petición sea única e irrepetible (\"nonce\" = número usado una sola vez). " +
       "Evita que alguien reenvíe una copia de tu petición. En esta guía se genera solo en cada envío.",
@@ -91,10 +91,10 @@ export const AUTH_FIELD_INFO = {
   },
 
   auth_trankey: {
-    title: "TranKey (AUTO)",
+    title: "TranKey",
     text:
-      "Es la \"firma\" de la petición: demuestra que conoces la secretKey SIN enviarla. Se calcula de nuevo en CADA petición combinando tres ingredientes — el nonce, el seed y tu secretKey — y aplicando dos transformaciones (SHA-256 y luego Base64). " +
-      "Aquí se calcula automáticamente, pero estos son los pasos exactos por si lo implementas en tu servidor:",
+      "Se calcula de nuevo en CADA petición combinando tres ingredientes — el nonce, el seed y tu secretKey — y aplicando dos transformaciones (SHA-256 y luego Base64). " +
+      "En el demo se calcula automáticamente, pero estos son los pasos exactos para que lo implementes en tu desarrollo:",
     steps: [
       "Pega los tres ingredientes en este orden, sin espacios: primero el nonce ORIGINAL (el de antes de codificarlo en Base64), luego el seed, luego tu secretKey. Es decir el texto: nonce + seed + secretKey.",
       "Calcula el hash SHA-256 de ese texto. Importante: usa la salida BINARIA cruda del SHA-256 (los bytes), NO el típico texto hexadecimal.",
@@ -102,8 +102,8 @@ export const AUTH_FIELD_INFO = {
       "El texto resultante es el tranKey. Ponlo en el campo \"tranKey\" junto al login, el nonce (Base64) y el seed.",
     ],
     result: [
-      "Obtienes un texto en Base64, distinto en cada petición, p. ej. \"cm96cHI0dWE2cDhtcTBjaXVkYWQ=\".",
-      "Ejemplo — ingredientes: nonce = \"927342197\", seed = \"2023-06-21T09:56:06-05:00\", secretKey = \"3YC5brb5eAR4xBGQ\".",
+      "En la fórmula nonce + seed + secretKey, el símbolo '+' representa la operación de concatenación de tu lenguaje de programación; NO debes agregar los caracteres '+' al texto generado.",
+      "Después de calcular el SHA-256, utiliza los bytes binarios originales del hash para generar el Base64.",
       "Ejemplo — fórmula: tranKey = Base64(SHA-256(\"927342197\" + \"2023-06-21T09:56:06-05:00\" + \"3YC5brb5eAR4xBGQ\")).",
     ],
   },
