@@ -173,15 +173,112 @@ export function buildBody(state) {
     };
   }
 
-  return {
-    auth,
-    payment: {
-      reference: ref,
-      description: desc,
-      amount: { currency: cur, total: amt },
-    },
-    returnUrl: "https://tu-sitio.com/retorno",
+  // Web Checkout (wc_session): la forma del "payment" cambia según el tipo de
+  // pago seleccionado, siguiendo la documentación de Place to Pay:
+  // https://docs.placetopay.dev/checkout/create-session/
+  return buildWebCheckoutBody(auth, { ref, desc, cur, amt });
+}
+
+/**
+ * Construye el CreateSessionRequest de Web Checkout adaptando la estructura
+ * al "Tipo de pago" (input[name="paymentType"]). El campo "Simular respuesta"
+ * NO afecta este cuerpo (solo afecta la respuesta simulada en la tarjeta 5).
+ */
+function buildWebCheckoutBody(auth, { ref, desc, cur, amt }) {
+  const tipo = getSelectedOptionValue("paymentType") || "basico";
+
+  // Estructura base "payment" común a la mayoría de los tipos.
+  const payment = {
+    reference: ref,
+    description: desc,
+    amount: { currency: cur, total: amt },
   };
+
+  const body = { auth };
+
+  switch (tipo) {
+    // Pago básico: payment simple.
+    case "basico":
+      body.payment = payment;
+      break;
+
+    // Pagos parciales: payment.allowPartial = true. No admite impuestos.
+    case "partial":
+      body.payment = { ...payment, allowPartial: true };
+      break;
+
+    // Pago recurrente: payment.recurring con la estructura Recurrence.
+    case "recurrencia":
+      body.payment = {
+        ...payment,
+        recurring: {
+          periodicity: "M",
+          interval: "1",
+          nextPayment: isoDatePlusDays(30),
+          maxPeriods: 12,
+          dueDate: isoDatePlusDays(365),
+          notificationUrl: "https://tu-sitio.com/notificacion",
+        },
+      };
+      break;
+
+    // Pago con dispersión: payment.dispersion (arreglo de DispersionRequests).
+    // La suma de las dispersiones debe igualar el total; misma moneda.
+    case "dispersion": {
+      const first = Math.round(amt * 0.7 * 100) / 100;
+      const second = Math.round((amt - first) * 100) / 100;
+      body.payment = {
+        ...payment,
+        dispersion: [
+          {
+            amount: { total: first, currency: cur },
+            agreement: 30,
+            agreementType: "AIRLINE",
+          },
+          {
+            amount: { total: second, currency: cur },
+            agreementType: "MERCHANT",
+          },
+        ],
+      };
+      break;
+    }
+
+    // Preautorización (check-in): type = "checkin" a nivel raíz + payment base.
+    // No admite pagos mixtos ni dispersos; la moneda se mantiene fija.
+    case "preauth":
+      body.type = "checkin";
+      body.payment = payment;
+      break;
+
+    // Suscripción + Token (tokenización): NO se envía "payment", se envía la
+    // estructura "subscription" para tokenizar el medio de pago.
+    case "token":
+      body.subscription = {
+        reference: ref,
+        description: desc || "Suscripción de prueba",
+      };
+      break;
+
+    // Pago + Suscripción: pago normal con payment.subscribe = true para
+    // ofrecer al usuario guardar (tokenizar) su medio de pago.
+    case "suscripcion":
+      body.payment = { ...payment, subscribe: true };
+      break;
+
+    default:
+      body.payment = payment;
+  }
+
+  body.returnUrl = "https://tu-sitio.com/retorno";
+  return body;
+}
+
+// Fecha ISO (YYYY-MM-DD) a N días de hoy, para los campos de recurrencia.
+function isoDatePlusDays(days) {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return d.toISOString().slice(0, 10);
 }
 
 export function updateAll(state) {
