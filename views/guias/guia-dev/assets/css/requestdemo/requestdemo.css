@@ -240,6 +240,25 @@ body {
   color: var(--accent);
 }
 
+.auth-help-result-sublist {
+  margin: 0.5rem 0 0;
+  padding-left: 1.25rem;
+  list-style: none;
+}
+
+.auth-help-result-sublist li {
+  margin-top: 0.35rem;
+  padding-left: 0;
+}
+
+.auth-help-result-sublist li::before {
+  content: none;
+}
+
+.auth-help-result-sublist strong {
+  color: var(--text);
+}
+
 /* Solo Raw JSON: ocultamos las pestañas Preview y Editar y su contenido */
 .demo-layout .json-tab[data-tab="preview"],
 .demo-layout .json-tab[data-tab="edit"],

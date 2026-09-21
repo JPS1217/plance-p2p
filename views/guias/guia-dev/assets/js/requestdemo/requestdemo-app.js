@@ -100,7 +100,27 @@ function initAuthHelp() {
 
         items.forEach((r) => {
           const li = document.createElement("li");
-          li.textContent = r;
+          if (typeof r === "string") {
+            li.textContent = r;
+          } else {
+            li.appendChild(document.createTextNode(r.text || ""));
+
+            if (Array.isArray(r.sublist) && r.sublist.length) {
+              const sublist = document.createElement("ul");
+              sublist.className = "auth-help-result-sublist";
+
+              r.sublist.forEach((subitem) => {
+                const subli = document.createElement("li");
+                const label = document.createElement("strong");
+                label.textContent = `${subitem.label || ""} `;
+                subli.appendChild(label);
+                subli.appendChild(document.createTextNode(subitem.value || ""));
+                sublist.appendChild(subli);
+              });
+
+              li.appendChild(sublist);
+            }
+          }
           ul.appendChild(li);
         });
 

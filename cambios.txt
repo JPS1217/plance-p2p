@@ -1,5 +1,28 @@
 Requestdemo.php
 
--la estrucutra del request no cambia segun las opciones que se escojan.
+- (complete) la estrucutra del request no cambia segun las opciones que se escojan.
 -El scroll bar esta interfiriendo con el borde de la tarjeta.
 -las estructuras de archivos no estan correctas.
+-Se deben habilitar las opciones especificas para cada request
+-Las Navegabilidad de las tiendas es muy extensa y no es compacta
+-Poner como se construyen las peticiones en diferentes lenguajes
+
+3 secciones:
+
+
+-Que necesito para integrarme, preguntas frecuentes.
+	¿Qué es una integración?
+	¿Quién desarrolla la integración?
+	¿Qué hace mi aplicación?
+	¿Qué hace Place to Pay?
+	¿Dónde se utiliza la información mostrada en esta plataforma?
+	¿Necesito saber programar?
+	¿Qué es una solicitud (request)?
+	¿Qué es una respuesta (response)?
+
+-quiero hacer una integración
+
+-ejemplos de integración
+
+-----------------------------------------------
+

@@ -93,10 +93,10 @@ export const AUTH_FIELD_INFO = {
   auth_trankey: {
     title: "TranKey",
     text:
-      "Se calcula de nuevo en CADA petición combinando tres ingredientes — el nonce, el seed y tu secretKey — y aplicando dos transformaciones (SHA-256 y luego Base64). " +
-      "En el demo se calcula automáticamente, pero estos son los pasos exactos para que lo implementes en tu desarrollo:",
+      "Se calcula de nuevo en CADA petición combinando tres datos — el nonce, el seed y tu secretKey — y aplicando dos transformaciones (SHA-256 y luego Base64). " +
+      "Estos son los pasos para que lo implementes en tu desarrollo:",
     steps: [
-      "Pega los tres ingredientes en este orden, sin espacios: primero el nonce ORIGINAL (el de antes de codificarlo en Base64), luego el seed, luego tu secretKey. Es decir el texto: nonce + seed + secretKey.",
+      "Pega los tres datos en este orden, sin espacios: primero el nonce ORIGINAL (el de antes de codificarlo en Base64), luego el seed, luego tu secretKey. Es decir el texto: nonce + seed + secretKey.",
       "Calcula el hash SHA-256 de ese texto. Importante: usa la salida BINARIA cruda del SHA-256 (los bytes), NO el típico texto hexadecimal.",
       "Codifica esos bytes en Base64.",
       "El texto resultante es el tranKey. Ponlo en el campo \"tranKey\" junto al login, el nonce (Base64) y el seed.",
@@ -104,6 +104,19 @@ export const AUTH_FIELD_INFO = {
     result: [
       "En la fórmula nonce + seed + secretKey, el símbolo '+' representa la operación de concatenación de tu lenguaje de programación; NO debes agregar los caracteres '+' al texto generado.",
       "Después de calcular el SHA-256, utiliza los bytes binarios originales del hash para generar el Base64.",
+      {
+        text: "No confundas la fórmula que se aplica con el valor que se envía en el campo nonce:",
+        sublist: [
+          {
+            label: "Incorrecto:",
+            value: "SHA-256(Base64(nonce) + seed + secretKey)",
+          },
+          {
+            label: "Correcto:",
+            value: "SHA-256(nonce + seed + secretKey)",
+          },
+        ],
+      },
       "Ejemplo — fórmula: tranKey = Base64(SHA-256(\"927342197\" + \"2023-06-21T09:56:06-05:00\" + \"3YC5brb5eAR4xBGQ\")).",
     ],
   },
