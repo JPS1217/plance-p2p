@@ -86,7 +86,7 @@ session_start();
         </section>
 
         <!-- ══════════════════════════════════════════════════════
-             CATEGORÍA 3 — Qué necesito para integrarme (FAQ)
+             CATEGORÍA 2 — Qué necesito para integrarme (FAQ)
              ══════════════════════════════════════════════════════ -->
         <section class="cat-section" aria-labelledby="cat-faq-title">
             <header class="cat-head">
@@ -152,7 +152,7 @@ session_start();
         </section>
 
         <!-- ══════════════════════════════════════════════════════
-             CATEGORÍA — Ejemplos de integración
+             CATEGORÍA 3 — Ejemplos de integración
              ══════════════════════════════════════════════════════ -->
         <section class="cat-section" aria-labelledby="cat-ejemplos-title">
             <header class="cat-head">

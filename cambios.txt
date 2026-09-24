@@ -1,28 +1,65 @@
-Requestdemo.php
+PENDIENTES
 
-- (complete) la estrucutra del request no cambia segun las opciones que se escojan.
+-Barra de busqueda donde el usuario indique su finalidad y se le brinda una opcion de integracion
+
 -El scroll bar esta interfiriendo con el borde de la tarjeta.
 -las estructuras de archivos no estan correctas.
--Se deben habilitar las opciones especificas para cada request
+-Se deben habilitar una lista con los fields propios para cada request
 -Las Navegabilidad de las tiendas es muy extensa y no es compacta
 -Poner como se construyen las peticiones en diferentes lenguajes
+-falta tarjeta de dispersion
+-API link de pagos que redireccione a la tienda correctas
+-Dar mas distintivo a las tiendas para que sea entienda mejoro el flujo que llevan
+-Cambiar la descripcion en las tiendas de los pasos a seguir a la hora de realizar la compras
+-Eliminar la info de Jair mostrada en las tiendas y ponerla en un footer en otro lado
+-Implementar la funcionalidad de claro y oscuro unificada para todas las paginas
+--Mejorar que tan intuitivo es hacer el lock de los campos
+	cambiar como se hace el lock en los fields, dando una descripcion inicial y poniendo los pines para hacer lock
 
-3 secciones:
+--------------------------------------------------------------------------------------------------------------------
 
+EN PROCESO
 
--Que necesito para integrarme, preguntas frecuentes.
-	¿Qué es una integración?
-	¿Quién desarrolla la integración?
-	¿Qué hace mi aplicación?
-	¿Qué hace Place to Pay?
-	¿Dónde se utiliza la información mostrada en esta plataforma?
-	¿Necesito saber programar?
-	¿Qué es una solicitud (request)?
-	¿Qué es una respuesta (response)?
+-Cambiar la interfaz de request demo y también añadir explicaciones para la tarjeta 1
+-Errores especificos de cada field en la construccion de la peticion
+-Mejorar las recomendaciones de ruta para usuarios que no sabrian por donde empezar
 
--quiero hacer una integración
+---------------------------------------------------------------------------------------------------------------------
 
--ejemplos de integración
+COMPLETADO
 
------------------------------------------------
+General
+	-remover el uso de base de datos
+	-Eliminar tiendas con flujos duplicados.
 
+Requestdemo.php
+	-la estrucutra del request no cambia segun las opciones que se escojan.
+	-3 secciones:
+		-Que necesito para integrarme, preguntas frecuentes.
+			¿Qué es una integración?
+			¿Quién desarrolla la integración?
+			¿Qué hace mi aplicación?
+			¿Qué hace Place to Pay?
+			¿Dónde se utiliza la información mostrada en esta plataforma?
+			¿Necesito saber programar?
+			¿Qué es una solicitud (request)?
+			¿Qué es una respuesta (response)?
+		-quiero hacer una integración
+		-ejemplos de integración
+	-experiencia de usuario, on hoover salga la explicacion del campo
+
+Index.php
+	-Remover registro de usuarios y cambiar punto de entrada a la app
+	-Renombrar home.php a index.php
+	-Cambiar descripcion de las tarjetas:
+		📦 Recibir el pago del cliente
+		Pago Básico
+		🔄 Cobrar de forma periódica
+		Pago Recurrente
+		💳 Guardar una tarjeta para futuras compras
+		Suscripción
+		🏪 Enviar el dinero a varias cuentas
+		Pago con Dispersión
+		🏨 Reservar fondos y cobrar más adelante
+		Preautorización
+	-Cambiar fondo

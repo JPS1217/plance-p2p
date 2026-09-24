@@ -36,6 +36,11 @@ export function sendReq(state, deps = {}) {
   const btn = $("#btnSend");
   if (!btn) return;
 
+  document.querySelector(".panel-center")?.scrollIntoView({
+    behavior: "smooth",
+    block: "start",
+  });
+
   btn.disabled = true;
   btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Enviando...';
 
