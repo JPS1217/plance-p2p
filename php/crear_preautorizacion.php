@@ -1,22 +1,13 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-    header("Location: ../index.php");
-    exit();
-}
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: ../views/reservaciones/hotel.php");
     exit();
 }
 
-require_once 'conexion_be.php';
-if (!isset($conexion)) {
-    $conexion = plance_db_connect();
-    if (!$conexion) die("Error de conexión: " . mysqli_connect_error());
-    
-}
+require_once 'env.php';
 
 // Recibir datos
 $habitacion = trim($_POST['habitacion'] ?? '');
@@ -80,19 +71,10 @@ $body = [
     "notificationUrl" => "https://doorman-situated-delivery.ngrok-free.dev/plance/php/notify.php"
 ];
 
-// ── Guardar en BD primero para tener el reserva_id ──
-$hab_safe  = mysqli_real_escape_string($conexion, $habitacion);
-$uid_safe  = mysqli_real_escape_string($conexion, $_SESSION['correo'] ?? '');
-$ref_safe  = mysqli_real_escape_string($conexion, $reference);
-$desc_safe = mysqli_real_escape_string($conexion, "{$habitacion} (checkin: {$checkin} al {$checkout})");
+// ── Sin base de datos: identificador local para el retorno ──
+$reserva_id = strtoupper(bin2hex(random_bytes(4)));
 
-$query = "INSERT INTO reservaciones (habitacion, descripcion, precio, moneda, usuario_id, estado, request_id)
-          VALUES ('$hab_safe', '$desc_safe', '$total', 'COP', '$uid_safe', 'pendiente', '$ref_safe')";
-
-mysqli_query($conexion, $query);
-$reserva_id = mysqli_insert_id($conexion);
-
-// ── Ahora reemplazar el placeholder con el reserva_id real ──
+// ── Reemplazar el placeholder con el reserva_id ──
 $body['returnUrl'] = app_base_url() . "/retorno/retorno_preautorizacion.php?reserva_id={$reserva_id}";
 
 // ── Llamada cURL ──
@@ -119,11 +101,7 @@ $message    = $result['status']['message'] ?? 'Sin respuesta';
 $requestId  = $result['requestId']         ?? null;
 $processUrl = $result['processUrl']        ?? null;
 
-// Actualizar session_id en BD con el requestId numérico de PlacetoPay
-if ($requestId) {
-    $rid_safe = mysqli_real_escape_string($conexion, (string)$requestId);
-    mysqli_query($conexion, "UPDATE reservaciones SET session_id='$rid_safe' WHERE id=$reserva_id");
-}
+// Sin base de datos: no se persiste el requestId.
 
 // ── Guardar en sesión para retorno ──
 $_SESSION['pre_result'] = [

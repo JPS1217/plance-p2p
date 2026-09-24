@@ -20,8 +20,8 @@ if (PHP_SAPI !== 'cli') {
 }
 
 require_once __DIR__ . '/../php/env.php';
-require_once __DIR__ . '/../php/conexion_be.php';
 require_once __DIR__ . '/../php/p2p_sonda_core.php';
+$conexion = null; // sin base de datos
 
 // Tablas a revisar y minutos de margen antes de considerar una orden
 // "abandonada" (evita chocar con un pago que el usuario todavia esta

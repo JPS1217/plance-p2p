@@ -1,23 +1,15 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-    header("Location: ../index.php");
-    exit();
-}
 
-require_once '../php/conexion_be.php';
-if (!isset($conexion)) {
-    $conexion = plance_db_connect();
-    if (!$conexion) die("Error de conexión: " . mysqli_connect_error());
-}
+require_once '../php/env.php';
 
-$disp_id = (int)($_GET['disp_id'] ?? 0);
-if (!$disp_id) { header("Location: ../home.php"); exit(); }
+$disp_id = $_GET['disp_id'] ?? '';
+if (!$disp_id) { header("Location: ../index.php"); exit(); }
 
-// Traer datos desde BD
-$row = mysqli_fetch_assoc(mysqli_query($conexion, "SELECT * FROM dispersiones WHERE id = $disp_id"));
-if (!$row) { header("Location: ../home.php"); exit(); }
+// Sin base de datos: datos y requestId los dejó crear_dispersion en sesión
+$row = $_SESSION['disp_result'] ?? null;
+if (!$row) { header("Location: ../index.php"); exit(); }
 
 $destino   = $row['destino'];
 $total     = (float)$row['precio_total'];
@@ -61,8 +53,7 @@ if ($requestId) {
         default    => 'rechazada'
     };
 
-    $est_safe = mysqli_real_escape_string($conexion, $nuevo_estado);
-    mysqli_query($conexion, "UPDATE dispersiones SET estado='$est_safe' WHERE id=$disp_id");
+    // Sin base de datos: no se persiste el estado.
 }
 
 // Colores
@@ -157,7 +148,7 @@ if ($gw_status === 'APPROVED') {
             </div>
         </div>
 
-        <a href="../home.php" class="btn-home">← Inicio</a>
+        <a href="../index.php" class="btn-home">← Inicio</a>
         <a href="../views/dispersiones/tickets.php" class="btn-volver">Ver tiquetes</a>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

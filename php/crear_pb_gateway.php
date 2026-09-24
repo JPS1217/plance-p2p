@@ -1,20 +1,12 @@
 <?php
 session_start();
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-    header("Location: ../index.php");
-    exit();
-}
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: ../views/games/pubg.php");
     exit();
 }
 
-require_once 'conexion_be.php';
-if (!isset($conexion)) {
-    $conexion = plance_db_connect();
-    if (!$conexion) die("Error de conexión: " . mysqli_connect_error());
-}
+require_once 'env.php';
 
 // Recibir datos
 $producto   = trim($_POST['producto']   ?? '');
@@ -31,15 +23,8 @@ if (empty($producto) || empty($precio) || empty($jugador_id)) {
     die("❌ Faltan datos principales.");
 }
 
-// Sanitizar
-$producto   = mysqli_real_escape_string($conexion, $producto);
-$precio     = mysqli_real_escape_string($conexion, $precio);
-$jugador_id = mysqli_real_escape_string($conexion, $jugador_id);
-$correo     = mysqli_real_escape_string($conexion, $correo);
-$telefono   = mysqli_real_escape_string($conexion, $telefono);
-$tipo_doc   = mysqli_real_escape_string($conexion, $tipo_doc);
-$num_doc    = mysqli_real_escape_string($conexion, $num_doc);
-$nombre     = mysqli_real_escape_string($conexion, $nombre);
+// Sin base de datos: no se sanitiza para SQL; los valores ya vienen con trim.
+$gw_status = null;
 
 // ══════════════════════════════════════════
 // API Gateway Real — PlacetoPay
@@ -166,20 +151,9 @@ if (in_array($estado_elegido, ['aprobada', 'pendiente', 'rechazada'])) {
     $status = $gw_status;
 }
 
-// Guardar en BD
-$estado_safe = mysqli_real_escape_string($conexion, $nuevo_estado);
+// Sin base de datos: identificador local para el retorno
 $gw_request_id = $result['internalReference'] ?? $reference;
-$ref_safe    = mysqli_real_escape_string($conexion, $gw_request_id);
-$resuelve_en_sql = $resuelve_en ? "'" . mysqli_real_escape_string($conexion, $resuelve_en) . "'" : "NULL";
-$resuelve_a_sql  = $resuelve_a  ? "'" . mysqli_real_escape_string($conexion, $resuelve_a)  . "'" : "NULL";
-
-$query = "INSERT INTO gateway_ordenes (producto, precio, nombre, correo, telefono, tipo_doc, num_doc, estado, resuelve_en, resuelve_a, request_id)
-          VALUES ('$producto', '$precio', '$nombre', '$correo', '$telefono', '$tipo_doc', '$num_doc', '$estado_safe', $resuelve_en_sql, $resuelve_a_sql, '$ref_safe')";
-
-$resultado = mysqli_query($conexion, $query);
-if (!$resultado) die("❌ Error al guardar: " . mysqli_error($conexion));
-
-$orden_id = mysqli_insert_id($conexion);
+$orden_id      = strtoupper(bin2hex(random_bytes(4)));
 
 // Guardar en sesión para retorno
 $_SESSION['gw_result'] = [
@@ -194,7 +168,9 @@ $_SESSION['gw_result'] = [
     'razon'     => $gw_reason,
     'gw_status' => $gw_status,
     'reference' => $reference,
-    'metodo'    => $metodo
+    'metodo'    => $metodo,
+    'resuelve_en' => $resuelve_en,
+    'resuelve_a'  => $resuelve_a
 ];
 
 unset($_SESSION['gw_pending']);

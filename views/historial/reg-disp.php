@@ -1,19 +1,8 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-    header("Location: ../../index.php");
-    exit();
-}
-
-require_once '../../php/conexion_be.php';
-if (!isset($conexion)) {
-    $conexion = plance_db_connect();
-    if (!$conexion) die("Error de conexión: " . mysqli_connect_error());
-}
-
-$correo_sesion = mysqli_real_escape_string($conexion, $_SESSION['correo'] ?? '');
-$resultado = mysqli_query($conexion, "SELECT * FROM dispersiones WHERE usuario_id = '$correo_sesion' ORDER BY created_at DESC");
+// Sin base de datos: historial vacío (estado "sin registros").
+$resultado = [];
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -64,7 +53,7 @@ $resultado = mysqli_query($conexion, "SELECT * FROM dispersiones WHERE usuario_i
         <div class="alert-verify"><?= htmlspecialchars($_SESSION['verify_msg']) ?></div>
         <?php unset($_SESSION['verify_msg']); endif; ?>
 
-        <?php if (mysqli_num_rows($resultado) > 0): ?>
+        <?php if (count($resultado) > 0): ?>
         <div class="table-responsive" id="disp-tabla">
             <table class="table table-hover">
                 <thead>
@@ -81,7 +70,7 @@ $resultado = mysqli_query($conexion, "SELECT * FROM dispersiones WHERE usuario_i
                     </tr>
                 </thead>
                 <tbody>
-                    <?php while ($row = mysqli_fetch_assoc($resultado)): ?>
+                    <?php foreach (($resultado ?? []) as $row): ?>
                     <tr>
                         <td><span style="color:#8a8d96;">#<?= htmlspecialchars($row['id']) ?></span></td>
                         <td style="font-weight:600;">✈️ <?= htmlspecialchars($row['destino']) ?></td>
@@ -112,7 +101,7 @@ $resultado = mysqli_query($conexion, "SELECT * FROM dispersiones WHERE usuario_i
                             <?php endif; ?>
                         </td>
                     </tr>
-                    <?php endwhile; ?>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>

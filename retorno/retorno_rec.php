@@ -1,19 +1,8 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-    header("Location: ../index.php");
-    exit();
-}
 
-// ══════════════════════════════════════════
-// Conexión a BD
-// ══════════════════════════════════════════
-require_once '../php/conexion_be.php';
-if (!isset($conexion)) {
-    $conexion = plance_db_connect();
-    if (!$conexion) die("Error de conexión: " . mysqli_connect_error());
-}
+require_once '../php/env.php';
 
 // ══════════════════════════════════════════
 // Recibir rec_id desde la URL
@@ -21,17 +10,16 @@ if (!isset($conexion)) {
 $rec_id = intval($_GET['rec'] ?? 0);
 
 if (!$rec_id) {
-    header("Location: ../home.php");
+    header("Location: ../index.php");
     exit();
 }
 
-// Obtener request_id desde la BD
-$rec_id_safe = mysqli_real_escape_string($conexion, $rec_id);
-$row         = mysqli_fetch_assoc(mysqli_query($conexion, "SELECT * FROM recurrencias WHERE id = '$rec_id_safe'"));
-$request_id  = $row['request_id'] ?? '';
+// Sin base de datos: request_id e info los dejó crear_recurrencia en sesión
+$row        = $_SESSION['rec_info'] ?? null;
+$request_id = $_SESSION['rec_requestId'] ?? '';
 
 if (!$request_id) {
-    header("Location: ../home.php");
+    header("Location: ../index.php");
     exit();
 }
 
@@ -109,17 +97,8 @@ if ($status_p2p === 'APPROVED') {
 }
 
 // ══════════════════════════════════════════
-// Actualizar estado en BD
+// Sin base de datos: no se persiste el estado.
 // ══════════════════════════════════════════
-$estado_safe = mysqli_real_escape_string($conexion, $nuevo_estado);
-
-// Si fue aprobada, guardar también fecha_fin
-if ($nuevo_estado === 'aprobada') {
-    $fecha_fin_safe = date('Y-m-d', strtotime('+12 months'));
-    mysqli_query($conexion, "UPDATE recurrencias SET estado = '$estado_safe', fecha_fin = '$fecha_fin_safe' WHERE id = '$rec_id_safe'");
-} else {
-    mysqli_query($conexion, "UPDATE recurrencias SET estado = '$estado_safe' WHERE id = '$rec_id_safe'");
-}
 
 $rec = $row;
 ?>
@@ -215,7 +194,7 @@ $rec = $row;
 
         <?php endif; ?>
 
-        <a href="../home.php" class="btn-home">← Inicio</a>
+        <a href="../index.php" class="btn-home">← Inicio</a>
         <a href="../views/plataformas/suscripciones.php" class="btn-volver">Volver al comercio</a>
 
     </div>

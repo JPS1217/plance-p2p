@@ -1,24 +1,9 @@
-Ôªø<?php
+<?php
 session_start();
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) { header("Location: ../../index.php"); exit(); }
 
-// ‚îÄ‚îÄ Continuar pago: si llegamos con ?orden=ID, precargamos el saldo pendiente ‚îÄ‚îÄ
+// Sin base de datos: la precarga de un pago mixto en curso dependia de una
+// orden almacenada. Sin persistencia siempre se inicia un pago nuevo.
 $continuar_orden = null;
-if (isset($_GET['orden'])) {
-    require_once dirname(__DIR__, 2) . '/php/conexion_be.php';
-    if (!isset($conexion)) { $conexion = plance_db_connect(); }
-    $orden_id_get = (int) $_GET['orden'];
-    if ($conexion && $orden_id_get) {
-        $row = mysqli_fetch_assoc(mysqli_query($conexion, "SELECT * FROM gateway_ordenes WHERE id = $orden_id_get AND tipo_pago = 'mixto'"));
-        if ($row) {
-            $saldo = (float) $row['precio'] - (float) ($row['monto_pagado'] ?? 0);
-            if ($saldo > 0) {
-                $row['saldo']        = $saldo;
-                $continuar_orden     = $row;
-            }
-        }
-    }
-}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -45,7 +30,7 @@ if (isset($_GET['orden'])) {
         href="../../assets/css/components/driver-theme.css?v=<?php echo filemtime(dirname(__DIR__, 2) . '/assets/css/components/driver-theme.css'); ?>">
 </head>
 <style>
-    /* Tienda de Esmeraldas ‚Äî acento esmeralda, tipograf√≠a Barlow */
+    /* Tienda de Esmeraldas ó acento esmeralda, tipografÌa Barlow */
     :root {
         --gj-accent:        #10b981;
         --gj-accent-glow:   rgba(16, 185, 129, 0.25);
@@ -92,8 +77,8 @@ if (isset($_GET['orden'])) {
 
     <div class="game-banner">
         <div class="game-banner__tag">
-            üíö Tienda de Esmeraldas
-            <span class="gw-badge">‚ö° API Gateway</span>
+            ?? Tienda de Esmeraldas
+            <span class="gw-badge">? API Gateway</span>
             <span class="gw-badge" id="pagoMixtoBadge"><i class="bi bi-shuffle"></i> Pago Mixto</span>
             <!--<span class="tds-badge"><i class="bi bi-shield-lock-fill"></i> 3DS Obligatorio</span -->
         </div>
@@ -105,11 +90,11 @@ if (isset($_GET['orden'])) {
         <i class="bi bi-shield-exclamation"></i>
         <div style="width: 100%;">
             <div class="security-warning-header" onclick="toggleWarning()">
-                <strong>‚ö†Ô∏è Aviso para comercios</strong>
+                <strong>?? Aviso para comercios</strong>
                 <i class="bi bi-chevron-down security-warning-toggle" id="warningToggle"></i>
             </div>
             <div class="security-warning-content" id="warningContent">
-                La integraci√≥n con API Gateway implica el manejo directo de datos sensibles del usuario. Para operar en producci√≥n es <strong>obligatorio</strong> contar con certificaci√≥n <strong>PCI-DSS</strong> y se recomienda implementar <strong>3D Secure (3DS)</strong> para reducir el riesgo de fraude. Esta demo es solo con fines ilustrativos.
+                La integraciÛn con API Gateway implica el manejo directo de datos sensibles del usuario. Para operar en producciÛn es <strong>obligatorio</strong> contar con certificaciÛn <strong>PCI-DSS</strong> y se recomienda implementar <strong>3D Secure (3DS)</strong> para reducir el riesgo de fraude. Esta demo es solo con fines ilustrativos.
                 <br><br>
                 La base de datos de esta web <strong>NO! Guarda datos sensibles </strong> como el <strong> Numero de tarjeta, Fecha y CVV</strong> o <strong>Numeros de cuenta</strong> esta es solo una demostracion del servicio.
             </div>
@@ -119,7 +104,7 @@ if (isset($_GET['orden'])) {
     <?php if ($continuar_orden): ?>
     <div class="continuar-orden-banner">
         <i class="bi bi-arrow-repeat"></i>
-        Completando la orden <strong>#<?= (int) $continuar_orden['id'] ?></strong> ‚Äî saldo pendiente:
+        Completando la orden <strong>#<?= (int) $continuar_orden['id'] ?></strong> ó saldo pendiente:
         <strong>$<?= number_format($continuar_orden['saldo'], 0, ',', '.') ?> COP</strong>
     </div>
     <?php endif; ?>
@@ -157,7 +142,7 @@ if (isset($_GET['orden'])) {
                 </div>
 
                 <div class="product-card popular-card" data-id="3" data-price="19900" data-pts="360">
-                    <div class="badge-popular">‚òÖ Popular</div>
+                    <div class="badge-popular">? Popular</div>
                     <div class="product-card__img">
                         <img src="../../assets/imgames/esmeraldas/emerald-icon.svg" style="height: 40px; width: 40px" alt="">
                     </div>
@@ -186,7 +171,7 @@ if (isset($_GET['orden'])) {
                 </div>
 
                 <div class="product-card popular-card" data-id="6" data-price="99900" data-pts="2240">
-                    <div class="badge-popular">üî• Mejor valor</div>
+                    <div class="badge-popular">?? Mejor valor</div>
                     <div class="product-card__img">
                         <img src="../../assets/imgames/esmeraldas/emerald-icon.svg" style="height: 40px; width: 40px" alt="">
                     </div>
@@ -213,9 +198,9 @@ if (isset($_GET['orden'])) {
                     <div class="product-card__price">299.900 COP <span class="discount-tag">+960 extra</span></div>
                 </div>
             </div>
-            <!-- Modo de simulaci√≥n -->
+            <!-- Modo de simulaciÛn -->
              <div class="sim-mode-wrap">
-                <span class="sim-mode-label">Modo de simulaci√≥n</span>
+                <span class="sim-mode-label">Modo de simulaciÛn</span>
                     <div class="sim-mode-toggle">
                         <button type="button" class="sim-mode-opt active" id="modoElegir" onclick="setModo('elegir')">
                             <i class="bi bi-sliders"></i> Elegir estado
@@ -224,7 +209,7 @@ if (isset($_GET['orden'])) {
                             <i class="bi bi-lightning-charge-fill"></i> Pago normal
                         </button>
                     </div>
-                <div class="sim-mode-hint" id="modoHint">Elige manualmente c√≥mo termina la transacci√≥n.</div>
+                <div class="sim-mode-hint" id="modoHint">Elige manualmente cÛmo termina la transacciÛn.</div>
             </div>
             <?php endif; ?>
         </section>
@@ -232,23 +217,23 @@ if (isset($_GET['orden'])) {
         <!-- CHECKOUT -->
         <aside class="checkout-panel">
             <div class="checkout-box">
-                <div class="checkout-product-name"><img id="checkoutImg" src="" alt="" /><span id="checkoutName"><?= $continuar_orden ? 'üíö ' . htmlspecialchars($continuar_orden['producto']) : 'üíö 360 Esmeraldas' ?></span></div>
+                <div class="checkout-product-name"><img id="checkoutImg" src="" alt="" /><span id="checkoutName"><?= $continuar_orden ? '?? ' . htmlspecialchars($continuar_orden['producto']) : '?? 360 Esmeraldas' ?></span></div>
                 <div class="checkout-price-row">
                     <span style="font-size:0.85rem;color:var(--pt-text-sec);"><?= $continuar_orden ? 'Total del pedido' : 'Total' ?></span>
                     <span class="checkout-price" id="checkoutPrice"><?= $continuar_orden ? number_format((float) $continuar_orden['precio'], 0, ',', '.') . ' COP' : '19.900 COP' ?></span>
                 </div>
 
                 <div class="field-group" id="montoPagarGroup">
-                    <label class="field-label">¬øCu√°nto quieres pagar ahora?</label>
+                    <label class="field-label">øCu·nto quieres pagar ahora?</label>
                     <input type="number" class="field-input" id="montoPagar" min="1000"
                            max="<?= $continuar_orden ? (int) $continuar_orden['saldo'] : 19900 ?>" step="100"
                            value="<?= $continuar_orden ? (int) $continuar_orden['saldo'] : 19900 ?>">
-                    <span class="field-hint" id="montoHint">M√≠nimo $1.000 COP ¬∑ M√°ximo $<span id="montoMaxLabel"><?= $continuar_orden ? number_format($continuar_orden['saldo'], 0, ',', '.') : '19.900' ?></span> COP (saldo pendiente)</span>
+                    <span class="field-hint" id="montoHint">MÌnimo $1.000 COP ∑ M·ximo $<span id="montoMaxLabel"><?= $continuar_orden ? number_format($continuar_orden['saldo'], 0, ',', '.') : '19.900' ?></span> COP (saldo pendiente)</span>
                 </div>
 
                 <div class="checkout-divider"></div>
 
-                <!-- Tabs m√©todo de pago -->
+                <!-- Tabs mÈtodo de pago -->
                 <div class="payment-tabs">
                     <button class="payment-tab active" id="tabTarjeta" onclick="setPayment('tarjeta')">
                         <i class="bi bi-credit-card-fill"></i> Tarjeta
@@ -262,7 +247,7 @@ if (isset($_GET['orden'])) {
                 <div class="form-section active" id="formTarjeta">
                     <span class="section-label-sm">Datos de la tarjeta</span>
                     <div class="field-group">
-                        <label class="field-label">N√∫mero de tarjeta</label>
+                        <label class="field-label">N˙mero de tarjeta</label>
                         <input type="text" class="field-input" id="cardNumber" placeholder="0000 0000 0000 0000" maxlength="19">
                     </div>
                     <div class="field-row">
@@ -282,11 +267,11 @@ if (isset($_GET['orden'])) {
                     <div class="checkout-divider"></div>
                     <span class="section-label-sm">Datos del titular</span>
                     <div class="field-group">
-                        <label class="field-label">Correo electr√≥nico</label>
+                        <label class="field-label">Correo electrÛnico</label>
                         <input type="email" class="field-input" id="bsCorreo" value="<?php echo htmlspecialchars($continuar_orden['correo'] ?? $_SESSION['correo'] ?? ''); ?>">
                     </div>
                     <div class="field-group">
-                        <label class="field-label">Tel√©fono</label>
+                        <label class="field-label">TelÈfono</label>
                         <input type="text" class="field-input" id="bsTelefono" placeholder="3001234567" value="<?= htmlspecialchars($continuar_orden['telefono'] ?? '') ?>">
                     </div>
                     <div class="field-row">
@@ -294,14 +279,14 @@ if (isset($_GET['orden'])) {
                             <label class="field-label">Tipo de documento</label>
                             <select class="field-input" id="bsTipoDoc">
                                 <?php $bs_tipo_doc = $continuar_orden['tipo_doc'] ?? 'CC'; ?>
-                                <option value="CC" <?= $bs_tipo_doc === 'CC' ? 'selected' : '' ?>>C√©dula</option>
-                                <option value="CE" <?= $bs_tipo_doc === 'CE' ? 'selected' : '' ?>>C√©dula Extranjer√≠a</option>
+                                <option value="CC" <?= $bs_tipo_doc === 'CC' ? 'selected' : '' ?>>CÈdula</option>
+                                <option value="CE" <?= $bs_tipo_doc === 'CE' ? 'selected' : '' ?>>CÈdula ExtranjerÌa</option>
                                 <option value="NIT" <?= $bs_tipo_doc === 'NIT' ? 'selected' : '' ?>>NIT</option>
                                 <option value="PP" <?= $bs_tipo_doc === 'PP' ? 'selected' : '' ?>>Pasaporte</option>
                             </select>
                         </div>
                         <div class="field-group">
-                            <label class="field-label">N√∫mero de documento</label>
+                            <label class="field-label">N˙mero de documento</label>
                             <input type="text" class="field-input" id="bsNumDoc" placeholder="1234567890" value="<?= htmlspecialchars($continuar_orden['num_doc'] ?? '') ?>">
                         </div>
                     </div>
@@ -321,7 +306,7 @@ if (isset($_GET['orden'])) {
                             <option value="NEQUI">Nequi</option>
                             <option value="DAVIVIENDA">Davivienda</option>
                             <option value="BBVA">BBVA</option>
-                            <option value="BOGOTA">Banco de Bogot√°</option>
+                            <option value="BOGOTA">Banco de Bogot·</option>
                         </select>
                     </div>
                     <div class="field-group">
@@ -332,7 +317,7 @@ if (isset($_GET['orden'])) {
                         </select>
                     </div>
                     <div class="field-group">
-                        <label class="field-label">N√∫mero de cuenta</label>
+                        <label class="field-label">N˙mero de cuenta</label>
                         <input type="text" class="field-input" id="cuentaNumero" placeholder="0000000000">
                     </div>
                     <div class="checkout-divider"></div>
@@ -342,11 +327,11 @@ if (isset($_GET['orden'])) {
                         <input type="text" class="field-input" id="cuentaNombre" placeholder="Nombre y apellido" value="<?= htmlspecialchars($continuar_orden['nombre'] ?? '') ?>">
                     </div>
                     <div class="field-group">
-                        <label class="field-label">Correo electr√≥nico</label>
+                        <label class="field-label">Correo electrÛnico</label>
                         <input type="email" class="field-input" id="cuentaCorreo" value="<?php echo htmlspecialchars($continuar_orden['correo'] ?? $_SESSION['correo'] ?? ''); ?>">
                     </div>
                     <div class="field-group">
-                        <label class="field-label">Tel√©fono</label>
+                        <label class="field-label">TelÈfono</label>
                         <input type="text" class="field-input" id="cuentaTelefono" placeholder="3001234567" value="<?= htmlspecialchars($continuar_orden['telefono'] ?? '') ?>">
                     </div>
                     <div class="field-row">
@@ -354,13 +339,13 @@ if (isset($_GET['orden'])) {
                             <label class="field-label">Tipo de documento</label>
                             <select class="field-input" id="cuentaTipoDoc">
                                 <?php $cuenta_tipo_doc = $continuar_orden['tipo_doc'] ?? 'CC'; ?>
-                                <option value="CC" <?= $cuenta_tipo_doc === 'CC' ? 'selected' : '' ?>>C√©dula</option>
-                                <option value="CE" <?= $cuenta_tipo_doc === 'CE' ? 'selected' : '' ?>>C√©dula Extranjer√≠a</option>
+                                <option value="CC" <?= $cuenta_tipo_doc === 'CC' ? 'selected' : '' ?>>CÈdula</option>
+                                <option value="CE" <?= $cuenta_tipo_doc === 'CE' ? 'selected' : '' ?>>CÈdula ExtranjerÌa</option>
                                 <option value="NIT" <?= $cuenta_tipo_doc === 'NIT' ? 'selected' : '' ?>>NIT</option>
                             </select>
                         </div>
                         <div class="field-group">
-                            <label class="field-label">N√∫mero de documento</label>
+                            <label class="field-label">N˙mero de documento</label>
                             <input type="text" class="field-input" id="cuentaNumDoc" placeholder="1234567890" value="<?= htmlspecialchars($continuar_orden['num_doc'] ?? '') ?>">
                         </div>
                     </div>
@@ -377,18 +362,18 @@ if (isset($_GET['orden'])) {
                 </button>
                 <div class="security-note">
                     <i class="bi bi-shield-check"></i>
-                     Pago Mixto ¬∑ API Gateway ¬∑ Evertec
+                     Pago Mixto ∑ API Gateway ∑ Evertec
                 </div>
             </div>
         </aside>
     </main>
 
-    <!-- ‚ïê‚ïê‚ïê INTEGRACI√ìN PLACETOPAY ‚ïê‚ïê‚ïê -->
+    <!-- --- INTEGRACI”N PLACETOPAY --- -->
     <section class="integration-docs" style="--code-accent:var(--gj-accent); --code-accent-ink:var(--gj-accent-ink); --code-accent-soft:var(--gj-accent-soft); --code-radius-sm:var(--gj-radius-sm); --code-radius-md:var(--gj-radius-md); --code-radius-lg:var(--gj-radius-lg); --code-font:var(--gj-font-body);">
-        <span class="integration-docs__badge"><i class="bi bi-braces"></i> Integraci√≥n PlacetoPay</span>
-        <h3>As√≠ se procesa el pago de esta tienda</h3>
-        <p>A diferencia de Web Checkout, aqu√≠ <strong>no hay redirecci√≥n</strong>: los datos de la tarjeta (o cuenta) que llenas en este mismo panel viajan en el request de creaci√≥n de la transacci√≥n, y <strong>PlaceToPay Gateway</strong> responde de una vez con el estado final del pago ‚Äî <code>APPROVED</code>, <code>PENDING</code> o <code>REJECTED</code> ‚Äî sin devolver un <code>processUrl</code>.</p>
-        <p>Como esta tienda es de <strong>Pago Mixto</strong>, cada env√≠o solo cobra el monto que elijas (no el total): se guarda como un <em>abono</em> y puedes repetir el proceso ‚Äî incluso con otro medio de pago ‚Äî hasta completar el total del pedido.</p>
+        <span class="integration-docs__badge"><i class="bi bi-braces"></i> IntegraciÛn PlacetoPay</span>
+        <h3>AsÌ se procesa el pago de esta tienda</h3>
+        <p>A diferencia de Web Checkout, aquÌ <strong>no hay redirecciÛn</strong>: los datos de la tarjeta (o cuenta) que llenas en este mismo panel viajan en el request de creaciÛn de la transacciÛn, y <strong>PlaceToPay Gateway</strong> responde de una vez con el estado final del pago ó <code>APPROVED</code>, <code>PENDING</code> o <code>REJECTED</code> ó sin devolver un <code>processUrl</code>.</p>
+        <p>Como esta tienda es de <strong>Pago Mixto</strong>, cada envÌo solo cobra el monto que elijas (no el total): se guarda como un <em>abono</em> y puedes repetir el proceso ó incluso con otro medio de pago ó hasta completar el total del pedido.</p>
 
         <div class="endpoint-bar">
             <span class="method-pill">POST</span>
@@ -410,7 +395,7 @@ if (isset($_GET['orden'])) {
     <span class="jk">"seed"</span>: <span class="js">"2026-08-25T10:15:32-05:00"</span>
   },
   <span class="jk">"payer"</span>: {
-    <span class="jk">"name"</span>: <span class="js">"Andr√©s Torres"</span>,
+    <span class="jk">"name"</span>: <span class="js">"AndrÈs Torres"</span>,
     <span class="jk">"surname"</span>: <span class="js">""</span>,
     <span class="jk">"email"</span>: <span class="js">"usuario@correo.com"</span>,
     <span class="jk">"documentType"</span>: <span class="js">"CC"</span>,
@@ -434,23 +419,23 @@ if (isset($_GET['orden'])) {
   <span class="jk">"userAgent"</span>: <span class="js">"Mozilla/5.0 (Windows NT 10.0; Win64; x64)"</span>
 }</code></pre>
             <pre class="code-panel" data-key="php"><code>&lt;?php
-<span class="cm">// credenciales fuera del c√≥digo, nunca hardcodeadas</span>
+<span class="cm">// credenciales fuera del cÛdigo, nunca hardcodeadas</span>
 <span class="cvar">$login</span>     = getenv(<span class="js">'P2P_LOGIN'</span>);
 <span class="cvar">$secretKey</span> = getenv(<span class="js">'P2P_SECRET_KEY'</span>);
 <span class="cvar">$endpoint</span>  = <span class="js">'https://api-test.placetopay.com/rest/gateway/process'</span>;
 
-<span class="cm">// autenticaci√≥n: Base64( SHA256( nonce + seed + secretKey ) )</span>
+<span class="cm">// autenticaciÛn: Base64( SHA256( nonce + seed + secretKey ) )</span>
 <span class="cvar">$seed</span>     = date(<span class="js">'c'</span>);
 <span class="cvar">$nonce</span>    = bin2hex(random_bytes(16));
 <span class="cvar">$tranKey</span>  = base64_encode(hash(<span class="js">'sha256'</span>, <span class="cvar">$nonce</span> . <span class="cvar">$seed</span> . <span class="cvar">$secretKey</span>, true));
 <span class="cvar">$nonceB64</span> = base64_encode(<span class="cvar">$nonce</span>);
 
-<span class="cm">// seg√∫n el m√©todo elegido, el instrumento es tarjeta o cuenta</span>
+<span class="cm">// seg˙n el mÈtodo elegido, el instrumento es tarjeta o cuenta</span>
 <span class="cvar">$instrument</span> = <span class="cvar">$metodo</span> === <span class="js">'tarjeta'</span>
     ? [<span class="jk">'card'</span> =&gt; [<span class="jk">'number'</span> =&gt; <span class="cvar">$card_number</span>, <span class="jk">'expiration'</span> =&gt; <span class="cvar">$card_expiry</span>, <span class="jk">'cvv'</span> =&gt; <span class="cvar">$card_cvv</span>]]
     : [<span class="jk">'bank'</span> =&gt; [<span class="jk">'code'</span> =&gt; <span class="cvar">$banco</span>, <span class="jk">'account'</span> =&gt; <span class="cvar">$num_cuenta</span>]];
 
-<span class="cm">// cuerpo del request ‚Äî as√≠ lo arma esta tienda</span>
+<span class="cm">// cuerpo del request ó asÌ lo arma esta tienda</span>
 <span class="cvar">$body</span> = [
     <span class="jk">'auth'</span> =&gt; [
         <span class="jk">'login'</span>   =&gt; <span class="cvar">$login</span>,
@@ -488,19 +473,19 @@ curl_setopt_array(<span class="cvar">$ch</span>, [
 <span class="cvar">$result</span> = json_decode(curl_exec(<span class="cvar">$ch</span>), true);
 curl_close(<span class="cvar">$ch</span>);
 
-<span class="cm">// aqu√≠ no hay processUrl: el estado ya viene resuelto</span>
+<span class="cm">// aquÌ no hay processUrl: el estado ya viene resuelto</span>
 <span class="cvar">$estado</span> = <span class="cvar">$result</span>[<span class="js">'status'</span>][<span class="js">'status'</span>]; <span class="cm">// APPROVED / PENDING / REJECTED</span></code></pre>
         </div>
 
         <div class="doc-note">
-            <span class="doc-note-icon">‚ö†Ô∏è</span>
-            <span>Por eso el aviso de arriba: como los datos de tarjeta pasan por nuestra p√°gina antes de llegar a PlacetoPay, este flujo requiere <strong>certificaci√≥n PCI-DSS</strong> en producci√≥n. Esta demo no guarda n√∫mero, fecha ni CVV ‚Äî se usan solo para armar el request y nunca se persisten en la base de datos.</span>
+            <span class="doc-note-icon">??</span>
+            <span>Por eso el aviso de arriba: como los datos de tarjeta pasan por nuestra p·gina antes de llegar a PlacetoPay, este flujo requiere <strong>certificaciÛn PCI-DSS</strong> en producciÛn. Esta demo no guarda n˙mero, fecha ni CVV ó se usan solo para armar el request y nunca se persisten en la base de datos.</span>
         </div>
 
         <a class="integration-docs__link" href="../guias/guia-developer.php#api-gateway">
             <div>
-                <strong>¬øQuieres entender esta integraci√≥n a fondo?</strong>
-                <span>Lee la documentaci√≥n completa de API Gateway ‚Äî alcance PCI-DSS, 3D Secure y m√°s.</span>
+                <strong>øQuieres entender esta integraciÛn a fondo?</strong>
+                <span>Lee la documentaciÛn completa de API Gateway ó alcance PCI-DSS, 3D Secure y m·s.</span>
             </div>
             <i class="bi bi-arrow-right"></i>
         </a>
@@ -525,8 +510,8 @@ curl_close(<span class="cvar">$ch</span>);
             8:{name:' 8960 Esmeraldas', precio:299900,price:'299.900 COP'},
         };
 
-        // ‚îÄ‚îÄ Continuar pago: cuando venimos de ?orden=ID no hay tarjetas que elegir,
-        // el producto y el saldo ya vienen fijados desde PHP. ‚îÄ‚îÄ
+        // -- Continuar pago: cuando venimos de ?orden=ID no hay tarjetas que elegir,
+        // el producto y el saldo ya vienen fijados desde PHP. --
         const isContinuar       = <?= $continuar_orden ? 'true' : 'false' ?>;
         const continuarProducto = <?= json_encode($continuar_orden['producto'] ?? '') ?>;
         const continuarPrecio   = <?= (int) ($continuar_orden['precio'] ?? 0) ?>;
@@ -577,7 +562,7 @@ curl_close(<span class="cvar">$ch</span>);
             } else { initCards(); }
         }
 
-        // ‚îÄ‚îÄ Tabs m√©todo de pago ‚îÄ‚îÄ
+        // -- Tabs mÈtodo de pago --
         window.setPayment = function(method) {
             document.getElementById('currentPayment').value = method;
             document.getElementById('tabTarjeta').classList.toggle('active', method === 'tarjeta');
@@ -587,8 +572,8 @@ curl_close(<span class="cvar">$ch</span>);
             actualizarDisponibilidadModo(method);
         };
 
-        // Pago por cuenta no puede resolverse de forma autom√°tica/instant√°nea
-        // (igual que el mock real de PlacetoPay), as√≠ que se bloquea "Pago normal".
+        // Pago por cuenta no puede resolverse de forma autom·tica/instant·nea
+        // (igual que el mock real de PlacetoPay), asÌ que se bloquea "Pago normal".
         function actualizarDisponibilidadModo(method) {
             const modoAutoBtn = document.getElementById('modoAuto');
             const esCuenta = method === 'cuenta';
@@ -611,21 +596,21 @@ curl_close(<span class="cvar">$ch</span>);
         });
 
 
-        // ‚îÄ‚îÄ Modo de simulaci√≥n ‚îÄ‚îÄ
+        // -- Modo de simulaciÛn --
         let modoSimulacion = 'elegir';
         window.setModo = function(modo) {
             modoSimulacion = modo;
             document.getElementById('modoElegir').classList.toggle('active', modo === 'elegir');
             document.getElementById('modoAuto').classList.toggle('active', modo === 'auto');
             document.getElementById('modoHint').textContent = (modo === 'elegir')
-                ? 'Elige manualmente c√≥mo termina la transacci√≥n.'
-                : 'El estado se asigna autom√°ticamente, como un pago real.';
+                ? 'Elige manualmente cÛmo termina la transacciÛn.'
+                : 'El estado se asigna autom·ticamente, como un pago real.';
         };
         let envioEnCurso = false;
         const btnPagarDefaultHTML = document.getElementById('btnPagar').innerHTML;
 
         // Al volver desde el mock (ej. "Cancelar y volver") el navegador puede
-        // restaurar esta p√°gina desde bfcache con el bot√≥n tal como qued√≥ justo
+        // restaurar esta p·gina desde bfcache con el botÛn tal como quedÛ justo
         // antes de enviar el formulario (deshabilitado y en "Procesando...").
         window.addEventListener('pageshow', function(event) {
             if (!event.persisted) return;
@@ -638,9 +623,9 @@ curl_close(<span class="cvar">$ch</span>);
         });
 
         document.getElementById('btnPagar').addEventListener('click', function() {
-            if (envioEnCurso) return; // ya se est√° procesando, ignorar clics repetidos
+            if (envioEnCurso) return; // ya se est· procesando, ignorar clics repetidos
             const jugadorId = document.getElementById('jugadorIdInput').value.trim();
-            if (!jugadorId) { alert('‚ö†Ô∏è Por favor ingresa tu ID de jugador.'); return; }
+            if (!jugadorId) { alert('?? Por favor ingresa tu ID de jugador.'); return; }
 
             let producto, precioTotal;
             if (isContinuar) {
@@ -648,7 +633,7 @@ curl_close(<span class="cvar">$ch</span>);
                 precioTotal = continuarPrecio;
             } else {
                 const selected = document.querySelector('.product-card.selected');
-                if (!selected) { alert('‚ö†Ô∏è Selecciona un producto.'); return; }
+                if (!selected) { alert('?? Selecciona un producto.'); return; }
                 const id = parseInt(selected.getAttribute('data-id'));
                 const p  = products[id];
                 producto    = p.name;
@@ -656,8 +641,8 @@ curl_close(<span class="cvar">$ch</span>);
             }
 
             const montoPagar = parseInt(document.getElementById('montoPagar').value, 10);
-            if (!montoPagar || montoPagar < 1000) { alert('‚ö†Ô∏è El monto a pagar debe ser de al menos $1.000 COP.'); return; }
-            if (montoPagar > montoMaxActual) { alert('‚ö†Ô∏è El monto a pagar no puede superar el saldo pendiente ($' + montoMaxActual.toLocaleString('es-CO') + ' COP).'); return; }
+            if (!montoPagar || montoPagar < 1000) { alert('?? El monto a pagar debe ser de al menos $1.000 COP.'); return; }
+            if (montoPagar > montoMaxActual) { alert('?? El monto a pagar no puede superar el saldo pendiente ($' + montoMaxActual.toLocaleString('es-CO') + ' COP).'); return; }
 
             const method = document.getElementById('currentPayment').value;
             let nombre, correo, telefono, tipoDoc, numDoc;
@@ -671,9 +656,9 @@ curl_close(<span class="cvar">$ch</span>);
                 telefono = document.getElementById('bsTelefono').value.trim();
                 tipoDoc  = document.getElementById('bsTipoDoc').value;
                 numDoc   = document.getElementById('bsNumDoc').value.trim();
-                if (!cardNum || cardNum.length < 15) { alert('‚ö†Ô∏è Ingresa un n√∫mero de tarjeta v√°lido.'); return; }
-                if (!expiry) { alert('‚ö†Ô∏è Ingresa la fecha de vencimiento.'); return; }
-                if (!cvv)    { alert('‚ö†Ô∏è Ingresa el CVV.'); return; }
+                if (!cardNum || cardNum.length < 15) { alert('?? Ingresa un n˙mero de tarjeta v·lido.'); return; }
+                if (!expiry) { alert('?? Ingresa la fecha de vencimiento.'); return; }
+                if (!cvv)    { alert('?? Ingresa el CVV.'); return; }
             } else {
                 nombre   = document.getElementById('cuentaNombre').value.trim();
                 correo   = document.getElementById('cuentaCorreo').value.trim();
@@ -683,10 +668,10 @@ curl_close(<span class="cvar">$ch</span>);
             }
 
             if (!nombre || !correo || !telefono || !numDoc) {
-                alert('‚ö†Ô∏è Por favor completa todos los campos del titular.'); return;
+                alert('?? Por favor completa todos los campos del titular.'); return;
             }
 
-            // Armar formulario pero NO enviarlo a√∫n
+            // Armar formulario pero NO enviarlo a˙n
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = (modoSimulacion === 'auto')

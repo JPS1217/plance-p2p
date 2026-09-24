@@ -1,21 +1,13 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-    header("Location: ../index.php");
-    exit();
-}
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: ../views/plataformas/otras_streaming.php");
     exit();
 }
 
-require_once 'conexion_be.php';
-if (!isset($conexion)) {
-    $conexion = plance_db_connect();
-    if (!$conexion) die("Error de conexión: " . mysqli_connect_error());
-}
+require_once 'env.php';
 
 $servicio   = trim($_POST['servicio']   ?? '');
 $plan       = trim($_POST['plan']       ?? '');
@@ -26,19 +18,8 @@ if (empty($servicio) || empty($plan) || empty($precio) || empty($usuario_id)) {
     die("❌ Faltan datos.");
 }
 
-$servicio   = mysqli_real_escape_string($conexion, $servicio);
-$plan       = mysqli_real_escape_string($conexion, $plan);
-$precio     = mysqli_real_escape_string($conexion, $precio);
-$usuario_id = mysqli_real_escape_string($conexion, $usuario_id);
-
-$estado = "pendiente";
-$query  = "INSERT INTO suscription (servicio, plan, precio, usuario_id, estado)
-           VALUES ('$servicio', '$plan', '$precio', '$usuario_id', '$estado')";
-
-$resultado = mysqli_query($conexion, $query);
-if (!$resultado) die("❌ Error al guardar: " . mysqli_error($conexion));
-
-$sub_id = mysqli_insert_id($conexion);
+// Sin base de datos: identificador local para la referencia del pago
+$sub_id = strtoupper(bin2hex(random_bytes(4)));
 
 // ══════════════════════════════════════════
 // WEB CHECKOUT — Suscripción pura (subscription)
@@ -93,8 +74,14 @@ if (!$response) die("❌ Error de conexión: " . $curlError);
 $result = json_decode($response, true);
 
 if (isset($result['processUrl'])) {
-    $request_id = mysqli_real_escape_string($conexion, $result['requestId'] ?? '');
-    mysqli_query($conexion, "UPDATE suscription SET request_id = '$request_id' WHERE id = '$sub_id'");
+    $_SESSION['sus_requestId'] = $result['requestId'] ?? '';
+    $_SESSION['sus_info'] = [
+        'id'         => $sub_id,
+        'servicio'   => $servicio,
+        'plan'       => $plan,
+        'precio'     => $precio,
+        'usuario_id' => $usuario_id,
+    ];
     header("Location: " . $result['processUrl']);
     exit();
 } else {

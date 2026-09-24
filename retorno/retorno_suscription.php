@@ -1,25 +1,17 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-    header("Location: ../index.php");
-    exit();
-}
 
-require_once '../php/conexion_be.php';
-if (!isset($conexion)) {
-    $conexion = plance_db_connect();
-    if (!$conexion) die("Error de conexión: " . mysqli_connect_error());
-}
+require_once '../php/env.php';
 
 $sub_id = intval($_GET['sub'] ?? 0);
-if (!$sub_id) { header("Location: ../home.php"); exit(); }
+if (!$sub_id) { header("Location: ../index.php"); exit(); }
 
-$sub_id_safe = mysqli_real_escape_string($conexion, $sub_id);
-$row         = mysqli_fetch_assoc(mysqli_query($conexion, "SELECT * FROM suscription WHERE id = '$sub_id_safe'"));
-$request_id  = $row['request_id'] ?? '';
+// Sin base de datos: request_id e info los dejó crear_suscription en sesión
+$row        = $_SESSION['sus_info'] ?? null;
+$request_id = $_SESSION['sus_requestId'] ?? '';
 
-if (!$request_id) { header("Location: ../home.php"); exit(); }
+if (!$request_id) { header("Location: ../index.php"); exit(); }
 
 // Consultar estado a PlaceToPay
 $login     = "2d9eaf1e662518756a3d78806543af5b";
@@ -80,10 +72,7 @@ if ($status_p2p === 'APPROVED') {
     $color = '#8a8d96'; $bg_icon = 'rgba(138,141,150,0.15)'; $color_rgb = '138, 141, 150';
 }
 
-// Actualizar BD
-$estado_safe = mysqli_real_escape_string($conexion, $nuevo_estado);
-$token_safe  = mysqli_real_escape_string($conexion, $token);
-mysqli_query($conexion, "UPDATE suscription SET estado = '$estado_safe', token = '$token_safe' WHERE id = '$sub_id_safe'");
+// Sin base de datos: no se persiste estado ni token.
 
 $subs = $row;
 ?>
@@ -146,7 +135,7 @@ $subs = $row;
         </div>
         <?php endif; ?>
 
-        <a href="../home.php" class="btn-home">← Inicio</a>
+        <a href="../index.php" class="btn-home">← Inicio</a>
         <a href="../views/plataformas/suscripciones.php" class="btn-volver">Volver al comercio</a>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

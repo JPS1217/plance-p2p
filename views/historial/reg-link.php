@@ -1,19 +1,8 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-    header("Location: ../../index.php");
-    exit();
-}
-
-require_once '../../php/conexion_be.php';
-if (!isset($conexion)) {
-    $conexion = plance_db_connect();
-    if (!$conexion) die("Error de conexión: " . mysqli_connect_error());
-}
-
-// Links de pago generados (API Link de pagos — PlacetoPay)
-$resultado = mysqli_query($conexion, "SELECT * FROM payment_link ORDER BY created_at DESC");
+// Sin base de datos: historial vacío (estado "sin registros").
+$resultado = [];
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -55,7 +44,7 @@ $resultado = mysqli_query($conexion, "SELECT * FROM payment_link ORDER BY create
              Historial de Links de Pago
         </div>
 
-        <?php if ($resultado && mysqli_num_rows($resultado) > 0): ?>
+        <?php if ($resultado && count($resultado) > 0): ?>
         <div class="table-responsive" id="link-tabla">
             <table class="table table-hover">
                 <thead>
@@ -73,7 +62,7 @@ $resultado = mysqli_query($conexion, "SELECT * FROM payment_link ORDER BY create
                     </tr>
                 </thead>
                 <tbody>
-                    <?php while ($row = mysqli_fetch_assoc($resultado)):
+                    <?php foreach (($resultado ?? []) as $row):
                         $estado    = strtolower($row['estado']);
                         $expirado  = !empty($row['expiracion']) && strtotime($row['expiracion']) < time();
                         if ($estado === 'activo' && $expirado) $estado_show = 'expirado';
@@ -110,7 +99,7 @@ $resultado = mysqli_query($conexion, "SELECT * FROM payment_link ORDER BY create
                             <?php endif; ?>
                         </td>
                     </tr>
-                    <?php endwhile; ?>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>

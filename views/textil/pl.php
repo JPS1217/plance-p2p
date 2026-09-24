@@ -1,13 +1,12 @@
-Ôªø<?php
+<?php
 session_start();
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) { header("Location: ../../index.php"); exit(); }
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premier League ‚Äî Kits</title>
+    <title>Premier League ó Kits</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,7 +24,7 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) { header("Loca
         href="../../assets/css/components/driver-theme.css?v=<?php echo filemtime(dirname(__DIR__, 2) . '/assets/css/components/driver-theme.css'); ?>">
 </head>
 <style>
-    /* Premier League ‚Äî acento azul */
+    /* Premier League ó acento azul */
     :root {
         --tex-accent:      #3b82f6;
         --tex-accent-rgb:  59, 130, 246;
@@ -42,14 +41,14 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) { header("Loca
 
     <div class="game-banner">
         <div class="game-banner__tag">
-            <i class="fa-solid fa-futbol" style="color: hsl(207, 100%, 62%);"></i> Premier League ‚Äî Kits Deportivos
-            <span class="link-badge">üîó Link de Pago</span>
+            <i class="fa-solid fa-futbol" style="color: hsl(207, 100%, 62%);"></i> Premier League ó Kits Deportivos
+            <span class="link-badge">?? Link de Pago</span>
         </div>
     </div>
 
     <main class="shop-layout">
         <section class="products-panel" id="productsPanel">
-            <p class="section-label">Elige tu equipaci√≥n</p>
+            <p class="section-label">Elige tu equipaciÛn</p>
             <div class="products-grid">
 
                 <div class="product-card" data-id="1" data-producto="Kit Liverpool FC" data-precio="50000">
@@ -57,7 +56,7 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) { header("Loca
                         <img src="../../assets/kits/generic/liverpool-icon.svg" alt="Liverpool FC">
                     </div>
                     <div class="product-card__name">Liverpool FC</div>
-                    <div class="product-card__label">Camiseta ¬∑ Temporada 17/18</div>
+                    <div class="product-card__label">Camiseta ∑ Temporada 17/18</div>
                     <div class="product-card__price">50.000 COP</div>
                 </div>
 
@@ -66,7 +65,7 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) { header("Loca
                         <img src="../../assets/kits/generic/mancity-icon.svg" alt="Manchester City">
                     </div>
                     <div class="product-card__name">Manchester City</div>
-                    <div class="product-card__label">Camiseta ¬∑ Temporada 18/19</div>
+                    <div class="product-card__label">Camiseta ∑ Temporada 18/19</div>
                     <div class="product-card__price">50.000 COP</div>
                 </div>
 
@@ -75,7 +74,7 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) { header("Loca
                         <img src="../../assets/kits/generic/manutd-icon.svg" alt="Manchester United">
                     </div>
                     <div class="product-card__name">Manchester United</div>
-                    <div class="product-card__label">Camiseta ¬∑ Temporada 18/19</div>
+                    <div class="product-card__label">Camiseta ∑ Temporada 18/19</div>
                     <div class="product-card__price">50.000 COP</div>
                 </div>
                 
@@ -84,7 +83,7 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) { header("Loca
                         <img src="../../assets/kits/generic/chelsea-icon.svg" alt="Chelsea FC">
                     </div>
                     <div class="product-card__name">Chelsea FC</div>
-                    <div class="product-card__label">Camiseta ¬∑ Temporada 23/24</div>
+                    <div class="product-card__label">Camiseta ∑ Temporada 23/24</div>
                     <div class="product-card__price">50.000 COP</div>
                 </div>
 
@@ -93,7 +92,7 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) { header("Loca
                         <img src="../../assets/kits/generic/arsenal-icon.svg" alt="Arsenal FC">
                     </div>
                     <div class="product-card__name">Arsenal FC</div>
-                    <div class="product-card__label">Camiseta ¬∑ Temporada 24/25</div>
+                    <div class="product-card__label">Camiseta ∑ Temporada 24/25</div>
                     <div class="product-card__price">50.000 COP</div>
                 </div>
 
@@ -102,7 +101,7 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) { header("Loca
                         <img src="../../assets/kits/generic/westham-icon.svg" alt="west-ham">
                     </div>
                     <div class="product-card__name">West Ham United</div>
-                    <div class="product-card__label">Camiseta ¬∑ Temporada 24/25</div>
+                    <div class="product-card__label">Camiseta ∑ Temporada 24/25</div>
                     <div class="product-card__price">50.000 COP</div>
                 </div>
 
@@ -111,7 +110,7 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) { header("Loca
                         <img src="../../assets/kits/generic/tottenham-icon.svg" alt="Tottenham Hotspur">
                     </div>
                     <div class="product-card__name">Tottenham Hotspur</div>
-                    <div class="product-card__label">Camiseta ¬∑ Temporada 22/23</div>
+                    <div class="product-card__label">Camiseta ∑ Temporada 22/23</div>
                     <div class="product-card__price">50.000 COP</div>
                 </div>
 
@@ -120,7 +119,7 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) { header("Loca
                         <img src="../../assets/kits/generic/astonvilla-icon.svg" alt="Aston Villa">
                     </div>
                     <div class="product-card__name">Aston Villa</div>
-                    <div class="product-card__label">Camiseta ¬∑ Temporada 21/22</div>
+                    <div class="product-card__label">Camiseta ∑ Temporada 21/22</div>
                     <div class="product-card__price">50.000 COP</div>
                 </div>
 
@@ -131,10 +130,10 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) { header("Loca
         <aside class="checkout-panel">
             <div class="checkout-box">
                 <div class="checkout-header">
-                    <div class="checkout-product-img" id="checkoutImg">üî¥</div>
+                    <div class="checkout-product-img" id="checkoutImg">??</div>
                     <div class="checkout-product-info">
                         <div class="checkout-product-name" id="checkoutName">Liverpool FC</div>
-                        <div class="checkout-product-label">Camiseta ¬∑ Temporada 24/25</div>
+                        <div class="checkout-product-label">Camiseta ∑ Temporada 24/25</div>
                         <div class="checkout-price-row">
                             <span style="font-size:0.85rem;color:var(--pt-text-sec);">Total</span>
                             <span class="checkout-price">50.000 COP</span>
@@ -144,14 +143,14 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) { header("Loca
 
                 <div class="link-info" id="linkInfo">
                     <i class="bi bi-link-45deg" style="font-size:1rem;flex-shrink:0;"></i>
-                    <span>Se generar√° un <strong>link de pago</strong> que podr√°s compartir por correo, WhatsApp o redes sociales. El link expira en 24 horas.</span>
+                    <span>Se generar· un <strong>link de pago</strong> que podr·s compartir por correo, WhatsApp o redes sociales. El link expira en 24 horas.</span>
                 </div>
 
                 <div class="checkout-divider"></div>
                 <span class="section-label-sm">Datos del comprador</span>
 
                 <div class="field-group">
-                    <label class="field-label">Correo electr√≥nico</label>
+                    <label class="field-label">Correo electrÛnico</label>
                     <input type="email" class="field-input" id="correoInput"
                            value="<?php echo htmlspecialchars($_SESSION['correo'] ?? ''); ?>"
                            placeholder="correo@ejemplo.com">
@@ -166,17 +165,17 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) { header("Loca
                 </button>
                 <div class="security-note">
                     <i class="bi bi-shield-check"></i>
-                    Link de Pago ¬∑ PlacetoPay ¬∑ Evertec
+                    Link de Pago ∑ PlacetoPay ∑ Evertec
                 </div>
             </div>
         </aside>
     </main>
 
-    <!-- ‚ïê‚ïê‚ïê INTEGRACI√ìN PLACETOPAY ‚ïê‚ïê‚ïê -->
+    <!-- --- INTEGRACI”N PLACETOPAY --- -->
     <section class="integration-docs" style="--code-accent:var(--tex-accent); --code-accent-ink:var(--tex-accent-ink); --code-accent-soft:rgba(var(--tex-accent-rgb),0.12); --code-radius-sm:var(--tex-radius-sm); --code-radius-md:var(--tex-radius-md); --code-radius-lg:var(--tex-radius-lg); --code-font:var(--tex-font);">
-        <span class="integration-docs__badge"><i class="bi bi-braces"></i> Integraci√≥n PlacetoPay</span>
-        <h3>As√≠ se genera el link de pago de esta tienda</h3>
-        <p>Cuando presionas <strong>"Generar link de pago"</strong>, nuestro backend arma este request y lo env√≠a a la <strong>API de Link de Pagos</strong> de PlacetoPay ‚Äî un endpoint distinto al de Web Checkout. La respuesta trae una URL que puedes compartir por correo, WhatsApp o redes: quien la abra paga sin que t√∫ tengas que estar presente.</p>
+        <span class="integration-docs__badge"><i class="bi bi-braces"></i> IntegraciÛn PlacetoPay</span>
+        <h3>AsÌ se genera el link de pago de esta tienda</h3>
+        <p>Cuando presionas <strong>"Generar link de pago"</strong>, nuestro backend arma este request y lo envÌa a la <strong>API de Link de Pagos</strong> de PlacetoPay ó un endpoint distinto al de Web Checkout. La respuesta trae una URL que puedes compartir por correo, WhatsApp o redes: quien la abra paga sin que t˙ tengas que estar presente.</p>
 
         <div class="endpoint-bar">
             <span class="method-pill">POST</span>
@@ -212,12 +211,12 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) { header("Loca
   <span class="jk">"receiverEmails"</span>: [<span class="js">"comprador@correo.com"</span>]
 }</code></pre>
             <pre class="code-panel" data-key="php"><code>&lt;?php
-<span class="cm">// credenciales fuera del c√≥digo, nunca hardcodeadas</span>
+<span class="cm">// credenciales fuera del cÛdigo, nunca hardcodeadas</span>
 <span class="cvar">$login</span>     = getenv(<span class="js">'P2P_LOGIN'</span>);
 <span class="cvar">$secretKey</span> = getenv(<span class="js">'P2P_SECRET_KEY'</span>);
 <span class="cvar">$url</span>       = <span class="js">'https://sites-test.placetopay.com/api/payment-link'</span>;
 
-<span class="cm">// autenticaci√≥n: Base64( SHA256( nonce + seed + secretKey ) )</span>
+<span class="cm">// autenticaciÛn: Base64( SHA256( nonce + seed + secretKey ) )</span>
 <span class="cvar">$seed</span>     = date(<span class="js">'c'</span>);
 <span class="cvar">$nonce</span>    = bin2hex(random_bytes(16));
 <span class="cvar">$tranKey</span>  = base64_encode(hash(<span class="js">'sha256'</span>, <span class="cvar">$nonce</span> . <span class="cvar">$seed</span> . <span class="cvar">$secretKey</span>, true));
@@ -226,7 +225,7 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) { header("Loca
 <span class="cm">// el link expira en 24h; cada pago individual, en 15 min</span>
 <span class="cvar">$expiracion</span> = date(<span class="js">'Y-m-d H:i:s'</span>, strtotime(<span class="js">'+24 hours'</span>));
 
-<span class="cm">// cuerpo del request ‚Äî as√≠ lo arma esta tienda</span>
+<span class="cm">// cuerpo del request ó asÌ lo arma esta tienda</span>
 <span class="cvar">$data</span> = [
     <span class="jk">'auth'</span> =&gt; [
         <span class="jk">'login'</span>   =&gt; <span class="cvar">$login</span>,
@@ -260,19 +259,19 @@ curl_setopt_array(<span class="cvar">$ch</span>, [
 <span class="cvar">$result</span>   = json_decode(curl_exec(<span class="cvar">$ch</span>), true);
 curl_close(<span class="cvar">$ch</span>);
 
-<span class="cm">// el link generado ‚Äî es lo que se comparte con el comprador</span>
+<span class="cm">// el link generado ó es lo que se comparte con el comprador</span>
 <span class="cvar">$link_url</span> = <span class="cvar">$result</span>[<span class="js">'url'</span>] ?? <span class="cvar">$result</span>[<span class="js">'link'</span>] ?? <span class="js">''</span>;</code></pre>
         </div>
 
         <div class="doc-note">
-            <span class="doc-note-icon">üí°</span>
-            <span>El link vive <strong>24 horas</strong> (<code>expirationDate</code>) y cada intento de pago individual dentro de ese link expira a los <strong>15 minutos</strong> (<code>paymentExpiration</code>). <code>receiverEmails</code> env√≠a autom√°ticamente el link al correo del comprador, adem√°s de mostrarlo en pantalla.</span>
+            <span class="doc-note-icon">??</span>
+            <span>El link vive <strong>24 horas</strong> (<code>expirationDate</code>) y cada intento de pago individual dentro de ese link expira a los <strong>15 minutos</strong> (<code>paymentExpiration</code>). <code>receiverEmails</code> envÌa autom·ticamente el link al correo del comprador, adem·s de mostrarlo en pantalla.</span>
         </div>
 
         <a class="integration-docs__link" href="../guias/guia-developer.php#link-pagos">
             <div>
-                <strong>¬øQuieres entender esta integraci√≥n a fondo?</strong>
-                <span>Lee la documentaci√≥n completa sobre Link de Pagos en PlacetoPay.</span>
+                <strong>øQuieres entender esta integraciÛn a fondo?</strong>
+                <span>Lee la documentaciÛn completa sobre Link de Pagos en PlacetoPay.</span>
             </div>
             <i class="bi bi-arrow-right"></i>
         </a>
@@ -281,10 +280,10 @@ curl_close(<span class="cvar">$ch</span>);
     <script>
     (function() {
         // ====================================================================
-        // üé® SISTEMA AUTOM√ÅTICO DE IM√ÅGENES
+        // ?? SISTEMA AUTOM¡TICO DE IM¡GENES
         // ====================================================================
-        // El sistema detecta autom√°ticamente si una card tiene imagen PNG
-        // y la sincroniza con el checkout. Solo agrega tus im√°genes en el HTML.
+        // El sistema detecta autom·ticamente si una card tiene imagen PNG
+        // y la sincroniza con el checkout. Solo agrega tus im·genes en el HTML.
         // ====================================================================
 
         function updateCheckoutFromCard(card) {
@@ -333,13 +332,13 @@ curl_close(<span class="cvar">$ch</span>);
 
         document.getElementById('btnGenerar').addEventListener('click', function() {
             const selected = document.querySelector('.product-card.selected');
-            if (!selected) { alert('‚ö†Ô∏è Selecciona una equipaci√≥n primero.'); return; }
+            if (!selected) { alert('?? Selecciona una equipaciÛn primero.'); return; }
 
             const correo = document.getElementById('correoInput').value.trim();
             const nombre = document.getElementById('nombreInput').value.trim();
 
-            if (!correo) { alert('‚ö†Ô∏è Por favor ingresa tu correo electr√≥nico.'); return; }
-            if (!nombre) { alert('‚ö†Ô∏è Por favor ingresa tu nombre.'); return; }
+            if (!correo) { alert('?? Por favor ingresa tu correo electrÛnico.'); return; }
+            if (!nombre) { alert('?? Por favor ingresa tu nombre.'); return; }
 
             const producto = selected.getAttribute('data-producto');
             const precio   = selected.getAttribute('data-precio');

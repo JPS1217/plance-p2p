@@ -34,7 +34,7 @@
         <i class="bi bi-file-earmark-code"></i>
         Ver Guía Developer
       </a>
-      <a href="../../../home.php" class="welcome-btn secondary full">
+      <a href="../../../index.php" class="welcome-btn secondary full">
         <i class="bi bi-house-door"></i>
         Volver al inicio
       </a>

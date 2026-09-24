@@ -1,21 +1,13 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-    header("Location: ../index.php");
-    exit();
-}
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: ../views/plataformas/ia_gateway.php");
     exit();
 }
 
-require_once 'conexion_be.php';
-if (!isset($conexion)) {
-    $conexion = plance_db_connect();
-    if (!$conexion) die("Error de conexión: " . mysqli_connect_error());
-}
+require_once 'env.php';
 
 // Recibir datos
 $servicio     = trim($_POST['servicio']     ?? '');
@@ -32,15 +24,7 @@ if (empty($servicio) || empty($plan) || empty($precio) || empty($nombre) || empt
     die("❌ Faltan datos. Por favor completa todos los campos.");
 }
 
-// Sanitizar
-$servicio     = mysqli_real_escape_string($conexion, $servicio);
-$plan         = mysqli_real_escape_string($conexion, $plan);
-$precio       = mysqli_real_escape_string($conexion, $precio);
-$nombre       = mysqli_real_escape_string($conexion, $nombre);
-$correo       = mysqli_real_escape_string($conexion, $correo);
-$telefono     = mysqli_real_escape_string($conexion, $telefono);
-$tipo_doc     = mysqli_real_escape_string($conexion, $tipo_doc);
-$num_doc      = mysqli_real_escape_string($conexion, $num_doc);
+// Sin base de datos: los valores ya vienen con trim (no hay SQL que escapar).
 $periodicidad = ($periodicidad === 'Y') ? 'Y' : 'M';
 
 // Calcular calendario según periodicidad (mismo criterio que crear_recurrencia.php / crear_suscription_rec.php)
@@ -170,20 +154,9 @@ if (in_array($estado_elegido, ['aprobada-token', 'aprobada-sin', 'pendiente', 'r
     $status = $gw_status;
 }
 
-// Guardar en BD
-$estado_safe   = mysqli_real_escape_string($conexion, $nuevo_estado);
+// Sin base de datos: identificador local para el retorno
 $gw_request_id = $result['internalReference'] ?? $reference;
-$ref_safe      = mysqli_real_escape_string($conexion, $gw_request_id);
-$resuelve_en_sql = $resuelve_en ? "'" . mysqli_real_escape_string($conexion, $resuelve_en) . "'" : "NULL";
-$resuelve_a_sql  = $resuelve_a  ? "'" . mysqli_real_escape_string($conexion, $resuelve_a)  . "'" : "NULL";
-
-$query = "INSERT INTO gateway_recurrencias (servicio, plan, precio, nombre, correo, telefono, tipo_doc, num_doc, estado, resuelve_en, resuelve_a, periodicidad, next_payment, fecha_fin, request_id)
-          VALUES ('$servicio', '$plan', '$precio', '$nombre', '$correo', '$telefono', '$tipo_doc', '$num_doc', '$estado_safe', $resuelve_en_sql, $resuelve_a_sql, '$periodicidad', '$next_payment', '$fecha_fin', '$ref_safe')";
-
-$resultado = mysqli_query($conexion, $query);
-if (!$resultado) die("❌ Error al guardar: " . mysqli_error($conexion));
-
-$orden_id = mysqli_insert_id($conexion);
+$orden_id      = strtoupper(bin2hex(random_bytes(4)));
 
 // Guardar en sesión para retorno
 $_SESSION['gw_rec_result'] = [
@@ -200,6 +173,8 @@ $_SESSION['gw_rec_result'] = [
     'next_payment' => $next_payment,
     'fecha_fin'    => $fecha_fin,
     'message'      => $gw_message,
+    'resuelve_en'  => $resuelve_en,
+    'resuelve_a'   => $resuelve_a,
 ];
 
 unset($_SESSION['gw_subs_pending']);

@@ -1,21 +1,8 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-    header("Location: ../index.php");
-    exit();
-}
 
-// ══════════════════════════════════════════
-// Conexión a BD
-// ══════════════════════════════════════════
-require_once '../php/conexion_be.php';
-if (!isset($conexion)) {
-    $conexion = plance_db_connect();
-    if (!$conexion) {
-        die("Error de conexión: " . mysqli_connect_error());
-    }
-}
+require_once '../php/env.php';
 
 // ══════════════════════════════════════════
 // Recibir order_id desde la URL
@@ -24,7 +11,7 @@ $order_id   = intval($_GET['order'] ?? 0);
 $request_id = $_SESSION['p2p_requestId'] ?? '';
 
 if (!$order_id || !$request_id) {
-    header("Location: ../home.php");
+    header("Location: ../index.php");
     exit();
 }
 
@@ -104,18 +91,13 @@ if ($status_p2p === 'APPROVED') {
 }
 
 // ══════════════════════════════════════════
-// Actualizar estado en BD
+// Sin base de datos: no se persiste el estado.
+// Detalle de la orden a partir de lo que dejó crear_orden en sesión (si existe).
 // ══════════════════════════════════════════
-$order_id_safe = mysqli_real_escape_string($conexion, $order_id);
-$estado_safe   = mysqli_real_escape_string($conexion, $nuevo_estado);
-
-mysqli_query($conexion, "UPDATE ordenes SET estado = '$estado_safe' WHERE id = '$order_id_safe'");
-
-// Obtener info de la orden para mostrarla
-$orden = mysqli_fetch_assoc(mysqli_query($conexion, "SELECT * FROM ordenes WHERE id = '$order_id_safe'"));
+$orden = $_SESSION['p2p_orden_info'] ?? null;
 
 // Limpiar sesión de P2P
-unset($_SESSION['p2p_requestId'], $_SESSION['p2p_order_id']);
+unset($_SESSION['p2p_requestId'], $_SESSION['p2p_order_id'], $_SESSION['p2p_orden_info']);
 ?>
 <!DOCTYPE html>
 <html lang="es">

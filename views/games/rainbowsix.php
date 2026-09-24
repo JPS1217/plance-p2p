@@ -1,6 +1,5 @@
-Ôªø<?php
+<?php
 session_start();
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) { header("Location: ../../index.php"); exit(); }
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -23,7 +22,7 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) { header("Loca
         href="../../assets/css/components/driver-theme.css?v=<?php echo filemtime(dirname(__DIR__, 2) . '/assets/css/components/driver-theme.css'); ?>">
 </head>
 <style>
-    /* Tienda de Gemas ‚Äî morado (Gemas) + azul (Web Checkout / multi) */
+    /* Tienda de Gemas ó morado (Gemas) + azul (Web Checkout / multi) */
     :root {
         --gj-accent:        #7c3aed;
         --gj-accent-glow:   rgba(124, 58, 237, 0.25);
@@ -47,9 +46,9 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) { header("Loca
 
     <div class="game-banner">
         <div class="game-banner__tag">
-            üíé Tienda de Gemas
-            <span class="wc-badge">üñ•Ô∏è Web Checkout</span>
-            <span class="mixto-badge" id="pagoMixtoBadge">üîÄ Pago Mixto</span>
+            ?? Tienda de Gemas
+            <span class="wc-badge">??? Web Checkout</span>
+            <span class="mixto-badge" id="pagoMixtoBadge">?? Pago Mixto</span>
         </div>
     </div>
 
@@ -57,7 +56,7 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) { header("Loca
         <section class="products-panel" id="productsPanel">
 
             <!-- Gemas -->
-            <p class="section-label">üíé Gemas ‚Äî Moneda del juego</p>
+            <p class="section-label">?? Gemas ó Moneda del juego</p>
             <div class="products-grid">
                 <div class="product-card" data-id="p1" data-nombre="60 Gemas" data-precio="4900">
                     <img class="product-card__icon" src="../../assets/imgames/gemas/gem-icon.svg" alt="">
@@ -76,7 +75,7 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) { header("Loca
                     </div>
                 </div>
                 <div class="product-card popular-card" data-id="p3" data-nombre="300 Gemas" data-precio="24900">
-                    <div class="badge-popular">‚òÖ Popular</div>
+                    <div class="badge-popular">? Popular</div>
                     <img class="product-card__icon" src="../../assets/imgames/gemas/gem-icon.svg" alt="">
                     <div class="product-card__info">
                         <div class="product-card__pts">300 Gemas</div>
@@ -113,7 +112,7 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) { header("Loca
             </div>
 
             <!-- PASES -->
-            <p class="section-label">üéñÔ∏è Pases de batalla</p>
+            <p class="section-label">??? Pases de batalla</p>
             <div class="pases-grid">
                 <div class="pase-card" data-id="b1" data-nombre="Pase Premium" data-precio="39900">
                     <span class="pase-tag">PASE DE BATALLA</span>
@@ -130,7 +129,7 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) { header("Loca
                         <img class="pase-icon" src="../../assets/imgames/comunes/pase-icon.svg" alt="">
                         <div class="pase-name">Pase Elite</div>
                     </div>
-                    <div class="pase-desc">Incluye todo el Pase Premium m√°s contenido exclusivo elite y recompensas adicionales.</div>
+                    <div class="pase-desc">Incluye todo el Pase Premium m·s contenido exclusivo elite y recompensas adicionales.</div>
                     <div class="pase-price">79.900 COP</div>
                 </div>
             </div>
@@ -145,8 +144,8 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) { header("Loca
                 <label class="check-wrap multi" style="margin-bottom:0.8rem;">
                     <input type="checkbox" id="multiCheck" onchange="toggleMulti()">
                     <span class="check-label">
-                        <strong>üõí Selecci√≥n m√∫ltiple</strong>
-                        Agrega varios productos al carrito y p√°galos juntos.
+                        <strong>?? SelecciÛn m˙ltiple</strong>
+                        Agrega varios productos al carrito y p·galos juntos.
                     </span>
                 </label>
 
@@ -164,8 +163,8 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) { header("Loca
                 <label class="check-wrap parcial">
                     <input type="checkbox" id="parcialCheck" onchange="toggleParcial()">
                     <span class="check-label">
-                        <strong>üîÄ Pago parcial (Mixto)</strong>
-                        Paga solo una parte ahora y el resto despu√©s.
+                        <strong>?? Pago parcial (Mixto)</strong>
+                        Paga solo una parte ahora y el resto despuÈs.
                     </span>
                 </label>-->
                 
@@ -173,7 +172,7 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) { header("Loca
                 <!-- Panel pago parcial -->
                 <div class="parcial-panel" id="parcialPanel">
                     <div class="parcial-amounts">
-                        <span>M√≠nimo: <strong id="minAmount">0</strong></span>
+                        <span>MÌnimo: <strong id="minAmount">0</strong></span>
                         <span>Total: <strong id="maxAmount">0</strong></span>
                     </div>
                     <input type="range" class="parcial-slider" id="parcialSlider" min="0" max="100" value="50" oninput="updateSlider()">
@@ -193,17 +192,17 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) { header("Loca
                 </button>
                 <div class="security-note">
                     <i class="bi bi-shield-check"></i>
-                    Web Checkout ¬∑ PlacetoPay ¬∑ Evertec
+                    Web Checkout ∑ PlacetoPay ∑ Evertec
                 </div>
             </div>
         </aside>
     </main>
 
-    <!-- ‚ïê‚ïê‚ïê INTEGRACI√ìN PLACETOPAY ‚ïê‚ïê‚ïê -->
+    <!-- --- INTEGRACI”N PLACETOPAY --- -->
     <section class="integration-docs" style="--code-accent:var(--gj-accent); --code-accent-ink:var(--gj-accent-ink); --code-accent-soft:var(--gj-accent-soft); --code-radius-sm:var(--gj-radius-sm, 6px); --code-radius-md:var(--gj-radius-md); --code-radius-lg:var(--gj-radius-lg); --code-font:var(--gj-font-body);">
-        <span class="integration-docs__badge"><i class="bi bi-braces"></i> Integraci√≥n PlacetoPay</span>
-        <h3>As√≠ se crea la sesi√≥n de pago de esta tienda</h3>
-        <p>Cuando presionas <strong>"Pagar ahora"</strong>, nuestro backend arma este mismo request y lo env√≠a a <strong>PlacetoPay Web Checkout</strong> con <code>payment.allowPartial: true</code>. En la pasarela ver√°s una casilla para elegir cu√°nto pagar ahora ‚Äî el resto queda pendiente para completarlo despu√©s.</p>
+        <span class="integration-docs__badge"><i class="bi bi-braces"></i> IntegraciÛn PlacetoPay</span>
+        <h3>AsÌ se crea la sesiÛn de pago de esta tienda</h3>
+        <p>Cuando presionas <strong>"Pagar ahora"</strong>, nuestro backend arma este mismo request y lo envÌa a <strong>PlacetoPay Web Checkout</strong> con <code>payment.allowPartial: true</code>. En la pasarela ver·s una casilla para elegir cu·nto pagar ahora ó el resto queda pendiente para completarlo despuÈs.</p>
 
         <div class="endpoint-bar">
             <span class="method-pill">POST</span>
@@ -230,7 +229,7 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) { header("Loca
     <span class="jk">"amount"</span>: {
       <span class="jk">"currency"</span>: <span class="js">"COP"</span>,
       <span class="jk">"total"</span>: <span class="jn">24900</span>,
-      <span class="cm">// m√≠nimo permitido: 10% del total</span>
+      <span class="cm">// mÌnimo permitido: 10% del total</span>
       <span class="jk">"minimum"</span>: <span class="jn">2490</span>
     },
     <span class="cm">// clave: habilita la casilla de pago parcial en la pasarela</span>
@@ -243,21 +242,21 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) { header("Loca
   <span class="jk">"locale"</span>: <span class="js">"es_CO"</span>
 }</code></pre>
             <pre class="code-panel" data-key="php"><code>&lt;?php
-<span class="cm">// credenciales fuera del c√≥digo, nunca hardcodeadas</span>
+<span class="cm">// credenciales fuera del cÛdigo, nunca hardcodeadas</span>
 <span class="cvar">$login</span>     = getenv(<span class="js">'P2P_LOGIN'</span>);
 <span class="cvar">$secretKey</span> = getenv(<span class="js">'P2P_SECRET_KEY'</span>);
 <span class="cvar">$endpoint</span>  = <span class="js">'https://checkout-test.placetopay.com/api/session'</span>;
 
-<span class="cm">// autenticaci√≥n: Base64( SHA256( nonce + seed + secretKey ) )</span>
+<span class="cm">// autenticaciÛn: Base64( SHA256( nonce + seed + secretKey ) )</span>
 <span class="cvar">$seed</span>     = date(<span class="js">'c'</span>);
 <span class="cvar">$nonce</span>    = bin2hex(random_bytes(16));
 <span class="cvar">$tranKey</span>  = base64_encode(hash(<span class="js">'sha256'</span>, <span class="cvar">$nonce</span> . <span class="cvar">$seed</span> . <span class="cvar">$secretKey</span>, true));
 <span class="cvar">$nonceB64</span> = base64_encode(<span class="cvar">$nonce</span>);
 
-<span class="cm">// para pagos mixtos: siempre se env√≠a el total completo</span>
+<span class="cm">// para pagos mixtos: siempre se envÌa el total completo</span>
 <span class="cvar">$amount</span> = [<span class="jk">'currency'</span> =&gt; <span class="js">'COP'</span>, <span class="jk">'total'</span> =&gt; (float) <span class="cvar">$total</span>];
 
-<span class="cm">// si se permite pago parcial, se agrega el monto m√≠nimo (10%)</span>
+<span class="cm">// si se permite pago parcial, se agrega el monto mÌnimo (10%)</span>
 <span class="fn">if</span> (<span class="cvar">$allow_partial</span>) {
     <span class="cvar">$amount</span>[<span class="js">'minimum'</span>] = (float) ceil(<span class="cvar">$total</span> * 0.1);
 }
@@ -273,7 +272,7 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) { header("Loca
         <span class="jk">'reference'</span>    =&gt; <span class="js">'MIX-'</span> . strtoupper(bin2hex(random_bytes(4))),
         <span class="jk">'description'</span>  =&gt; <span class="cvar">$productos</span>,             <span class="cm">// ej: "300 Gemas" (o varios unidos con " + ")</span>
         <span class="jk">'amount'</span>       =&gt; <span class="cvar">$amount</span>,
-        <span class="jk">'allowPartial'</span> =&gt; <span class="cvar">$allow_partial</span>,      <span class="cm">// ‚Üê clave: activa el pago mixto</span>
+        <span class="jk">'allowPartial'</span> =&gt; <span class="cvar">$allow_partial</span>,      <span class="cm">// ? clave: activa el pago mixto</span>
     ],
     <span class="jk">'expiration'</span> =&gt; date(<span class="js">'c'</span>, strtotime(<span class="js">'+30 minutes'</span>)),
     <span class="jk">'returnUrl'</span>  =&gt; app_base_url() . <span class="js">'/retorno/retorno_mixto.php'</span>,
@@ -298,14 +297,14 @@ header(<span class="js">'Location: '</span> . <span class="cvar">$result</span>[
         </div>
 
         <div class="doc-note">
-            <span class="doc-note-icon">üí°</span>
-            <span>Este carrito soporta <strong>selecci√≥n m√∫ltiple</strong>: si agregas varios productos, todos viajan juntos en un solo <code>description</code> y un √∫nico <code>amount.total</code>. El pago mixto siempre est√° activo aqu√≠, as√≠ que el comprador decide en la pasarela si paga todo de una vez o solo una parte.</span>
+            <span class="doc-note-icon">??</span>
+            <span>Este carrito soporta <strong>selecciÛn m˙ltiple</strong>: si agregas varios productos, todos viajan juntos en un solo <code>description</code> y un ˙nico <code>amount.total</code>. El pago mixto siempre est· activo aquÌ, asÌ que el comprador decide en la pasarela si paga todo de una vez o solo una parte.</span>
         </div>
 
         <a class="integration-docs__link" href="../guias/guia-developer.php#web-checkout">
             <div>
-                <strong>¬øQuieres entender esta integraci√≥n a fondo?</strong>
-                <span>Lee la documentaci√≥n completa de Web Checkout ‚Äî autenticaci√≥n, notificaciones y m√°s.</span>
+                <strong>øQuieres entender esta integraciÛn a fondo?</strong>
+                <span>Lee la documentaciÛn completa de Web Checkout ó autenticaciÛn, notificaciones y m·s.</span>
             </div>
             <i class="bi bi-arrow-right"></i>
         </a>
@@ -363,7 +362,7 @@ header(<span class="js">'Location: '</span> . <span class="cvar">$result</span>[
         };
 
         window.toggleParcial = function() {
-            // Funci√≥n deshabilitada - pago parcial removido
+            // FunciÛn deshabilitada - pago parcial removido
         };
 
         function toggleCard(card_el) {
@@ -380,7 +379,7 @@ header(<span class="js">'Location: '</span> . <span class="cvar">$result</span>[
                     card_el.classList.add('in-cart');
                 }
             } else {
-                // Single mode ‚Äî deseleccionar todo y seleccionar este
+                // Single mode ó deseleccionar todo y seleccionar este
                 document.querySelectorAll('.product-card, .pase-card').forEach(c=>{
                     c.classList.remove('selected','in-cart');
                 });
@@ -398,10 +397,10 @@ header(<span class="js">'Location: '</span> . <span class="cvar">$result</span>[
 
         window.pagar = function() {
             const jugadorId = document.getElementById('jugadorId').value.trim();
-            if (!jugadorId) { alert('‚ö†Ô∏è Por favor ingresa tu ID de jugador.'); return; }
+            if (!jugadorId) { alert('?? Por favor ingresa tu ID de jugador.'); return; }
 
             const items = Object.values(cart);
-            if (items.length === 0) { alert('‚ö†Ô∏è Selecciona al menos un producto.'); return; }
+            if (items.length === 0) { alert('?? Selecciona al menos un producto.'); return; }
 
             const total = getTotal();
 

@@ -84,10 +84,10 @@
 <body>
 
 <nav class="topnav">
-        <a href="../../welcome.php">
+        <a href="../../index.php">
             <img src="../../assets/icons/icono.png" alt="Icon" style="height: 35px;">
         </a>
-    <a href="../../welcome.php" class="btn-back">← Volver</a>
+    <a href="../../index.php" class="btn-back">← Volver</a>
 </nav>
 
 <section class="hero">

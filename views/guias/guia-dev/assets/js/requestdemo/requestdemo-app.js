@@ -27,88 +27,91 @@ import { $, $$, selectSingleOption } from "../core/utils.js";
 // popup, para reutilizar el mecanismo existente (data-info-key).
 Object.assign(OPTION_INFO, AUTH_FIELD_INFO);
 
-function initAuthHelp() {
+function initFieldHelp() {
   const title = $("#authHelpTitle");
   const text = $("#authHelpText");
   const steps = $("#authHelpSteps");
   const result = $("#authHelpResult");
+  const aside = $("#authHelp");
+  const kicker = aside ? aside.querySelector(".auth-help-kicker") : null;
 
   if (!title || !text) return;
 
-  // Ahora el disparador es el icono ⓘ (.info-action.auth-info) de cada campo,
-  // no la etiqueta. Al hacer clic muestra la descripción en la tarjeta 3 y ya
-  // NO abre popup (popup.js excluye los .auth-info).
-  $$("#secAuth .info-action.auth-info").forEach((btn) => {
-    const showHelp = () => {
-      const key = btn.dataset.infoKey;
-      const info = key ? AUTH_FIELD_INFO[key] : null;
-      if (!info) return;
+  // Copia por defecto para restaurar el panel cuando no hay campo activo.
+  const DEFAULT_KICKER = kicker ? kicker.textContent : "Campo seleccionado";
+  const defaultTitle = title.textContent;
+  const defaultText = text.textContent;
 
-      title.textContent = info.title;
+  // Los campos con descripción: cada .field-group con data-info-key en las
+  // secciones Autenticación y Datos del pago.
+  const fields = $$(
+    "#secAuth .field-group[data-info-key], #secPago .field-group[data-info-key]",
+  );
 
-      // Resalta el fragmento de texto indicado en info.highlight (si existe) dentro del párrafo principal.
-      text.replaceChildren();
+  let lockedKey = null; // clave del campo fijado (o null = modo hover)
 
-      const textParts = info.text.split(info.highlight);
+  // Pinta la descripción del campo indicado por su clave en la tarjeta 3.
+  function render(key) {
+    const info = key ? OPTION_INFO[key] : null;
+    if (!info) return;
 
-      text.appendChild(document.createTextNode(textParts[0]));
+    title.textContent = info.title;
 
-      if (info.highlight) {
-        text.appendChild(document.createElement("br"));
+    // Resalta el fragmento info.highlight dentro del párrafo principal.
+    text.replaceChildren();
+    const hl = info.highlight || "";
+    const parts = hl ? info.text.split(hl) : [info.text];
+    text.appendChild(document.createTextNode(parts[0]));
+    if (hl) {
+      text.appendChild(document.createElement("br"));
+      const span = document.createElement("span");
+      span.className = "auth-help-highlight";
+      span.textContent = hl;
+      text.appendChild(span);
+      text.appendChild(document.createTextNode(parts[1] || ""));
+    }
 
-        const highlight = document.createElement("span");
-        highlight.className = "auth-help-highlight";
-        highlight.textContent = info.highlight;
-        text.appendChild(highlight);
+    // Pasos (lista numerada) — opcional.
+    if (steps) {
+      steps.replaceChildren();
+      if (Array.isArray(info.steps) && info.steps.length) {
+        info.steps.forEach((s) => {
+          const li = document.createElement("li");
+          li.textContent = s;
+          steps.appendChild(li);
+        });
+        steps.style.display = "";
+      } else {
+        steps.style.display = "none";
       }
+    }
 
-      text.appendChild(document.createTextNode(textParts[1] || ""));
+    // Resultado / errores comunes — opcional (string o array).
+    if (result) {
+      result.replaceChildren();
+      const items = Array.isArray(info.result)
+        ? info.result.slice()
+        : info.result
+          ? [info.result]
+          : [];
 
-      // Pasos (lista numerada) — opcional
-      if (steps) {
-        steps.replaceChildren();
-        if (Array.isArray(info.steps) && info.steps.length) {
-          info.steps.forEach((s) => {
-            const li = document.createElement("li");
-            li.textContent = s;
-            steps.appendChild(li);
-          });
-          steps.style.display = "";
-        } else {
-          steps.style.display = "none";
-        }
-      }
-
-      // Resultado / errores comunes — opcional.
-      // Se admite string o array; se muestra como viñetas dentro de la caja
-      // con borde naranja.
-      if (result) {
-        result.replaceChildren();
-        const items = Array.isArray(info.result)
-          ? info.result.slice()
-          : info.result
-            ? [info.result]
-            : [];
-
+      if (items.length) {
         const heading = document.createElement("h3");
         heading.className = "auth-help-result-title";
-        heading.textContent = "Errores comunes";
+        heading.textContent = "Notas";
         result.appendChild(heading);
 
         const ul = document.createElement("ul");
         ul.className = "auth-help-result-list";
-
         items.forEach((r) => {
           const li = document.createElement("li");
           if (typeof r === "string") {
             li.textContent = r;
           } else {
             li.appendChild(document.createTextNode(r.text || ""));
-
             if (Array.isArray(r.sublist) && r.sublist.length) {
               const sublist = document.createElement("ul");
               sublist.className = "auth-help-result-sublist";
-
               r.sublist.forEach((subitem) => {
                 const subli = document.createElement("li");
                 const label = document.createElement("strong");
@@ -117,33 +120,96 @@ function initAuthHelp() {
                 subli.appendChild(document.createTextNode(subitem.value || ""));
                 sublist.appendChild(subli);
               });
-
               li.appendChild(sublist);
             }
           }
           ul.appendChild(li);
         });
-
-        if (ul.children.length) {
-          result.appendChild(ul);
-          result.style.display = "";
-        } else {
-          result.style.display = "none";
-        }
+        result.appendChild(ul);
+        result.style.display = "";
+      } else {
+        result.style.display = "none";
       }
-    };
+    }
+  }
 
-    btn.addEventListener("click", (event) => {
+  // Refleja el estado (fijado vs hover) en el kicker y en el resaltado del campo.
+  function setKickerLocked(locked) {
+    if (!kicker) return;
+    if (locked) {
+      kicker.textContent = "📌 Fijado — clic para soltar";
+      kicker.classList.add("is-locked");
+    } else {
+      kicker.textContent = DEFAULT_KICKER;
+      kicker.classList.remove("is-locked");
+    }
+  }
+
+  function markLockedField(field) {
+    fields.forEach((f) => f.classList.toggle("is-locked", f === field));
+  }
+
+  function clearLockedField() {
+    fields.forEach((f) => f.classList.remove("is-locked"));
+  }
+
+  fields.forEach((field) => {
+    const key = field.dataset.infoKey;
+
+    // Hover / focus → previsualiza (solo si no hay nada fijado).
+    const preview = () => {
+      if (lockedKey) return;
+      render(key);
+    };
+    field.addEventListener("mouseenter", preview);
+    field.addEventListener("focusin", preview);
+
+    // Clic → fijar / soltar / cambiar de campo fijado.
+    field.addEventListener("click", (event) => {
+      // No interferir con interacciones reales del input/select.
       event.stopPropagation();
-      showHelp();
+      if (lockedKey === key) {
+        // Ya estaba fijado este mismo → soltar y volver a modo hover.
+        lockedKey = null;
+        clearLockedField();
+        setKickerLocked(false);
+      } else {
+        // Fijar este campo (o cambiar el fijado a este).
+        lockedKey = key;
+        render(key);
+        markLockedField(field);
+        setKickerLocked(true);
+      }
     });
-    btn.addEventListener("keydown", (event) => {
+
+    // Enter / Espacio con foco en el campo = clic (accesibilidad).
+    field.addEventListener("keydown", (event) => {
       if (event.key === "Enter" || event.key === " ") {
+        // Evita hacer toggle si el foco está en el input interno escribiendo.
+        if (event.target.closest("input, select, textarea, button")) return;
         event.preventDefault();
-        showHelp();
+        field.click();
       }
     });
   });
+
+  // Clic fuera de cualquier campo → soltar y volver a modo hover.
+  document.addEventListener("click", (event) => {
+    if (!lockedKey) return;
+    if (event.target.closest("#secAuth .field-group[data-info-key], #secPago .field-group[data-info-key]")) {
+      return;
+    }
+    lockedKey = null;
+    clearLockedField();
+    setKickerLocked(false);
+  });
+
+  // Leniencia de hover: al salir del área de campos y sin nada fijado, se
+  // conserva la última descripción mostrada (no se vacía el panel). Solo al
+  // soltar un fijado se restaura el texto por defecto, cosa que ya hace
+  // setKickerLocked(false) dejando la última descripción visible.
+  void defaultTitle;
+  void defaultText;
 }
 
 /**
@@ -188,7 +254,7 @@ function boot() {
   });
 
   initPopup();
-  initAuthHelp();
+  initFieldHelp();
   // Sincroniza el estado inicial de la sección Operación (URL, tipo de pago).
   onEpChange({ updateAll: () => requestApi.updateAll?.() });
 

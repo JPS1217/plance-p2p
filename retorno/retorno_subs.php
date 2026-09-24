@@ -1,21 +1,8 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-    header("Location: ../index.php");
-    exit();
-}
 
-// ══════════════════════════════════════════
-// Conexión a BD
-// ══════════════════════════════════════════
-require_once '../php/conexion_be.php';
-if (!isset($conexion)) {
-    $conexion = plance_db_connect();
-    if (!$conexion) {
-        die("Error de conexión: " . mysqli_connect_error());
-    }
-}
+require_once '../php/env.php';
 
 // ══════════════════════════════════════════
 // Recibir sub_id desde la URL
@@ -23,17 +10,16 @@ if (!isset($conexion)) {
 $sub_id = intval($_GET['sub'] ?? 0);
 
 if (!$sub_id) {
-    header("Location: ../home.php");
+    header("Location: ../index.php");
     exit();
 }
 
-// Obtener request_id desde la BD
-$sub_id_safe = mysqli_real_escape_string($conexion, $sub_id);
-$row         = mysqli_fetch_assoc(mysqli_query($conexion, "SELECT * FROM suscripciones WHERE id = '$sub_id_safe'"));
-$request_id  = $row['request_id'] ?? '';
+// Sin base de datos: request_id e info los dejó crear_subs en sesión
+$row        = $_SESSION['sub_info'] ?? null;
+$request_id = $_SESSION['sub_requestId'] ?? '';
 
 if (!$request_id) {
-    header("Location: ../home.php");
+    header("Location: ../index.php");
     exit();
 }
 
@@ -109,10 +95,8 @@ if ($status_p2p === 'APPROVED') {
 }
 
 // ══════════════════════════════════════════
-// Actualizar estado en BD
+// Sin base de datos: no se persiste estado ni token.
 // ══════════════════════════════════════════
-$sub_id_safe = mysqli_real_escape_string($conexion, $sub_id);
-$estado_safe = mysqli_real_escape_string($conexion, $nuevo_estado);
 
 // ══════════════════════════════════════════
 // Extraer token de la respuesta de PlaceToPay
@@ -149,9 +133,7 @@ if (empty($token) && isset($result['payment'][0]['processorFields']) && is_array
     }
 }
 
-// Actualizar estado y token en BD
-$token_safe = mysqli_real_escape_string($conexion, $token);
-mysqli_query($conexion, "UPDATE suscripciones SET estado = '$estado_safe', token = '$token_safe' WHERE id = '$sub_id_safe'");
+// Sin base de datos: el token queda sólo en memoria para esta pantalla.
 
 // ── Definir título y mensaje según si hay token ──
 if ($status_p2p === 'APPROVED') {

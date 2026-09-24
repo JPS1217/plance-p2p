@@ -7,14 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit();
 }
 
-// Conexión
-require_once 'conexion_be.php';
-if (!isset($conexion)) {
-    $conexion = plance_db_connect();
-    if (!$conexion) {
-        die("Error de conexión: " . mysqli_connect_error());
-    }
-}
+require_once 'env.php';
 
 // Recibir y limpiar datos
 $plataforma = trim($_POST['plataforma'] ?? '');
@@ -27,24 +20,8 @@ if (empty($plataforma) || empty($plan) || empty($precio) || empty($usuario_id)) 
     die("❌ Faltan datos. Por favor vuelve y completa todos los campos.");
 }
 
-// Sanitizar
-$plataforma = mysqli_real_escape_string($conexion, $plataforma);
-$plan       = mysqli_real_escape_string($conexion, $plan);
-$precio     = mysqli_real_escape_string($conexion, $precio);
-$usuario_id = mysqli_real_escape_string($conexion, $usuario_id);
-
-// Insertar en tabla suscripciones
-$estado = "pendiente";
-$query  = "INSERT INTO suscripciones (plataforma, plan, precio, usuario_id, estado) 
-           VALUES ('$plataforma', '$plan', '$precio', '$usuario_id', '$estado')";
-
-$resultado = mysqli_query($conexion, $query);
-
-if (!$resultado) {
-    die("❌ Error al guardar la suscripción: " . mysqli_error($conexion));
-}
-
-$sub_id = mysqli_insert_id($conexion);
+// Sin base de datos: identificador local para la referencia del pago
+$sub_id = strtoupper(bin2hex(random_bytes(4)));
 
 
 // 🔥 WEB CHECKOUT — PlaceToPay
@@ -116,15 +93,19 @@ if (!$response) {
 $result = json_decode($response, true);
 
 if (isset($result['processUrl'])) {
-    // Guardar requestId en BD antes de redirigir
-    $request_id = mysqli_real_escape_string($conexion, $result['requestId'] ?? '');
-    mysqli_query($conexion, "UPDATE suscripciones SET request_id = '$request_id' WHERE id = '$sub_id'");
-
+    $_SESSION['sub_requestId'] = $result['requestId'] ?? '';
+    $_SESSION['sub_info'] = [
+        'id'         => $sub_id,
+        'plataforma' => $plataforma,
+        'plan'       => $plan,
+        'precio'     => $precio,
+        'usuario_id' => $usuario_id,
+    ];
     header("Location: " . $result['processUrl']);
     exit();
 } else {
     echo "<h3 style='font-family:sans-serif;color:#e05252;'>❌ Error al crear sesión de pago</h3>";
-    echo "<p style='font-family:sans-serif;color:#f0f1f3;'>Suscripción <strong>#$sub_id</strong> guardada en BD pero el pago no pudo iniciarse.</p>";
+    echo "<p style='font-family:sans-serif;color:#f0f1f3;'>Suscripción <strong>#$sub_id</strong> — el pago no pudo iniciarse.</p>";
     echo "<pre style='background:#1e2128;color:#f0f1f3;padding:1rem;border-radius:8px;font-size:0.85rem;'>";
     print_r($result);
     echo "</pre>";

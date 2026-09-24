@@ -1,16 +1,12 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-    header("Location: ../index.php");
-    exit();
-}
 
 $gwm = $_SESSION['gwm_result'] ?? null;
 unset($_SESSION['gwm_result']);
 
 if (!$gwm) {
-    header("Location: ../home.php");
+    header("Location: ../index.php");
     exit();
 }
 
@@ -145,9 +141,9 @@ if ($status === 'APPROVED') {
         <a href="../views/games/bloodstrike.php?orden=<?= urlencode((string) $orden_id) ?>" class="btn-home">
             <i class="bi bi-play-circle-fill"></i> Continuar pago
         </a>
-        <a href="../home.php" class="btn-volver">← Inicio</a>
+        <a href="../index.php" class="btn-volver">← Inicio</a>
         <?php else: ?>
-        <a href="../home.php" class="btn-home">← Inicio</a>
+        <a href="../index.php" class="btn-home">← Inicio</a>
         <?php endif; ?>
         <a href="../views/games/juegos.php" class="btn-volver">Volver al comercio</a>
     </div>

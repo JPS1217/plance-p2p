@@ -1,29 +1,20 @@
 <?php
 session_start();
 require_once __DIR__ . '/../vendor/autoload.php';
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
+
+require_once 'env.php';
+
+$sub_id = intval($_GET['sub'] ?? 0);
+if (!$sub_id) {
     header("Location: ../index.php");
     exit();
 }
 
-require_once 'conexion_be.php';
-if (!isset($conexion)) {
-    $conexion = plance_db_connect();
-    if (!$conexion) die("Error de conexión: " . mysqli_connect_error());
-}
-
-$sub_id = intval($_GET['sub'] ?? 0);
-if (!$sub_id) {
-    header("Location: ../home.php");
-    exit();
-}
-
-// Obtener datos de la suscripción
-$sub_id_safe = mysqli_real_escape_string($conexion, $sub_id);
-$subs = mysqli_fetch_assoc(mysqli_query($conexion, "SELECT * FROM suscripciones WHERE id = '$sub_id_safe'"));
+// Sin base de datos: los datos de la suscripción los dejó crear_subs en sesión
+$subs = $_SESSION['sub_info'] ?? null;
 
 if (!$subs) {
-    header("Location: ../home.php");
+    header("Location: ../index.php");
     exit();
 }
 

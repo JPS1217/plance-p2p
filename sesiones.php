@@ -1,10 +1,6 @@
 <?php
     session_start();
 
-    if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-    header("Location: index.php");
-    exit();
-    }
 
 ?>
 <!DOCTYPE html>
@@ -30,7 +26,7 @@
 
 <body class="d-flex flex-column min-vh-100">
     <?php
-        $nav_back_url  = "home.php";
+        $nav_back_url  = "index.php";
         $nav_back_text = "Atras";
         $nav_base      = "./";
         require_once 'php/navbar.php';

@@ -1,23 +1,12 @@
 <?php
 session_start();
 
-$es_invitado = !isset($_SESSION['usuario']) && !empty($_SESSION['invitado']);
-
-if (!isset($_SESSION['usuario']) && empty($_SESSION['invitado'])) {
-    header("Location: ../../index.php");
-    exit();
-}
-
-require_once __DIR__ . '/../../php/conexion_be.php';
-if (!isset($conexion)) {
-    $conexion = plance_db_connect();
-    if (!$conexion) die("Error de conexión: " . mysqli_connect_error());
-}
-
-$correo = mysqli_real_escape_string($conexion, $_SESSION['correo'] ?? '');
+require_once __DIR__ . '/../../php/env.php';
 
 // ══════════════════════════════════════════
 // Guardar apariencia seleccionada (tema + fondo personalizado)
+// Sin base de datos: la selección se guarda solo en la sesión actual.
+// (La persistencia real vía localStorage es un paso posterior.)
 // ══════════════════════════════════════════
 $alerta = '';
 $alerta_tipo = '';
@@ -42,37 +31,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $fondo_post = 'ninguno';
     }
 
-    if ($es_invitado) {
-        // Invitado: se guarda solo en la sesión, no en BD
-        $_SESSION['tema_invitado'] = $tema_post;
-        $_SESSION['fondo_invitado'] = $fondo_post;
-        $ok = true;
-    } else {
-        $tema_safe = mysqli_real_escape_string($conexion, $tema_post);
-        $fondo_safe = mysqli_real_escape_string($conexion, $fondo_post);
-        $existe = mysqli_fetch_assoc(mysqli_query($conexion, "SELECT id FROM user_preferences WHERE usuario_correo = '$correo'"));
-        if ($existe) {
-            $ok = mysqli_query($conexion, "UPDATE user_preferences SET tema = '$tema_safe', fondo = '$fondo_safe' WHERE usuario_correo = '$correo'");
-        } else {
-            $ok = mysqli_query($conexion, "INSERT INTO user_preferences (usuario_correo, tema, fondo) VALUES ('$correo', '$tema_safe', '$fondo_safe')");
-        }
-    }
+    $_SESSION['tema_local'] = $tema_post;
+    $_SESSION['fondo_local'] = $fondo_post;
 
-    $alerta = $ok ? '¡Apariencia actualizada!' : 'No se pudo guardar la apariencia.';
-    $alerta_tipo = $ok ? 'success' : 'error';
+    $alerta = '¡Apariencia actualizada!';
+    $alerta_tipo = 'success';
 }
 
-// Cargar apariencia actual
-$tema_actual = 'oscuro';
-$fondo_actual = 'ninguno';
-if ($es_invitado) {
-    $tema_actual = $_SESSION['tema_invitado'] ?? 'oscuro';
-    $fondo_actual = $_SESSION['fondo_invitado'] ?? 'ninguno';
-} else {
-    $pref = mysqli_fetch_assoc(mysqli_query($conexion, "SELECT tema, fondo FROM user_preferences WHERE usuario_correo = '$correo'"));
-    if ($pref && !empty($pref['tema'])) $tema_actual = $pref['tema'];
-    if ($pref && !empty($pref['fondo'])) $fondo_actual = $pref['fondo'];
-}
+// Cargar apariencia actual (solo sesión)
+$tema_actual  = $_SESSION['tema_local'] ?? 'oscuro';
+$fondo_actual = $_SESSION['fondo_local'] ?? 'ninguno';
 
 if ($fondo_actual === 'personalizado1' || $fondo_actual === 'personalizado2') {
     $apariencia_actual = $fondo_actual;
@@ -242,7 +210,7 @@ require_once __DIR__ . '/../../php/theme.php';
                 <h1 class="topbar-title">Configuración</h1>
                 <p class="topbar-subtitle">Personaliza la apariencia de Plance.</p>
             </div>
-            <a href="../../home.php" class="back-link">
+            <a href="../../index.php" class="back-link">
                 <i class="bi bi-arrow-left"></i>
                 Atras
             </a>
@@ -258,12 +226,6 @@ require_once __DIR__ . '/../../php/theme.php';
 
                     <?php if ($alerta): ?>
                         <div class="alert-box <?= $alerta_tipo ?>"><?= htmlspecialchars($alerta) ?></div>
-                    <?php endif; ?>
-
-                    <?php if ($es_invitado): ?>
-                        <div class="alert-box" style="background:rgba(211,155,23,0.1);color:var(--yellow);border:1px solid rgba(211,155,23,0.3);">
-                            Estás en modo invitado — tu tema se guardará mientras dure tu sesión actual.
-                        </div>
                     <?php endif; ?>
 
                     <form method="POST" id="temaForm">

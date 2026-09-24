@@ -67,11 +67,6 @@ $pagina_actual = basename($_SERVER['PHP_SELF']);
 
 <aside class="settings-sidebar">
     <nav class="sidebar-menu">
-        <a href="<?= $settings_base ?>ajustes.php" class="sidebar-link <?= $pagina_actual === 'ajustes.php' ? 'active' : '' ?>">
-            <i class="bi bi-gear-fill"></i>
-            Mi cuenta
-        </a>
-
         <a href="<?= $settings_base ?>configuracion.php" class="sidebar-link <?= $pagina_actual === 'configuracion.php' ? 'active' : '' ?>">
             <i class="bi bi-sliders"></i>
             Configuración
@@ -82,6 +77,6 @@ $pagina_actual = basename($_SERVER['PHP_SELF']);
 
     <div style="padding: 8px 10px 2px; color: var(--text-soft, #8a8d96); font-size: .9rem;">
         <i class="bi bi-info-circle"></i>
-        Ajustes de tu cuenta y preferencias
+        Preferencias de apariencia
     </div>
 </aside>

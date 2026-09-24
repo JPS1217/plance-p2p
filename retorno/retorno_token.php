@@ -1,22 +1,14 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-    header("Location: ../index.php");
-    exit();
-}
 
-require_once '../php/conexion_be.php';
-if (!isset($conexion)) {
-    $conexion = plance_db_connect();
-    if (!$conexion) die("Error de conexión: " . mysqli_connect_error());
-}
+require_once '../php/env.php';
 
 $sub_id     = intval($_GET['sub'] ?? $_SESSION['token_sub_id'] ?? 0);
 $request_id = $_SESSION['token_requestId'] ?? '';
 
 if (!$sub_id || !$request_id) {
-    header("Location: ../home.php");
+    header("Location: ../index.php");
     exit();
 }
 
@@ -70,14 +62,9 @@ if (isset($result['subscription']['instrument']) && is_array($result['subscripti
 }
 
 // ══════════════════════════════════════════
-// Guardar token en BD y actualizar estado
+// Sin base de datos: no se persiste el token.
 // ══════════════════════════════════════════
-$sub_id_safe = mysqli_real_escape_string($conexion, $sub_id);
-$token_safe  = mysqli_real_escape_string($conexion, $token);
-
 if (!empty($token)) {
-    // Tiene token → suscripción completamente activada
-    mysqli_query($conexion, "UPDATE suscripciones SET token = '$token_safe', estado = 'aprobada' WHERE id = '$sub_id_safe'");
     $exito   = true;
     $titulo  = '🔐 ¡Tarjeta guardada!';
     $mensaje = 'Tu tarjeta fue tokenizada exitosamente. Tu suscripción está completamente activada.';
@@ -125,7 +112,7 @@ unset($_SESSION['token_requestId'], $_SESSION['token_sub_id']);
         <div class="result-title"><?= $titulo ?></div>
         <p class="result-message"><?= $mensaje ?></p>
 
-        <a href="../home.php" class="btn-home">← Inicio</a>
+        <a href="../index.php" class="btn-home">← Inicio</a>
         <a href="../views/plataformas/streaming.php" class="btn-volver">Ver planes</a>
     </div>
 

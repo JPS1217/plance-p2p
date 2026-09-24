@@ -3,41 +3,16 @@
 // ══════════════════════════════════════════
 // theme.php — Motor de tema (claro/oscuro)
 // Se incluye en el <head> de cada página, justo antes de </head>
-// Requiere: session_start() ya ejecutado (y $conexion si ya existe)
+// Sin base de datos ni cuentas de usuario: la apariencia por defecto es la
+// misma que veía un invitado (tema oscuro, sin imagen de fondo). La
+// personalización cliente (localStorage) se conecta aquí más adelante.
 // ══════════════════════════════════════════
 
 if (session_status() === PHP_SESSION_NONE) session_start();
 
-if (!isset($conexion)) {
-    require_once __DIR__ . '/conexion_be.php';
-    if (!isset($conexion)) {
-        $conexion = plance_db_connect();
-    }
-}
-
-// ── Cargar preferencia de tema del usuario (o del invitado) ──
+// ── Apariencia por defecto (equivalente a un invitado navegando hoy) ──
 $theme_tema = 'oscuro';
 $theme_fondo = 'ninguno';
-$correo_actual = $_SESSION['correo'] ?? null;
-
-if ($correo_actual && $conexion) {
-    $correo_safe = mysqli_real_escape_string($conexion, $correo_actual);
-    $pref = mysqli_fetch_assoc(mysqli_query($conexion, "SELECT tema, fondo FROM user_preferences WHERE usuario_correo = '$correo_safe'"));
-    if ($pref && !empty($pref['tema'])) {
-        $theme_tema = $pref['tema'];
-    }
-    if ($pref && !empty($pref['fondo'])) {
-        $theme_fondo = $pref['fondo'];
-    }
-} else {
-    // Invitado sin cuenta: la preferencia se guarda solo en su sesión
-    if (!empty($_SESSION['tema_invitado'])) {
-        $theme_tema = $_SESSION['tema_invitado'];
-    }
-    if (!empty($_SESSION['fondo_invitado'])) {
-        $theme_fondo = $_SESSION['fondo_invitado'];
-    }
-}
 
 // ── Fondos personalizados por sección (Apariencia > Personalizado 1 / 2) ──
 // $theme_seccion lo define cada página ANTES de incluir este archivo.

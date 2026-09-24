@@ -1,20 +1,8 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-    header("Location: ../../index.php");
-    exit();
-}
-
-require_once '../../php/conexion_be.php';
-if (!isset($conexion)) {
-    $conexion = plance_db_connect();
-    if (!$conexion) die("Error de conexión: " . mysqli_connect_error());
-}
-
-// Traer solo las recurrencias del usuario en sesión (por correo)
-$correo_sesion = mysqli_real_escape_string($conexion, $_SESSION['correo'] ?? '');
-$resultado     = mysqli_query($conexion, "SELECT * FROM recurrencias WHERE usuario_id = '$correo_sesion' ORDER BY created_at DESC");
+// Sin base de datos: historial vacío (estado "sin registros").
+$resultado = [];
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -66,7 +54,7 @@ $resultado     = mysqli_query($conexion, "SELECT * FROM recurrencias WHERE usuar
         }
         ?>
 
-        <?php if (mysqli_num_rows($resultado) > 0): ?>
+        <?php if (count($resultado) > 0): ?>
         <div class="table-responsive" id="rec-tabla">
             <table class="table table-hover">
                 <thead>
@@ -85,7 +73,7 @@ $resultado     = mysqli_query($conexion, "SELECT * FROM recurrencias WHERE usuar
                     </tr>
                 </thead>
                 <tbody>
-                    <?php while ($row = mysqli_fetch_assoc($resultado)): ?>
+                    <?php foreach (($resultado ?? []) as $row): ?>
                     <tr>
                         <td><span style="color:#8a8d96;">#<?= htmlspecialchars($row['id']) ?></span></td>
                         <td><?= htmlspecialchars($row['servicio']) ?></td>
@@ -131,7 +119,7 @@ $resultado     = mysqli_query($conexion, "SELECT * FROM recurrencias WHERE usuar
                             <?php endif; ?>
                         </td>
                     </tr>
-                    <?php endwhile; ?>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>

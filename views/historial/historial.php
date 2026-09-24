@@ -1,32 +1,16 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-    header("Location: ../../index.php");
-    exit();
-}
-
-require_once '../../php/conexion_be.php';
-if (!isset($conexion)) {
-    $conexion = plance_db_connect();
-    if (!$conexion) die("Error de conexión: " . mysqli_connect_error());
-}
-
-// Contar registros del usuario actual
-$correo_sesion = mysqli_real_escape_string($conexion, $_SESSION['correo'] ?? '');
-
-$total_ordenes = mysqli_fetch_assoc (mysqli_query($conexion, "SELECT COUNT(*) as total FROM ordenes"))['total'];
-$total_subs    = mysqli_fetch_assoc(mysqli_query($conexion, "SELECT COUNT(*) as total FROM suscripciones WHERE usuario_id = '$correo_sesion'"))['total'];
-$total_recs    = mysqli_fetch_assoc(mysqli_query($conexion, "SELECT COUNT(*) as total FROM recurrencias WHERE usuario_id = '$correo_sesion'"))['total'];
-
-$total_links   = mysqli_fetch_assoc(mysqli_query($conexion, "SELECT COUNT(*) as total FROM payment_link"))['total'];
-$total_preaut   = mysqli_fetch_assoc(mysqli_query($conexion, "SELECT COUNT(*) as total FROM reservaciones"))['total'];
-$total_dispersiones   = mysqli_fetch_assoc(mysqli_query($conexion, "SELECT COUNT(*) as total FROM dispersiones"))['total'];
+// Sin base de datos: los contadores de historial arrancan en cero.
+// El historial local por sesión (§3) se conectará aquí más adelante.
+$total_ordenes       = 0;
+$total_subs          = 0;
+$total_recs          = 0;
+$total_links         = 0;
+$total_preaut        = 0;
+$total_dispersiones  = 0;
 $total_pagos = $total_ordenes + $total_subs + $total_recs + $total_preaut + $total_dispersiones;
-$total_pagos= number_format($total_pagos, 0, ',', '.');
-
-
-
+$total_pagos = number_format($total_pagos, 0, ',', '.');
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -151,7 +135,7 @@ $total_pagos= number_format($total_pagos, 0, ',', '.');
 </style>
 <body>
     <?php
-        $nav_back_url  = "../../home.php";
+        $nav_back_url  = "../../index.php";
         $nav_back_text = "Atrás";
         $nav_base      = "../../";
         require_once '../../php/navbar.php';

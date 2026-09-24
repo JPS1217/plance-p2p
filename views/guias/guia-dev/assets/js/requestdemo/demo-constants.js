@@ -120,4 +120,70 @@ export const AUTH_FIELD_INFO = {
       "Ejemplo — fórmula: tranKey = Base64(SHA-256(\"927342197\" + \"2023-06-21T09:56:06-05:00\" + \"3YC5brb5eAR4xBGQ\")).",
     ],
   },
+
+  // ── Datos del pago ──
+  pay_reference: {
+    title: "Referencia",
+    text:
+      "Es tu identificador propio para esta transacción: el número o código con el que TÚ reconoces el pedido en tu sistema (por ejemplo el número de factura, de orden o de reserva). " +
+      "Place to Pay te lo devuelve en la respuesta y en las notificaciones, así que te sirve para cruzar cada pago con el pedido correcto en tu base de datos.",
+    highlight: "el número o código con el que TÚ reconoces el pedido en tu sistema",
+    steps: [
+      "Usa un valor único por transacción (no repitas la misma referencia para dos cobros distintos).",
+      "Genera el valor desde tu sistema: normalmente es el id del pedido o de la factura.",
+      "Guárdalo: lo recibirás de vuelta en la respuesta para conciliar el pago.",
+    ],
+    result: [
+      "Debe ser única por cada intento de pago.",
+      "Viaja dentro del objeto \"payment\".",
+    ],
+  },
+
+  pay_description: {
+    title: "Descripción",
+    text:
+      "Es un texto corto y legible que describe qué se está pagando (por ejemplo \"Plan Premium - Junio\" o \"Recarga 360 esmeraldas\"). " +
+      "Se le muestra al cliente durante el pago y te ayuda a identificar la operación de un vistazo. No afecta el cobro; es puramente informativo.",
+    highlight: "Se le muestra al cliente durante el pago",
+    steps: [
+      "Escribe algo breve y claro que el comprador reconozca.",
+      "Evita datos sensibles: es un texto visible.",
+    ],
+    result: [
+      "Texto libre y opcional.",
+      "Viaja dentro del objeto \"payment\".",
+    ],
+  },
+
+  pay_currency: {
+    title: "Moneda",
+    text:
+      "Es la moneda en la que se cobra, en código ISO de 3 letras (COP, USD, CRC…). " +
+      "Debe corresponder a una moneda habilitada para tu comercio; el monto que envíes se interpreta en esta moneda.",
+    highlight: "en código ISO de 3 letras",
+    steps: [
+      "Elige la moneda habilitada para tu sitio (aquí: COP, USD o CRC).",
+      "Asegúrate de que el monto esté expresado en esa misma moneda.",
+    ],
+    result: [
+      "Viaja en payment.amount.currency.",
+      "Debe estar habilitada para tu comercio.",
+    ],
+  },
+
+  pay_amount: {
+    title: "Monto",
+    text:
+      "Es el valor total a cobrar, expresado en la moneda seleccionada. " +
+      "En monedas sin decimales (como COP) se envía el número entero (50000 = $50.000 COP). El mock usa el monto para decidir el resultado en el modo \"Automático (según tarjeta)\".",
+    highlight: "expresado en la moneda seleccionada",
+    steps: [
+      "Escribe el total exacto a cobrar en la moneda elegida.",
+      "No incluyas separadores de miles ni el símbolo de moneda; solo el número.",
+    ],
+    result: [
+      "Viaja en payment.amount.total.",
+      "Debe ser mayor que cero (un monto inválido devuelve el error 13).",
+    ],
+  },
 };

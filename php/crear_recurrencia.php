@@ -1,10 +1,6 @@
 <?php
 session_start();
 require_once __DIR__ . '/../vendor/autoload.php';
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-    header("Location: ../index.php");
-    exit();
-}
 
 // Solo acepta POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -12,12 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit();
 }
 
-// Conexión
-require_once 'conexion_be.php';
-if (!isset($conexion)) {
-    $conexion = plance_db_connect();
-    if (!$conexion) die("Error de conexión: " . mysqli_connect_error());
-}
+require_once 'env.php';
 
 // Recibir y limpiar datos
 $servicio   = trim($_POST['servicio']   ?? '');
@@ -30,28 +21,12 @@ if (empty($servicio) || empty($plan) || empty($precio) || empty($usuario_id)) {
     die("❌ Faltan datos. Por favor vuelve y completa todos los campos.");
 }
 
-// Sanitizar
-$servicio   = mysqli_real_escape_string($conexion, $servicio);
-$plan       = mysqli_real_escape_string($conexion, $plan);
-$precio     = mysqli_real_escape_string($conexion, $precio);
-$usuario_id = mysqli_real_escape_string($conexion, $usuario_id);
-
-// Calcular próximo cobro (1 mes desde hoy) y fecha fin (12 meses desde hoy)
+// Próximo cobro (1 mes) y fecha fin (12 meses)
 $next_payment = date('Y-m-d', strtotime('+1 month'));
 $fecha_fin    = date('Y-m-d', strtotime('+12 months'));
 
-// Insertar en tabla recurrencias
-$estado = "pendiente";
-$query  = "INSERT INTO recurrencias (servicio, plan, precio, usuario_id, estado, periodicidad, next_payment, fecha_fin)
-           VALUES ('$servicio', '$plan', '$precio', '$usuario_id', '$estado', 'M', '$next_payment', '$fecha_fin')";
-
-$resultado = mysqli_query($conexion, $query);
-
-if (!$resultado) {
-    die("❌ Error al guardar la recurrencia: " . mysqli_error($conexion));
-}
-
-$rec_id = mysqli_insert_id($conexion);
+// Sin base de datos: identificador local para la referencia del pago
+$rec_id = strtoupper(bin2hex(random_bytes(4)));
 
 // ══════════════════════════════════════════
 // 🔄 WEB CHECKOUT — PlaceToPay con RECURRENCIA
@@ -125,15 +100,21 @@ if (!$response) {
 $result = json_decode($response, true);
 
 if (isset($result['processUrl'])) {
-    // Guardar requestId en BD antes de redirigir
-    $request_id = mysqli_real_escape_string($conexion, $result['requestId'] ?? '');
-    mysqli_query($conexion, "UPDATE recurrencias SET request_id = '$request_id' WHERE id = '$rec_id'");
-
+    $_SESSION['rec_requestId'] = $result['requestId'] ?? '';
+    $_SESSION['rec_info'] = [
+        'id'         => $rec_id,
+        'servicio'   => $servicio,
+        'plan'       => $plan,
+        'precio'     => $precio,
+        'usuario_id' => $usuario_id,
+        'next_payment' => $next_payment,
+        'fecha_fin'  => $fecha_fin,
+    ];
     header("Location: " . $result['processUrl']);
     exit();
 } else {
     echo "<h3 style='font-family:sans-serif;color:#e05252;'>❌ Error al crear sesión de pago</h3>";
-    echo "<p style='font-family:sans-serif;color:#f0f1f3;'>Recurrencia <strong>#$rec_id</strong> guardada en BD pero el pago no pudo iniciarse.</p>";
+    echo "<p style='font-family:sans-serif;color:#f0f1f3;'>Recurrencia <strong>#$rec_id</strong> — el pago no pudo iniciarse.</p>";
     echo "<pre style='background:#1e2128;color:#f0f1f3;padding:1rem;border-radius:8px;font-size:0.85rem;'>";
     print_r($result);
     echo "</pre>";

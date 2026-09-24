@@ -1,21 +1,13 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-    header("Location: ../index.php");
-    exit();
-}
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: ../views/dispersiones/tickets.php");
     exit();
 }
 
-require_once 'conexion_be.php';
-if (!isset($conexion)) {
-    $conexion = plance_db_connect();
-    if (!$conexion) die("Error de conexión: " . mysqli_connect_error());
-}
+require_once 'env.php';
 
 // Recibir datos
 $destino   = trim($_POST['destino']   ?? '');
@@ -44,17 +36,8 @@ $nonceB64 = base64_encode($nonce);
 
 $reference = 'DISP-' . strtoupper(bin2hex(random_bytes(4)));
 
-// ── Guardar en BD primero para tener el dispersion_id ──
-$dest_safe = mysqli_real_escape_string($conexion, $destino);
-$uid_safe  = mysqli_real_escape_string($conexion, $_SESSION['correo'] ?? '');
-$ref_safe  = mysqli_real_escape_string($conexion, $reference);
-$desc_safe = mysqli_real_escape_string($conexion, "Tiquete a " . $destino);
-
-$query = "INSERT INTO dispersiones (destino, descripcion, precio_total, precio_base, impuesto, moneda, usuario_id, estado, request_id)
-          VALUES ('$dest_safe', '$desc_safe', '$total', '$base', '$impuesto', 'COP', '$uid_safe', 'pendiente', '$ref_safe')";
-
-mysqli_query($conexion, $query);
-$dispersion_id = mysqli_insert_id($conexion);
+// ── Sin base de datos: identificador local para el retorno ──
+$dispersion_id = strtoupper(bin2hex(random_bytes(4)));
 
 // ── Body con dispersión ──
 $body = [
@@ -128,11 +111,17 @@ $status     = $result['status']['status']  ?? 'FAILED';
 $processUrl = $result['processUrl']        ?? null;
 $requestId  = $result['requestId']         ?? null;
 
-// Actualizar requestId en BD
-if ($requestId) {
-    $rid_safe = mysqli_real_escape_string($conexion, (string)$requestId);
-    mysqli_query($conexion, "UPDATE dispersiones SET request_id='$rid_safe' WHERE id=$dispersion_id");
-}
+// Sin base de datos: no se persiste el requestId.
+
+// Datos para la pantalla de retorno (sin BD)
+$_SESSION['disp_result'] = [
+    'disp_id'      => $dispersion_id,
+    'destino'      => $destino,
+    'precio_total' => $total,
+    'precio_base'  => $base,
+    'impuesto'     => $impuesto,
+    'request_id'   => $requestId ?? $reference,
+];
 
 // Redirigir al WC si fue OK
 if ($status === 'OK' && $processUrl) {

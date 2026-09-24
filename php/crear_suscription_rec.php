@@ -1,21 +1,13 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-    header("Location: ../index.php");
-    exit();
-}
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: ../views/plataformas/ia.php");
     exit();
 }
 
-require_once 'conexion_be.php';
-if (!isset($conexion)) {
-    $conexion = plance_db_connect();
-    if (!$conexion) die("Error de conexión: " . mysqli_connect_error());
-}
+require_once 'env.php';
 
 $servicio     = trim($_POST['servicio']     ?? '');
 $plan         = trim($_POST['plan']         ?? '');
@@ -27,11 +19,7 @@ if (empty($servicio) || empty($plan) || empty($precio) || empty($usuario_id)) {
     die("❌ Faltan datos.");
 }
 
-$servicio     = mysqli_real_escape_string($conexion, $servicio);
-$plan         = mysqli_real_escape_string($conexion, $plan);
-$precio       = mysqli_real_escape_string($conexion, $precio);
-$usuario_id   = mysqli_real_escape_string($conexion, $usuario_id);
-$periodicidad = mysqli_real_escape_string($conexion, $periodicidad);
+// Sin base de datos: los valores ya vienen con trim (no hay SQL que escapar).
 
 // Calcular fechas según periodicidad
 if ($periodicidad === 'Y') {
@@ -46,14 +34,8 @@ if ($periodicidad === 'Y') {
     $interval     = "1";
 }
 
-$estado = "pendiente";
-$query  = "INSERT INTO suscription_rec (servicio, plan, precio, usuario_id, estado, periodicidad, next_payment, fecha_fin)
-           VALUES ('$servicio', '$plan', '$precio', '$usuario_id', '$estado', '$periodicidad', '$next_payment', '$fecha_fin')";
-
-$resultado = mysqli_query($conexion, $query);
-if (!$resultado) die("❌ Error al guardar: " . mysqli_error($conexion));
-
-$rec_id = mysqli_insert_id($conexion);
+// Sin base de datos: identificador local para la referencia del pago
+$rec_id = strtoupper(bin2hex(random_bytes(4)));
 
 // ══════════════════════════════════════════
 // WEB CHECKOUT — Pago recurrente
@@ -116,8 +98,17 @@ if (!$response) die("❌ Error de conexión: " . $curlError);
 $result = json_decode($response, true);
 
 if (isset($result['processUrl'])) {
-    $request_id = mysqli_real_escape_string($conexion, $result['requestId'] ?? '');
-    mysqli_query($conexion, "UPDATE suscription_rec SET request_id = '$request_id' WHERE id = '$rec_id'");
+    $_SESSION['srec_requestId'] = $result['requestId'] ?? '';
+    $_SESSION['srec_info'] = [
+        'id'           => $rec_id,
+        'servicio'     => $servicio,
+        'plan'         => $plan,
+        'precio'       => $precio,
+        'usuario_id'   => $usuario_id,
+        'periodicidad' => $periodicidad,
+        'next_payment' => $next_payment,
+        'fecha_fin'    => $fecha_fin,
+    ];
     header("Location: " . $result['processUrl']);
     exit();
 } else {

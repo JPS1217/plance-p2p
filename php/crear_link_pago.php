@@ -1,10 +1,6 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-    header("Location: ../index.php");
-    exit();
-}
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: ../views/textil/pl.php");
@@ -12,11 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 require_once 'p2p_config.php';
-require_once 'conexion_be.php';
-if (!isset($conexion)) {
-    $conexion = plance_db_connect();
-    if (!$conexion) die("Error de conexión: " . mysqli_connect_error());
-}
+require_once 'env.php';
 
 // Recibir datos
 $producto = trim($_POST['producto'] ?? '');
@@ -28,11 +20,7 @@ if (empty($producto) || empty($precio) || empty($correo)) {
     die("❌ Faltan datos.");
 }
 
-// Sanitizar
-$producto = mysqli_real_escape_string($conexion, $producto);
-$precio   = mysqli_real_escape_string($conexion, $precio);
-$correo   = mysqli_real_escape_string($conexion, $correo);
-$nombre   = mysqli_real_escape_string($conexion, $nombre);
+// Sin base de datos: los valores ya vienen con trim (no hay SQL que escapar).
 
 // Generar referencia única
 $referencia  = 'PL-' . strtoupper(bin2hex(random_bytes(4)));
@@ -95,19 +83,8 @@ $link_url = $result['url']  ?? $result['link'] ?? $result['data']['url'] ?? '';
 $link_id  = $result['id']   ?? $result['linkId'] ?? '';
 $status   = $result['status']['status'] ?? ($link_url ? 'OK' : 'ERROR');
 
-// Guardar en BD
-$link_url_safe = mysqli_real_escape_string($conexion, $link_url);
-$link_id_safe  = mysqli_real_escape_string($conexion, (string)$link_id);
-$ref_safe      = mysqli_real_escape_string($conexion, $referencia);
-$exp_safe      = mysqli_real_escape_string($conexion, $expiracion);
-$estado_db     = $link_url ? 'activo' : 'error';
-$estado_safe   = mysqli_real_escape_string($conexion, $estado_db);
-
-$query = "INSERT INTO payment_link (producto, precio, link_id, link_url, referencia, descripcion, estado, expiracion, correo)
-          VALUES ('$producto', '$precio', '$link_id_safe', '$link_url_safe', '$ref_safe', '$descripcion', '$estado_safe', '$exp_safe', '$correo')";
-
-mysqli_query($conexion, $query);
-$registro_id = mysqli_insert_id($conexion);
+// Sin base de datos: identificador local para el retorno
+$registro_id = strtoupper(bin2hex(random_bytes(4)));
 
 // Guardar en sesión para retorno
 $_SESSION['link_result'] = [

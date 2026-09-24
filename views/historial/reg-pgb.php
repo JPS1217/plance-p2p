@@ -1,43 +1,9 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-    header("Location: ../../index.php");
-    exit();
-}
-
-require_once '../../php/conexion_be.php';
-if (!isset($conexion)) {
-    $conexion = plance_db_connect();
-    if (!$conexion) die("Error de conexión: " . mysqli_connect_error());
-}
-
-// Traer solo las órdenes del jugador_id que coincide con el usuario en sesión
-// En ordenes, jugador_id lo escribe el usuario manualmente
-// Pero también podemos filtrar por user_id si lo tienes,
-// por ahora filtramos todas (admin view) o por correo si aplica
-// Como jugador_id es libre, mostramos todas las órdenes — puedes restringir después
-// Determinar qué tabla mostrar
+// Sin base de datos: historial vacío (estado "sin registros").
 $modo = $_GET['modo'] ?? 'wc';
-
-if ($modo === 'gateway') {
-    $resultado = mysqli_query($conexion, "SELECT * FROM gateway_ordenes WHERE tipo_pago = 'basico' ORDER BY created_at DESC");
-} elseif ($modo === 'mixto') {
-    // Mixtos: registros de ordenes que tienen monto_pagado (pago parcial) o productos múltiples
-    $resultado = mysqli_query($conexion, "SELECT * FROM ordenes WHERE monto_pagado IS NOT NULL OR producto LIKE '%+%' ORDER BY created_at DESC");
-} elseif ($modo === 'gateway_mixto') {
-    $resultado = mysqli_query($conexion, "
-        SELECT o.*,
-            (SELECT COUNT(*) FROM gateway_abonos a WHERE a.gateway_orden_id = o.id) AS num_abonos,
-            (SELECT a2.id FROM gateway_abonos a2 WHERE a2.gateway_orden_id = o.id AND a2.estado = 'pendiente' ORDER BY a2.id DESC LIMIT 1) AS pendiente_abono_id,
-            (SELECT a3.request_id FROM gateway_abonos a3 WHERE a3.gateway_orden_id = o.id AND a3.estado = 'pendiente' ORDER BY a3.id DESC LIMIT 1) AS pendiente_request_id
-        FROM gateway_ordenes o
-        WHERE o.tipo_pago = 'mixto'
-        ORDER BY o.created_at DESC
-    ");
-} else {
-    $resultado = mysqli_query($conexion, "SELECT * FROM ordenes WHERE monto_pagado IS NULL AND producto NOT LIKE '%+%' ORDER BY created_at DESC");
-}
+$resultado = [];
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -101,7 +67,7 @@ if ($modo === 'gateway') {
         }
         ?>
 
-        <?php if (mysqli_num_rows($resultado) > 0): ?>
+        <?php if (count($resultado) > 0): ?>
         <div class="table-responsive" id="pgb-tabla">
             <table class="table table-hover">
                 <thead>
@@ -154,7 +120,7 @@ if ($modo === 'gateway') {
                     <?php endif; ?>
                 </thead>
                 <tbody>
-                    <?php while ($row = mysqli_fetch_assoc($resultado)): ?>
+                    <?php foreach (($resultado ?? []) as $row): ?>
                     <tr>
                         <?php if ($modo === 'gateway'): ?>
                         <td><span style="color:#8a8d96;">#<?= htmlspecialchars($row['id']) ?></span></td>
@@ -283,7 +249,7 @@ if ($modo === 'gateway') {
                         </td>
                         <?php endif; ?>
                     </tr>
-                    <?php endwhile; ?>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>

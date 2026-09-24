@@ -36,15 +36,8 @@ if (empty($data) || !is_array($data)) {
     exit();
 }
 
-require_once 'conexion_be.php';
-if (!isset($conexion)) {
-    $conexion = plance_db_connect();
-    if (!$conexion) {
-        http_response_code(500);
-        echo json_encode(['status' => 'ERROR', 'message' => 'Error de conexion BD']);
-        exit();
-    }
-}
+// Sin base de datos: el webhook valida la firma y registra la notificación,
+// pero ya no persiste estado (no hay tablas que actualizar).
 
 // ==============================================================
 // Webhook de devoluciones ACH (chargeback.created)
@@ -125,62 +118,16 @@ $nuevo_estado = match ($status_txt) {
     default              => 'cancelada'
 };
 
-$rid_safe = mysqli_real_escape_string($conexion, $request_id);
-$est_safe = mysqli_real_escape_string($conexion, $nuevo_estado);
-$ref_safe = mysqli_real_escape_string($conexion, $reference);
-
-// Enrutar a la tabla segun el prefijo de la referencia
-$queries = [];
-
-if (strpos($reference, 'PRE-') === 0) {
-    // Preautorizaciones (reservaciones)
-    $queries[] = "UPDATE reservaciones SET estado = '$est_safe' WHERE request_id = '$ref_safe' OR session_id = '$rid_safe'";
-
-} elseif (strpos($reference, 'DISP-') === 0) {
-    // Dispersiones (guarda la referencia en request_id)
-    $queries[] = "UPDATE dispersiones SET estado = '$est_safe' WHERE request_id = '$ref_safe'";
-
-} elseif (strpos($reference, 'PL-') === 0) {
-    // Links de pago (tabla payment_link, columna referencia)
-    $estado_link = ($nuevo_estado === 'aprobada') ? 'pagado' : $nuevo_estado;
-    $inc_pagos   = ($nuevo_estado === 'aprobada') ? ", pagos_usados = pagos_usados + 1" : "";
-    $el_safe = mysqli_real_escape_string($conexion, $estado_link);
-    $queries[] = "UPDATE payment_link SET estado = '$el_safe'$inc_pagos WHERE referencia = '$ref_safe'";
-
-} elseif (strpos($reference, 'REC-') === 0) {
-    $id = intval(str_replace('REC-', '', $reference));
-    $queries[] = "UPDATE recurrencias SET estado = '$est_safe' WHERE id = $id";
-
-} elseif (strpos($reference, 'SUB-') === 0) {
-    $id = intval(str_replace('SUB-', '', $reference));
-    $queries[] = "UPDATE suscripciones SET estado = '$est_safe' WHERE id = $id AND request_id = '$rid_safe'";
-    $queries[] = "UPDATE suscription SET estado = '$est_safe' WHERE id = $id AND request_id = '$rid_safe'";
-
-} elseif (strpos($reference, 'SREC-') === 0) {
-    $id = intval(str_replace('SREC-', '', $reference));
-    $queries[] = "UPDATE suscription_rec SET estado = '$est_safe' WHERE id = $id AND request_id = '$rid_safe'";
-
-} elseif (strpos($reference, 'GW-') === 0) {
-    // Gateway (pago basico sin Web Checkout)
-    $queries[] = "UPDATE gateway_ordenes SET estado = '$est_safe' WHERE request_id = '$rid_safe'";
-    $queries[] = "UPDATE gateway_recurrencias SET estado = '$est_safe' WHERE request_id = '$rid_safe'";
-
-} else {
-    // Ordenes basicas (referencia numerica)
-    $id = intval($reference);
-    if ($id > 0) {
-        $queries[] = "UPDATE ordenes SET estado = '$est_safe' WHERE id = $id";
-    }
-}
-
-foreach ($queries as $q) {
-    if (!mysqli_query($conexion, $q)) {
-        error_log('Error webhook notify.php: ' . mysqli_error($conexion));
-    }
-}
+// Sin base de datos: se registra la notificación validada en el log en vez de
+// persistir el estado en tablas.
+file_put_contents(
+    __DIR__ . '/notify_debug.log',
+    date('Y-m-d H:i:s') . " | NOTIFY validado | ref=$reference | estado=$nuevo_estado\n\n",
+    FILE_APPEND
+);
 
 // NOTA: la notificacion NO trae el token del medio de pago; para suscripciones
-// se debe consultar la sesion via API (verificar_pago.php) tras el APPROVED.
+// se debe consultar la sesion via API tras el APPROVED.
 
 // Responder 200 lo antes posible (PlaceToPay NO reintenta la notificacion)
 http_response_code(200);

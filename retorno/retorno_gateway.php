@@ -1,17 +1,13 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-    header("Location: ../index.php");
-    exit();
-}
 
 // Obtener resultado de sesión
 $gw = $_SESSION['gw_result'] ?? null;
 unset($_SESSION['gw_result']);
 
 if (!$gw) {
-    header("Location: ../home.php");
+    header("Location: ../index.php");
     exit();
 }
 
@@ -122,7 +118,7 @@ if ($status === 'APPROVED') {
             </div>
         </div>
 
-        <a href="../home.php" class="btn-home">← Inicio</a>
+        <a href="../index.php" class="btn-home">← Inicio</a>
         <a href="../views/games/juegos.php" class="btn-volver">Volver al comercio</a>
     </div>
 

@@ -1,36 +1,8 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-    header("Location: ../../index.php");
-    exit();
-}
-
-require_once '../../php/conexion_be.php';
-if (!isset($conexion)) {
-    $conexion = plance_db_connect();
-    if (!$conexion) die("Error de conexión: " . mysqli_connect_error());
-}
-
-$correo  = mysqli_real_escape_string($conexion, $_SESSION['correo'] ?? '');
-
-// Traer ordenes aprobadas
-$ordenes = mysqli_query($conexion, "SELECT id, producto as nombre, precio, jugador_id as usuario, created_at, estado, 'orden' as tipo FROM ordenes WHERE estado = 'aprobada' ORDER BY created_at DESC");
-
-// Traer suscripciones aprobadas del usuario
-$suscripciones = mysqli_query($conexion, "SELECT id, CONCAT(plataforma, ' — ', plan) as nombre, precio, usuario_id as usuario, created_at, estado, 'suscripcion' as tipo FROM suscripciones WHERE estado = 'aprobada' AND usuario_id = '$correo' ORDER BY created_at DESC");
-
-// Traer recurrencias aprobadas del usuario
-$recurrencias = mysqli_query($conexion, "SELECT id, CONCAT(servicio, ' — ', plan) as nombre, precio, usuario_id as usuario, created_at, estado, 'recurrencia' as tipo FROM recurrencias WHERE estado = 'aprobada' AND usuario_id = '$correo' ORDER BY created_at DESC");
-
-// Unir en un array
+// Sin base de datos: no hay transacciones aprobadas que reversar (estado vacío).
 $transacciones = [];
-while ($row = mysqli_fetch_assoc($ordenes))      $transacciones[] = $row;
-while ($row = mysqli_fetch_assoc($suscripciones)) $transacciones[] = $row;
-while ($row = mysqli_fetch_assoc($recurrencias))  $transacciones[] = $row;
-
-// Ordenar por fecha desc
-usort($transacciones, fn($a, $b) => strtotime($b['created_at']) - strtotime($a['created_at']));
 
 // Mensaje
 $msg      = $_SESSION['reverso_msg']      ?? '';

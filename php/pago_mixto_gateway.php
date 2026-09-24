@@ -1,20 +1,12 @@
 <?php
 session_start();
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-    header("Location: ../index.php");
-    exit();
-}
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: ../views/games/bloodstrike.php");
     exit();
 }
 
-require_once 'conexion_be.php';
-if (!isset($conexion)) {
-    $conexion = plance_db_connect();
-    if (!$conexion) die("Error de conexión: " . mysqli_connect_error());
-}
+require_once 'env.php';
 require_once 'p2p_config.php';
 require_once 'p2p_sonda_core.php';
 
@@ -35,20 +27,12 @@ if (empty($jugador_id) || (!$orden_id && (empty($producto) || $precio <= 0))) {
     die("❌ Faltan datos principales.");
 }
 
-// ── Orden nueva vs. abono sobre una orden existente ──
-if ($orden_id) {
-    $orden_row = mysqli_fetch_assoc(mysqli_query(
-        $conexion,
-        "SELECT * FROM gateway_ordenes WHERE id = $orden_id AND tipo_pago = 'mixto'"
-    ));
-    if (!$orden_row) die("❌ Orden no encontrada.");
-
-    $precio       = (float) $orden_row['precio'];
-    $producto     = $orden_row['producto'];
-    $monto_pagado = (float) ($orden_row['monto_pagado'] ?? 0);
-} else {
-    $monto_pagado = 0.0;
+// Sin base de datos: no hay orden previa que retomar. Cada pago mixto de
+// gateway inicia una orden local nueva (el saldo previo es 0).
+if (!$orden_id) {
+    $orden_id = strtoupper(bin2hex(random_bytes(4)));
 }
+$monto_pagado = 0.0;
 
 $saldo_pendiente = $precio - $monto_pagado;
 
@@ -56,21 +40,7 @@ if ($monto_pagar < 1000 || $monto_pagar > $saldo_pendiente) {
     die("❌ El monto a pagar debe estar entre \$1.000 COP y el saldo pendiente (\$" . number_format($saldo_pendiente, 0, ',', '.') . " COP).");
 }
 
-// Sanitizar
-$producto_safe   = mysqli_real_escape_string($conexion, $producto);
-$jugador_id_safe = mysqli_real_escape_string($conexion, $jugador_id);
-$correo_safe     = mysqli_real_escape_string($conexion, $correo);
-$telefono_safe   = mysqli_real_escape_string($conexion, $telefono);
-$tipo_doc_safe   = mysqli_real_escape_string($conexion, $tipo_doc);
-$num_doc_safe    = mysqli_real_escape_string($conexion, $num_doc);
-$nombre_safe     = mysqli_real_escape_string($conexion, $nombre);
-
-if (!$orden_id) {
-    $query = "INSERT INTO gateway_ordenes (producto, tipo_pago, precio, nombre, correo, telefono, tipo_doc, num_doc, estado, monto_pagado)
-              VALUES ('$producto_safe', 'mixto', '$precio', '$nombre_safe', '$correo_safe', '$telefono_safe', '$tipo_doc_safe', '$num_doc_safe', 'pendiente', 0)";
-    if (!mysqli_query($conexion, $query)) die("❌ Error al crear la orden: " . mysqli_error($conexion));
-    $orden_id = mysqli_insert_id($conexion);
-}
+// Sin base de datos: los valores ya vienen con trim (no hay SQL que escapar).
 
 // ══════════════════════════════════════════
 // API Gateway — PlacetoPay (mismas credenciales del comercio principal)
@@ -165,20 +135,12 @@ if (in_array($estado_elegido, ['aprobada', 'pendiente', 'rechazada'])) {
     };
 }
 
-// ── Registrar el abono y recalcular la orden ──
-$gw_request_id   = $result['internalReference'] ?? $reference;
-$ref_safe        = mysqli_real_escape_string($conexion, $gw_request_id);
-$estado_safe     = mysqli_real_escape_string($conexion, $nuevo_estado_abono);
-$metodo_safe     = mysqli_real_escape_string($conexion, $metodo);
+// ── Sin base de datos: no se persiste el abono ni se recalcula la orden ──
+$gw_request_id = $result['internalReference'] ?? $reference;
+$abono_id      = strtoupper(bin2hex(random_bytes(4)));
 
-$query = "INSERT INTO gateway_abonos (gateway_orden_id, monto, medio_pago, estado, request_id)
-          VALUES ($orden_id, '$monto_pagar', '$metodo_safe', '$estado_safe', '$ref_safe')";
-if (!mysqli_query($conexion, $query)) die("❌ Error al guardar el abono: " . mysqli_error($conexion));
-$abono_id = mysqli_insert_id($conexion);
-
-p2p_recalcular_orden_mixta($conexion, $orden_id);
-
-$orden_actual = mysqli_fetch_assoc(mysqli_query($conexion, "SELECT * FROM gateway_ordenes WHERE id = $orden_id"));
+// Monto pagado tras este abono (sólo para la vista de retorno)
+$monto_pagado_actual = $monto_pagado + ($nuevo_estado_abono === 'aprobada' ? $monto_pagar : 0);
 
 // Guardar en sesión para retorno
 $_SESSION['gwm_result'] = [
@@ -189,7 +151,7 @@ $_SESSION['gwm_result'] = [
     'producto'    => $producto,
     'precio'      => $precio,
     'monto_pagar' => $monto_pagar,
-    'monto_pagado'=> (float) ($orden_actual['monto_pagado'] ?? 0),
+    'monto_pagado'=> $monto_pagado_actual,
     'correo'      => $correo,
     'nombre'      => $nombre,
     'message'     => $gw_message,

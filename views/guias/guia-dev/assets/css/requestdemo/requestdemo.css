@@ -71,27 +71,33 @@ body {
   background: var(--bg);
 }
 
-.demo-layout-op,
-.demo-layout-auth,
+.demo-layout-top,
 .demo-layout-io {
   width: 100%;
   min-width: 0;
 }
 
-/* Fila 1: panel de operación centrado y de ancho acotado */
-.demo-layout-op {
-  display: flex;
-  justify-content: center;
+/* Fila 1 combinada: (Operación + Autenticación/Pago) | Ayuda.
+   Usa la MISMA plantilla de columnas que la fila 3 (Request | Response) para
+   que la ayuda quede alineada con Response, y el par Operación+Autenticación
+   quede alineado con Request. */
+.demo-layout-top {
+  display: grid;
+  grid-template-columns: var(--demo-cols);
+  gap: var(--space-xl, 2.5rem);
+  align-items: stretch;
 }
 
-.demo-layout-op > .demo-section-panel {
-  width: 100%;
-  max-width: 640px;
+/* Los dos paneles de la izquierda comparten (a partes iguales) el ancho de la
+   columna que se alinea con Request Body. */
+.demo-top-left {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-xl, 2.5rem);
 }
 
-/* Filas 2 y 3 comparten la MISMA plantilla de columnas para que sus
-   tarjetas queden alineadas verticalmente. */
-.demo-layout-auth,
+/* Fila 3: Request Body + Response, misma plantilla de 2 columnas. */
 .demo-layout-io {
   display: grid;
   grid-template-columns: var(--demo-cols);
@@ -100,9 +106,8 @@ body {
 }
 
 /* Estilo de tarjeta común a todos los contenedores */
-.demo-layout-op > .demo-section-panel,
-.demo-layout-auth > .demo-section-panel,
-.demo-layout-auth > .auth-help,
+.demo-top-left > .demo-section-panel,
+.demo-layout-top > .auth-help,
 .demo-layout-io > .panel-center,
 .demo-layout-io > .panel-right {
   min-width: 0;
@@ -114,26 +119,25 @@ body {
   overflow: hidden;
 }
 
-/* Tamaño fijo para las tarjetas de las filas 2 y 3: su alto no cambia al
+/* Tamaño fijo para las tarjetas: su alto no cambia al
    colapsar/expandir las secciones internas (que hacen scroll interno). */
-.demo-layout-auth > .demo-section-panel,
-.demo-layout-auth > .auth-help,
+.demo-top-left > .demo-section-panel,
+.demo-layout-top > .auth-help,
 .demo-layout-io > .panel-center,
 .demo-layout-io > .panel-right {
   height: var(--card-h);
 }
 
-/* El panel de Autenticación y la tarjeta "Explora la autenticación" hacen
-   scroll interno si su contenido excede el alto fijo de la tarjeta. */
-.demo-layout-auth > .demo-section-panel,
-.demo-layout-auth > .auth-help {
+/* Los paneles de la fila 1 hacen scroll interno si su contenido excede el
+   alto fijo de la tarjeta. */
+.demo-top-left > .demo-section-panel,
+.demo-layout-top > .auth-help {
   overflow-y: auto;
 }
 
 /* Panels que ya tenían padding propio (.panel-left) lo conservan; sólo
    anulamos su border-right heredado, ya que ahora cada tarjeta tiene borde. */
-.demo-layout-op > .demo-section-panel,
-.demo-layout-auth > .demo-section-panel {
+.demo-top-left > .demo-section-panel {
   border-right: 0;
 }
 
@@ -302,20 +306,17 @@ body {
   font-size: 0.95rem;
 }
 
-/* Responsive: las filas de 2 columnas se apilan en pantallas estrechas. */
+/* Responsive: las filas de columnas se apilan en pantallas estrechas. */
 @media (max-width: 900px) {
-  .demo-layout-auth,
+  .demo-layout-top,
+  .demo-top-left,
   .demo-layout-io {
     grid-template-columns: 1fr;
   }
 
-  .demo-layout-op > .demo-section-panel {
-    max-width: none;
-  }
-
   /* Apiladas, las tarjetas usan alto mínimo en vez de fijo. */
-  .demo-layout-auth > .demo-section-panel,
-  .demo-layout-auth > .auth-help,
+  .demo-top-left > .demo-section-panel,
+  .demo-layout-top > .auth-help,
   .demo-layout-io > .panel-center,
   .demo-layout-io > .panel-right {
     height: auto;
@@ -453,3 +454,44 @@ body {
 .demo-layout-io > .panel-right {
   background: rgba(17, 17, 17, 0.86);
 } */
+
+
+/* ============================================================
+   Campos con descripción en vivo (hover) + fijado (clic).
+   Aplica a los .field-group[data-info-key] de Autenticación y Datos del pago.
+   ============================================================ */
+#secAuth .field-group[data-info-key],
+#secPago .field-group[data-info-key] {
+  cursor: pointer;
+  border-radius: var(--radius-md, 10px);
+  transition: background var(--transition-speed, 0.15s) var(--ease, ease),
+    box-shadow var(--transition-speed, 0.15s) var(--ease, ease);
+}
+
+/* Pista al pasar el mouse / enfocar por teclado */
+#secAuth .field-group[data-info-key]:hover,
+#secPago .field-group[data-info-key]:hover,
+#secAuth .field-group[data-info-key]:focus-visible,
+#secPago .field-group[data-info-key]:focus-visible {
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  outline: none;
+}
+
+/* Campo fijado (clic): borde/realce persistente mientras esté bloqueado */
+#secAuth .field-group.is-locked,
+#secPago .field-group.is-locked {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+/* El icono ⓘ ahora es solo visual: no captura clic ni foco (el disparador
+   es todo el campo). Se conserva para señalar que el campo tiene ayuda. */
+#secAuth .field-group[data-info-key] .info-action.auth-info,
+#secPago .field-group[data-info-key] .info-action.auth-info {
+  pointer-events: none;
+}
+
+/* Estado "fijado" del encabezado de la tarjeta de ayuda (panel 3) */
+.auth-help-kicker.is-locked {
+  color: var(--accent);
+}

@@ -1,10 +1,6 @@
-Ôªø<?php
+<?php
 session_start();
 
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-    header("Location: ../../index.php");
-    exit();
-}
 ?>
 
 <!DOCTYPE html>
@@ -32,7 +28,7 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
 
 </head>
 <style>
-    /* Tienda de Monedas ‚Äî acento dorado */
+    /* Tienda de Monedas ó acento dorado */
     :root {
         --gj-accent:        #f0b429;
         --gj-accent-glow:   rgba(240, 180, 41, 0.25);
@@ -56,7 +52,7 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
     </div>
   </div>
 
-  <!-- ‚ïê‚ïê‚ïê MAIN LAYOUT ‚ïê‚ïê‚ïê -->
+  <!-- --- MAIN LAYOUT --- -->
   <main class="shop-layout">
 
     <!-- IZQ: Productos Panel -->
@@ -75,7 +71,7 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
           </div>
 
           <div class="product-card popular-card" data-id="2" data-pts="500" data-price="12927" data-original="18972" data-discount="32">
-            <div class="badge-popular">‚òÖ Popular</div>
+            <div class="badge-popular">? Popular</div>
             <img src="../../assets/imgames/monedas/coin-icon.svg" style="height: 25px; width: 40px" alt="">
             <div class="product-card__pts">460</div>
             <div class="product-card__label">Monedas</div>
@@ -195,27 +191,27 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
 
         <button class="btn-buy" id="btnBuy">
           <span>Comprar ahora</span>
-          <span class="btn-arrow">‚Üí</span>
+          <span class="btn-arrow">?</span>
         </button>
 
 
         <div class="checkout-divider"></div>
 
         <!--- <div class="trust-badges">
-          <div class="trust-item"><i class="bi bi-shield-check fs-6 text-warning"></i><span>Garant√≠a de reembolso ¬∑ P2P</span></div>
-          <div class="trust-item"><i class="bi bi-lightning-fill fs-6 text-warning"></i><span>Pago r√°pido ¬∑ Apple Pay / G Pay</span></div>
-          <div class="trust-item"><i class="bi bi-headset fs-6 text-warning"></i><span>Asistencia en directo 24/7 ‚Äî ¬°A tu lado!</span></div>
+          <div class="trust-item"><i class="bi bi-shield-check fs-6 text-warning"></i><span>GarantÌa de reembolso ∑ P2P</span></div>
+          <div class="trust-item"><i class="bi bi-lightning-fill fs-6 text-warning"></i><span>Pago r·pido ∑ Apple Pay / G Pay</span></div>
+          <div class="trust-item"><i class="bi bi-headset fs-6 text-warning"></i><span>Asistencia en directo 24/7 ó °A tu lado!</span></div>
         </div>
       </div> -->
 
       <div class="session-instructions">
-        <p class="section-label">Instrucciones para crear sesi√≥n</p>
+        <p class="section-label">Instrucciones para crear sesiÛn</p>
         <ol class="session-steps">
           <li class="session-step">
             <span class="session-step__num">1</span>
             <div class="session-step__body">
               <span class="session-step__title">Digita tu ID de jugador</span>
-              <span class="session-step__desc">Escr√≠belo en el campo "ID de jugador" del panel de la derecha, tal como aparece en tu cuenta del juego.</span>
+              <span class="session-step__desc">EscrÌbelo en el campo "ID de jugador" del panel de la derecha, tal como aparece en tu cuenta del juego.</span>
             </div>
           </li>
           <li class="session-step">
@@ -228,8 +224,8 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
           <li class="session-step">
             <span class="session-step__num">3</span>
             <div class="session-step__body">
-              <span class="session-step__title">Crea tu sesi√≥n de pago</span>
-              <span class="session-step__desc">Presiona "Comprar ahora" para generar tu sesi√≥n y completar el pago de forma segura.</span>
+              <span class="session-step__title">Crea tu sesiÛn de pago</span>
+              <span class="session-step__desc">Presiona "Comprar ahora" para generar tu sesiÛn y completar el pago de forma segura.</span>
             </div>
           </li>
         </ol>
@@ -240,8 +236,8 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
         <div class="vendor-info">
           <div class="vendor-avatar">JM</div>
           <div>
-            <div class="vendor-name">Jair ‚úÖ</div>
-            <div class="vendor-rating">üëç 2026 ¬∑ <a href="#">Evertec Placetopay SAS</a></div>
+            <div class="vendor-name">Jair ?</div>
+            <div class="vendor-rating">?? 2026 ∑ <a href="#">Evertec Placetopay SAS</a></div>
           </div>
         </div>
       </div>
@@ -249,11 +245,11 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
     </aside>
   </main>
 
-  <!-- ‚ïê‚ïê‚ïê INTEGRACI√ìN PLACETOPAY ‚ïê‚ïê‚ïê -->
+  <!-- --- INTEGRACI”N PLACETOPAY --- -->
   <section class="integration-docs" style="--code-accent:var(--gj-accent); --code-accent-ink:var(--gj-accent-ink); --code-accent-soft:var(--gj-accent-soft); --code-radius-sm:var(--gj-radius-sm); --code-radius-md:var(--gj-radius-md); --code-radius-lg:var(--gj-radius-lg); --code-font:var(--gj-font-body);">
-    <span class="integration-docs__badge"><i class="bi bi-braces"></i> Integraci√≥n PlacetoPay</span>
-    <h3>As√≠ se crea la sesi√≥n de pago de esta tienda</h3>
-    <p>Cuando presionas <strong>"Comprar ahora"</strong>, nuestro backend arma este mismo request y lo env√≠a a <strong>PlacetoPay Web Checkout</strong>. La respuesta trae un <code>processUrl</code> al que te redirigimos para pagar con tarjeta o PSE ‚Äî tus datos de pago nunca pasan por nuestro servidor.</p>
+    <span class="integration-docs__badge"><i class="bi bi-braces"></i> IntegraciÛn PlacetoPay</span>
+    <h3>AsÌ se crea la sesiÛn de pago de esta tienda</h3>
+    <p>Cuando presionas <strong>"Comprar ahora"</strong>, nuestro backend arma este mismo request y lo envÌa a <strong>PlacetoPay Web Checkout</strong>. La respuesta trae un <code>processUrl</code> al que te redirigimos para pagar con tarjeta o PSE ó tus datos de pago nunca pasan por nuestro servidor.</p>
 
     <div class="endpoint-bar">
       <span class="method-pill">POST</span>
@@ -286,18 +282,18 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
   <span class="jk">"userAgent"</span>: <span class="js">"Mozilla/5.0 (Windows NT 10.0; Win64; x64)"</span>
 }</code></pre>
       <pre class="code-panel" data-key="php"><code>&lt;?php
-<span class="cm">// credenciales fuera del c√≥digo, nunca hardcodeadas</span>
+<span class="cm">// credenciales fuera del cÛdigo, nunca hardcodeadas</span>
 <span class="cvar">$login</span>     = getenv(<span class="js">'P2P_LOGIN'</span>);
 <span class="cvar">$secretKey</span> = getenv(<span class="js">'P2P_SECRET_KEY'</span>);
 <span class="cvar">$url</span>       = <span class="js">'https://checkout-test.placetopay.com/api/session'</span>;
 
-<span class="cm">// autenticaci√≥n: Base64( SHA256( nonce + seed + secretKey ) )</span>
+<span class="cm">// autenticaciÛn: Base64( SHA256( nonce + seed + secretKey ) )</span>
 <span class="cvar">$seed</span>     = date(<span class="js">'c'</span>);
 <span class="cvar">$nonce</span>    = bin2hex(random_bytes(16));
 <span class="cvar">$tranKey</span>  = base64_encode(hash(<span class="js">'sha256'</span>, <span class="cvar">$nonce</span> . <span class="cvar">$seed</span> . <span class="cvar">$secretKey</span>, true));
 <span class="cvar">$nonceB64</span> = base64_encode(<span class="cvar">$nonce</span>);
 
-<span class="cm">// cuerpo del request ‚Äî as√≠ lo arma esta tienda</span>
+<span class="cm">// cuerpo del request ó asÌ lo arma esta tienda</span>
 <span class="cvar">$data</span> = [
     <span class="jk">'auth'</span> =&gt; [
         <span class="jk">'login'</span>   =&gt; <span class="cvar">$login</span>,
@@ -333,14 +329,14 @@ header(<span class="js">'Location: '</span> . <span class="cvar">$result</span>[
     </div>
 
     <div class="doc-note">
-      <span class="doc-note-icon">üí°</span>
-      <span>Este flujo es <strong>Web Checkout de pago √∫nico</strong>: un solo cobro por el valor de los puntos elegidos, sin tokenizar tarjeta ni programar cobros futuros. Cuando vuelvas de la pasarela, consultamos el estado real de la sesi√≥n antes de entregar los puntos.</span>
+      <span class="doc-note-icon">??</span>
+      <span>Este flujo es <strong>Web Checkout de pago ˙nico</strong>: un solo cobro por el valor de los puntos elegidos, sin tokenizar tarjeta ni programar cobros futuros. Cuando vuelvas de la pasarela, consultamos el estado real de la sesiÛn antes de entregar los puntos.</span>
     </div>
 
     <a class="integration-docs__link" href="../guias/guia-developer.php#web-checkout">
       <div>
-        <strong>¬øQuieres entender esta integraci√≥n a fondo?</strong>
-        <span>Lee la documentaci√≥n completa de Web Checkout ‚Äî autenticaci√≥n, notificaciones y m√°s.</span>
+        <strong>øQuieres entender esta integraciÛn a fondo?</strong>
+        <span>Lee la documentaciÛn completa de Web Checkout ó autenticaciÛn, notificaciones y m·s.</span>
       </div>
       <i class="bi bi-arrow-right"></i>
     </a>
@@ -398,7 +394,7 @@ header(<span class="js">'Location: '</span> . <span class="cvar">$result</span>[
       const cards = document.querySelectorAll('.product-card');
 
       if (cards.length === 0) {
-        // Si el DOM a√∫n no est√° listo, reintenta
+        // Si el DOM a˙n no est· listo, reintenta
         setTimeout(initCards, 100);
         return;
       }
@@ -411,7 +407,7 @@ header(<span class="js">'Location: '</span> . <span class="cvar">$result</span>[
         });
       });
 
-      // Selecci√≥n por defecto: tarjeta 460 Monedas
+      // SelecciÛn por defecto: tarjeta 460 Monedas
       var def = document.querySelector('.product-card[data-id="2"]');
       if (def) {
         def.classList.add('selected');
@@ -419,7 +415,7 @@ header(<span class="js">'Location: '</span> . <span class="cvar">$result</span>[
       }
     }
 
-    // Funciona tanto si el DOM ya carg√≥ como si no
+    // Funciona tanto si el DOM ya cargÛ como si no
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', initCards);
     } else {
@@ -433,7 +429,7 @@ header(<span class="js">'Location: '</span> . <span class="cvar">$result</span>[
 
       var jugadorId = document.getElementById('jugadorIdInput').value.trim();
       if (!jugadorId) {
-        alert('‚ö†Ô∏è Por favor ingresa tu ID de jugador antes de continuar.');
+        alert('?? Por favor ingresa tu ID de jugador antes de continuar.');
         document.getElementById('jugadorIdInput').focus();
         return;
       }

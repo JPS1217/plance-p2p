@@ -1,16 +1,12 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-    header("Location: ../index.php");
-    exit();
-}
 
 $gw = $_SESSION['gw_rec_result'] ?? null;
 unset($_SESSION['gw_rec_result']);
 
 if (!$gw) {
-    header("Location: ../home.php");
+    header("Location: ../index.php");
     exit();
 }
 
@@ -122,7 +118,7 @@ if ($status === 'APPROVED') {
             <span>El calendario de cobro (próximo cobro y fin) queda guardado en nuestra base de datos como referencia — es PlacetoPay quien ejecuta los cobros siguientes, no nuestro backend.</span>
         </div>
 
-        <a href="../home.php" class="btn-home">← Inicio</a>
+        <a href="../index.php" class="btn-home">← Inicio</a>
         <a href="../views/plataformas/ia_gateway.php" class="btn-volver">Ver planes</a>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

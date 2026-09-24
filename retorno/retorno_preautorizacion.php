@@ -1,48 +1,31 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
+
+require_once '../php/env.php';
+
+$pre = $_SESSION['pre_result'] ?? null;
+
+// Leer reserva_id desde GET (viene del returnUrl) o desde sesión
+$reserva_id = $_GET['reserva_id'] ?? ($pre['reserva_id'] ?? '');
+
+if (!$reserva_id || !$pre) {
     header("Location: ../index.php");
     exit();
 }
 
-require_once '../php/conexion_be.php';
-if (!isset($conexion)) {
-    $conexion = plance_db_connect();
-    if (!$conexion) die("Error de conexión: " . mysqli_connect_error());
-}
+// Sin base de datos: todos los datos vienen de la sesión que dejó crear_preautorizacion
+$habitacion = $pre['habitacion'] ?? '';
+$total      = (float)($pre['total'] ?? 0);
+$correo     = $pre['correo'] ?? '';
+$reference  = $pre['reference'] ?? '';   // referencia PRE-XXXX
+$requestId  = $pre['requestId'] ?? '';   // requestId numérico de PlacetoPay
+$checkin    = $pre['checkin'] ?? '';
+$checkout   = $pre['checkout'] ?? '';
+$noches     = (int)($pre['noches'] ?? 1);
+$nombre     = $pre['nombre'] ?? '';
 
-$pre = $_SESSION['pre_result'] ?? null;
 unset($_SESSION['pre_result']);
-
-// Leer reserva_id desde GET (viene del returnUrl) o desde sesión
-$reserva_id = (int)($_GET['reserva_id'] ?? ($pre['reserva_id'] ?? 0));
-
-if (!$reserva_id) {
-    header("Location: ../home.php");
-    exit();
-}
-
-// Traer datos desde BD
-$row = mysqli_fetch_assoc(mysqli_query($conexion, "SELECT * FROM reservaciones WHERE id = $reserva_id"));
-if (!$row) {
-    header("Location: ../home.php");
-    exit();
-}
-
-$habitacion = $row['habitacion'];
-$total      = (float)$row['precio'];
-$correo     = $row['usuario_id'];
-$reference  = $row['request_id'];  // referencia PRE-XXXX
-$requestId  = $row['session_id'];  // requestId numérico de PlacetoPay
-
-// Extraer checkin/checkout de la descripcion
-$descripcion = $row['descripcion'];
-preg_match('/checkin: (.+) al (.+)\)/', $descripcion, $matches);
-$checkin  = $matches[1] ?? '';
-$checkout = $matches[2] ?? '';
-$noches   = $checkin && $checkout ? (int)((strtotime($checkout) - strtotime($checkin)) / 86400) : 1;
-$nombre   = $pre['nombre'] ?? '';
 
 // Consultar estado real en PlacetoPay
 $nuevo_estado = 'pendiente';
@@ -83,9 +66,7 @@ if ($requestId) {
         default    => 'rechazada'
     };
 
-    // Actualizar BD
-    $est_safe = mysqli_real_escape_string($conexion, $nuevo_estado);
-    mysqli_query($conexion, "UPDATE reservaciones SET estado='$est_safe' WHERE id=$reserva_id");
+    // Sin base de datos: no se persiste el estado.
 }
 
 // Colores y textos según estado
@@ -198,7 +179,7 @@ if ($gw_status === 'APPROVED') {
             </div>
         </div>
 
-        <a href="../home.php" class="btn-home">← Inicio</a>
+        <a href="../index.php" class="btn-home">← Inicio</a>
         <a href="../views/reservaciones/hotel.php" class="btn-volver">Ver habitaciones</a>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

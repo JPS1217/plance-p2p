@@ -1,10 +1,6 @@
 <?php
     session_start();
 
-    if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-    header("Location: ../../index.php");
-    exit();
-    }
 
 ?>
 <!DOCTYPE html>

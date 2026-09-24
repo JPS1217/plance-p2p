@@ -1,10 +1,6 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-    header("Location: ../index.php");
-    exit();
-}
 
 // Recibir datos del formulario de pubg/bloodstrike y guardar en sesión
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -13,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Si no hay datos pendientes redirigir
 if (empty($_SESSION['gw_pending'])) {
-    header("Location: ../home.php");
+    header("Location: ../index.php");
     exit();
 }
 

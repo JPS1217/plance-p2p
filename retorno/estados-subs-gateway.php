@@ -1,17 +1,13 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-    header("Location: ../index.php");
-    exit();
-}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $_SESSION['gw_subs_pending'] = $_POST;
 }
 
 if (empty($_SESSION['gw_subs_pending'])) {
-    header("Location: ../home.php");
+    header("Location: ../index.php");
     exit();
 }
 

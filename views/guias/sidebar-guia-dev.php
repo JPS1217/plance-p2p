@@ -61,7 +61,7 @@
       <span>Abrir Laboratorio de API</span>
       <i class="bi bi-arrow-right" style="margin-left:auto;"></i>
     </a>
-    <a href="../../home.php" class="lab-link" style="margin-top:8px; background:transparent;">
+    <a href="../../index.php" class="lab-link" style="margin-top:8px; background:transparent;">
       <i class="bi bi-house-door"></i>
       <span>Volver al inicio</span>
       <i class="bi bi-arrow-right" style="margin-left:auto;"></i>

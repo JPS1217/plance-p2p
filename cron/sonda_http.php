@@ -43,8 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'HEAD') {
     exit();
 }
 
-require_once __DIR__ . '/../php/conexion_be.php';
 require_once __DIR__ . '/../php/p2p_sonda_core.php';
+$conexion = null; // sin base de datos
 
 $TABLAS = [
     'ordenes', 'gateway_ordenes',                                    // pago basico: Web Checkout / API Gateway

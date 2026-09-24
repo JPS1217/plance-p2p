@@ -2,18 +2,10 @@
 session_start();
 // Solo acepta POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: ../home.php");
+    header("Location: ../index.php");
     exit();
 }
-
-// Conexión
-require_once 'conexion_be.php';
-if (!isset($conexion)) {
-    $conexion = plance_db_connect();
-    if (!$conexion) {
-        die("Error de conexión: " . mysqli_connect_error());
-    }
-}
+require_once 'env.php';
 
 // Recibir y limpiar datos
 $producto   = trim($_POST['producto']   ?? '');
@@ -25,23 +17,8 @@ if (empty($producto) || empty($precio) || empty($jugador_id)) {
     die("❌ Faltan datos. Por favor vuelve y completa todos los campos.");
 }
 
-// Sanitizar para evitar SQL injection básico
-$producto   = mysqli_real_escape_string($conexion, $producto);
-$precio     = mysqli_real_escape_string($conexion, $precio);
-$jugador_id = mysqli_real_escape_string($conexion, $jugador_id);
-
-// Insertar orden en BD
-$estado = "pendiente";
-$query  = "INSERT INTO ordenes (producto, precio, jugador_id, estado) 
-           VALUES ('$producto', '$precio', '$jugador_id', '$estado')";
-
-$resultado = mysqli_query($conexion, $query);
-
-if (!$resultado) {
-    die("❌ Error al guardar la orden: " . mysqli_error($conexion));
-}
-
-$order_id = mysqli_insert_id($conexion);
+// Sin base de datos: identificador local sólo para la referencia del pago
+$order_id = strtoupper(bin2hex(random_bytes(4)));
 
 
 //  WEB CHECKOUT — PlaceToPay
@@ -67,7 +44,7 @@ $data = [
         "seed"    => $seed
     ],
     "payment" => [
-        "reference"   => "ORD-" . str_pad($order_id, 6, '0', STR_PAD_LEFT),
+        "reference"   => "ORD-" . $order_id,
         "description" => substr(preg_replace('/[^a-zA-Z0-9 ]/u', '', $producto), 0, 80),
         "amount"      => [
             "currency" => "COP",
@@ -108,21 +85,23 @@ $result = json_decode($response, true);
 
 // Redirigir al checkout de PlaceToPay
 if (isset($result['processUrl'])) {
-    // Guardar requestId en BD antes de redirigir
-    $request_id = mysqli_real_escape_string($conexion, $result['requestId'] ?? '');
-    mysqli_query($conexion, "UPDATE ordenes SET request_id = '$request_id' WHERE id = '$order_id'");
-
     $_SESSION['p2p_requestId'] = $result['requestId'] ?? '';
     $_SESSION['p2p_order_id']  = $order_id;
+    $_SESSION['p2p_orden_info'] = [
+        'id'         => $order_id,
+        'producto'   => $producto,
+        'jugador_id' => $jugador_id,
+        'precio'     => $precio,
+    ];
     header("Location: " . $result['processUrl']);
     exit();
 } else {
     // Error — mostramos respuesta para depurar
     echo "<h3 style='font-family:sans-serif;color:#e05252;'>❌ Error al crear sesión de pago</h3>";
-    echo "<p style='font-family:sans-serif;color:#f0f1f3;'>Orden <strong>#$order_id</strong> guardada en BD pero el pago no pudo iniciarse.</p>";
+    echo "<p style='font-family:sans-serif;color:#f0f1f3;'>Orden <strong>#$order_id</strong> — el pago no pudo iniciarse.</p>";
     echo "<pre style='background:#1e2128;color:#f0f1f3;padding:1rem;border-radius:8px;font-size:0.85rem;'>";
     print_r($result);
     echo "</pre>";
-    echo "<a href='../home.php' style='color:#f0b429;font-family:sans-serif;'>← Volver al inicio</a>";
+    echo "<a href='../index.php' style='color:#f0b429;font-family:sans-serif;'>← Volver al inicio</a>";
 }
 ?>

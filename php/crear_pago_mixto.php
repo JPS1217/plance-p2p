@@ -2,21 +2,13 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-    header("Location: ../index.php");
-    exit();
-}
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: ../views/games/rainbowsix.php");
     exit();
 }
 
-require_once 'conexion_be.php';
-if (!isset($conexion)) {
-    $conexion = plance_db_connect();
-    if (!$conexion) die("Error de conexión: " . mysqli_connect_error());
-}
+require_once 'env.php';
 
 // Recibir datos
 $jugador_id    = trim($_POST['jugador_id']    ?? '');
@@ -30,8 +22,7 @@ if (empty($jugador_id) || empty($productos) || $total <= 0) {
     die("❌ Faltan datos principales.");
 }
 
-$jugador_id = mysqli_real_escape_string($conexion, $jugador_id);
-$productos  = mysqli_real_escape_string($conexion, $productos);
+// Sin base de datos: los valores ya vienen con trim (no hay SQL que escapar).
 
 // ── Credenciales y Auth ──
 $login     = "2d9eaf1e662518756a3d78806543af5b";
@@ -103,18 +94,9 @@ $message    = $result['status']['message'] ?? 'Sin respuesta';
 $requestId  = $result['requestId']         ?? null;
 $processUrl = $result['processUrl']        ?? null;
 
-// ── Guardar en BD ──
-$estado_db  = ($status === 'OK') ? 'pendiente' : 'rechazada';
-$ref_safe   = mysqli_real_escape_string($conexion, $reference);
-$est_safe   = mysqli_real_escape_string($conexion, $estado_db);
-$prod_safe  = mysqli_real_escape_string($conexion, $productos);
-$rid_safe   = mysqli_real_escape_string($conexion, (string)$requestId);
-
-$query = "INSERT INTO ordenes (producto, precio, jugador_id, estado, request_id, monto_pagado)
-          VALUES ('$prod_safe', '$total', '$jugador_id', '$est_safe', '$rid_safe', NULL)";
-
-mysqli_query($conexion, $query);
-$orden_id = mysqli_insert_id($conexion);
+// Sin base de datos: identificador local para el retorno
+$estado_db = ($status === 'OK') ? 'pendiente' : 'rechazada';
+$orden_id  = strtoupper(bin2hex(random_bytes(4)));
 
 // ── Sesión para retorno ──
 $_SESSION['mix_result'] = [

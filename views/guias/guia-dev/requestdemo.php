@@ -1,14 +1,6 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-  echo '<script>
-            alert("Por favor, inicie sesión para acceder a esta página.");
-            window.location.href = "../../../index.php";
-            </script>';
-  session_destroy();
-  die();
-}
 ?>
 <!doctype html>
 <html lang="es">
@@ -45,7 +37,7 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
 <body>
   <div id="appShell">
     <!-- <header class="topbar">
-        <a class="btn-sm" href="../../../home.php">
+        <a class="btn-sm" href="../../../index.php">
           <i class="bi bi-arrow-left"></i> Volver al inicio
         </a>
         <div class="d-flex align-items-center gap-3">
@@ -84,7 +76,9 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
 
     <div class="demo-layout" id="labLayout">
       <!-- Fila 1: Panel de operación (Servicio / Tipo de pago / Simular respuesta) -->
-      <div class="demo-layout-op">
+      <!-- Fila 1: (Operación + Autenticación/Pago) | Ayuda -->
+      <div class="demo-layout-top">
+        <div class="demo-top-left">
         <!-- ===================== OPERACION ===================== -->
         <section class="panel-left demo-section-panel">
           <h2 id="paneltopTitle">Escoge el flujo de petición</h2>
@@ -365,9 +359,6 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
           </div>
 
         </section>
-      </div>
-      <!-- Fila 2: Autenticación + Explora la autenticación -->
-      <div class="demo-layout-auth">
 
         <!-- ===================== AUTENTICACION ===================== -->
         <section class="panel-left demo-section-panel">
@@ -376,7 +367,7 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
               <span class="panel-title">Autenticación</span><i class="bi bi-chevron-down chev"></i>
             </div>
             <div class="section-body">
-              <div class="field-group">
+              <div class="field-group" data-info-key="auth_login" tabindex="0">
                 <label class="field-label">
                   <button type="button" class="info-action auth-info" data-info-key="auth_login"
                     aria-label="¿Cómo se genera el login?">
@@ -386,7 +377,7 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
                 </label>
                 <input type="text" class="field-input" id="fLogin" value="2d9eaf1e662518756a3d78806543af5b" />
               </div>
-              <div class="field-group">
+              <div class="field-group" data-info-key="auth_secret" tabindex="0">
                 <label class="field-label">
                   <button type="button" class="info-action auth-info" data-info-key="auth_secret"
                     aria-label="¿Cómo se genera el secret key?">
@@ -396,7 +387,7 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
                 </label>
                 <input type="password" class="field-input" id="fSecret" value="3YC5brb5eAR4xBGQ" />
               </div>
-              <div class="field-group">
+              <div class="field-group" data-info-key="auth_seed" tabindex="0">
                 <label class="field-label">
                   <button type="button" class="info-action auth-info" data-info-key="auth_seed"
                     aria-label="¿Cómo se genera el seed?">
@@ -406,7 +397,7 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
                 </label>
                 <input type="text" class="field-input auto" id="fSeed" readonly />
               </div>
-              <div class="field-group">
+              <div class="field-group" data-info-key="auth_nonce" tabindex="0">
                 <label class="field-label">
                   <button type="button" class="info-action auth-info" data-info-key="auth_nonce"
                     aria-label="¿Cómo se genera el nonce?">
@@ -416,7 +407,7 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
                 </label>
                 <input type="text" class="field-input auto" id="fNonce" readonly />
               </div>
-              <div class="field-group">
+              <div class="field-group" data-info-key="auth_trankey" tabindex="0">
                 <label class="field-label">
                   <button type="button" class="info-action auth-info" data-info-key="auth_trankey"
                     aria-label="¿Cómo se genera el tranKey?">
@@ -436,22 +427,22 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
               <span class="panel-title">Datos del pago</span><i class="bi bi-chevron-down chev"></i>
             </div>
             <div class="section-body">
-              <div class="field-group">
+              <div class="field-group" data-info-key="pay_reference" tabindex="0">
                 <label class="field-label">Referencia <span class="req">*</span></label><input type="text"
                   class="field-input" id="fRef" value="LAB-001" />
               </div>
-              <div class="field-group">
+              <div class="field-group" data-info-key="pay_description" tabindex="0">
                 <label class="field-label">Descripción</label><input type="text" class="field-input" id="fDesc"
                   value="Prueba de pago" />
               </div>
-              <div class="field-group">
+              <div class="field-group" data-info-key="pay_currency" tabindex="0">
                 <label class="field-label">Moneda</label><select class="field-select" id="fCurrency">
                   <option value="COP">COP — Peso colombiano</option>
                   <option value="USD">USD — Dólar (Panamá / Belize)</option>
                   <option value="CRC">CRC — Colón costarricense</option>
                 </select>
               </div>
-              <div class="field-group">
+              <div class="field-group" data-info-key="pay_amount" tabindex="0">
                 <label class="field-label">Monto <span class="req">*</span></label><input type="number"
                   class="field-input" id="fAmount" value="50000" />
               </div>
@@ -459,6 +450,7 @@ if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
           </div>
 
         </section>
+        </div><!-- /.demo-top-left -->
 
         <aside class="auth-help" id="authHelp" aria-live="polite">
           <span class="auth-help-kicker">Campo seleccionado</span>

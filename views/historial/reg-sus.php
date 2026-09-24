@@ -1,40 +1,9 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["usuario"]) && empty($_SESSION["invitado"])) {
-    header("Location: ../../index.php");
-    exit();
-}
-
-require_once '../../php/conexion_be.php';
-if (!isset($conexion)) {
-    $conexion = plance_db_connect();
-    if (!$conexion) die("Error de conexión: " . mysqli_connect_error());
-}
-
-// Traer solo las suscripciones del usuario en sesión (por correo)
-$correo_sesion = mysqli_real_escape_string($conexion, $_SESSION['correo'] ?? '');
-
-// Determinar modo
+// Sin base de datos: historial vacío (se renderiza el estado "sin registros").
 $modo = $_GET['modo'] ?? 'wc-sub';
-
-switch ($modo) {
-    case 'wc-rec':
-        $resultado = mysqli_query($conexion, "SELECT *, 'wc-rec' as modo FROM suscription_rec WHERE usuario_id = '$correo_sesion' ORDER BY created_at DESC");
-        break;
-    case 'wc-pura':
-        $resultado = mysqli_query($conexion, "SELECT *, 'wc-pura' as modo FROM suscription WHERE usuario_id = '$correo_sesion' ORDER BY created_at DESC");
-        break;
-    case 'gw-sub':
-        $resultado = mysqli_query($conexion, "SELECT *, 'gw-sub' as modo FROM gateway_recurrencias WHERE correo = '$correo_sesion' ORDER BY created_at DESC");
-        break;
-    case 'gw-pura':
-        $resultado = mysqli_query($conexion, "SELECT *, 'gw-pura' as modo FROM gateway_suscription WHERE correo = '$correo_sesion' ORDER BY created_at DESC");
-        break;
-    default: // wc-sub
-        $resultado = mysqli_query($conexion, "SELECT *, 'wc-sub' as modo FROM suscripciones WHERE usuario_id = '$correo_sesion' ORDER BY created_at DESC");
-        break;
-}
+$resultado = [];
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -102,7 +71,7 @@ switch ($modo) {
         }
         ?>
 
-        <?php if (mysqli_num_rows($resultado) > 0): ?>
+        <?php if (count($resultado) > 0): ?>
         <div class="table-responsive" id="sus-tabla">
             <table class="table table-hover">
                 <thead>
@@ -119,7 +88,7 @@ switch ($modo) {
                     <?php endif; ?>
                 </thead>
                 <tbody>
-                    <?php while ($row = mysqli_fetch_assoc($resultado)): ?>
+                    <?php foreach (($resultado ?? []) as $row): ?>
                     <tr>
                         <td><span style="color:#8a8d96;">#<?= htmlspecialchars($row['id']) ?></span></td>
 
@@ -216,7 +185,7 @@ switch ($modo) {
                         </td>
                         <?php endif; ?>
                     </tr>
-                    <?php endwhile; ?>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
