@@ -98,7 +98,7 @@ function initFieldHelp() {
       if (items.length) {
         const heading = document.createElement("h3");
         heading.className = "auth-help-result-title";
-        heading.textContent = "Notas";
+        heading.textContent = "Errores comunes";
         result.appendChild(heading);
 
         const ul = document.createElement("ul");
@@ -146,11 +146,26 @@ function initFieldHelp() {
   }
 
   function markLockedField(field) {
-    fields.forEach((f) => f.classList.toggle("is-locked", f === field));
+    fields.forEach((f) => {
+      const locked = f === field;
+      f.classList.toggle("is-locked", locked);
+      const pin = f.querySelector(".field-pin");
+      if (pin) {
+        pin.classList.toggle("bi-pin-fill", locked);
+        pin.classList.toggle("bi-pin-angle", !locked);
+      }
+    });
   }
 
   function clearLockedField() {
-    fields.forEach((f) => f.classList.remove("is-locked"));
+    fields.forEach((f) => {
+      f.classList.remove("is-locked");
+      const pin = f.querySelector(".field-pin");
+      if (pin) {
+        pin.classList.remove("bi-pin-fill");
+        pin.classList.add("bi-pin-angle");
+      }
+    });
   }
 
   fields.forEach((field) => {

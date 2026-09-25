@@ -838,6 +838,34 @@ main {
     line-height: 1.65;
 }
 
+.faq-guias-cta {
+    margin: 1.25rem 0 0;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    text-align: center;
+    color: rgba(241, 245, 249, 0.8);
+    font-size: 1rem;
+}
+
+.faq-guias-cta a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-left: 0.4rem;
+    color: var(--color-primary);
+    font-weight: 700;
+    text-decoration: none;
+    transition: gap 0.2s ease, color 0.2s ease;
+}
+
+.faq-guias-cta a:hover,
+.faq-guias-cta a:focus-visible {
+    color: var(--color-secondary-1);
+    gap: 0.7rem;
+    text-decoration: none;
+    outline: none;
+}
+
 @media (max-width: 767px) {
     .cat-head {
         gap: 12px;

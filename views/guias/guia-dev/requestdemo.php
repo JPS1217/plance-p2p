@@ -371,7 +371,7 @@ session_start();
                 <label class="field-label">
                   <button type="button" class="info-action auth-info" data-info-key="auth_login"
                     aria-label="¿Cómo se genera el login?">
-                    <i class="bi bi-info-circle"></i>
+                    <i class="bi bi-pin-angle field-pin"></i>
                   </button>
                   Login <span class="req">*</span>
                 </label>
@@ -381,7 +381,7 @@ session_start();
                 <label class="field-label">
                   <button type="button" class="info-action auth-info" data-info-key="auth_secret"
                     aria-label="¿Cómo se genera el secret key?">
-                    <i class="bi bi-info-circle"></i>
+                    <i class="bi bi-pin-angle field-pin"></i>
                   </button>
                   Secret Key <span class="req">*</span>
                 </label>
@@ -391,7 +391,7 @@ session_start();
                 <label class="field-label">
                   <button type="button" class="info-action auth-info" data-info-key="auth_seed"
                     aria-label="¿Cómo se genera el seed?">
-                    <i class="bi bi-info-circle"></i>
+                    <i class="bi bi-pin-angle field-pin"></i>
                   </button>
                   Seed <span class="auto-tag">AUTO</span>
                 </label>
@@ -401,7 +401,7 @@ session_start();
                 <label class="field-label">
                   <button type="button" class="info-action auth-info" data-info-key="auth_nonce"
                     aria-label="¿Cómo se genera el nonce?">
-                    <i class="bi bi-info-circle"></i>
+                    <i class="bi bi-pin-angle field-pin"></i>
                   </button>
                   Nonce <span class="auto-tag">AUTO</span>
                 </label>
@@ -411,7 +411,7 @@ session_start();
                 <label class="field-label">
                   <button type="button" class="info-action auth-info" data-info-key="auth_trankey"
                     aria-label="¿Cómo se genera el tranKey?">
-                    <i class="bi bi-info-circle"></i>
+                    <i class="bi bi-pin-angle field-pin"></i>
                   </button>
                   TranKey <span class="auto-tag">AUTO</span>
                 </label>
@@ -428,22 +428,22 @@ session_start();
             </div>
             <div class="section-body">
               <div class="field-group" data-info-key="pay_reference" tabindex="0">
-                <label class="field-label">Referencia <span class="req">*</span></label><input type="text"
+                <label class="field-label"><button type="button" class="info-action auth-info" data-info-key="pay_reference" aria-label="Fijar descripción"><i class="bi bi-pin-angle field-pin"></i></button> Referencia <span class="req">*</span></label><input type="text"
                   class="field-input" id="fRef" value="LAB-001" />
               </div>
               <div class="field-group" data-info-key="pay_description" tabindex="0">
-                <label class="field-label">Descripción</label><input type="text" class="field-input" id="fDesc"
+                <label class="field-label"><button type="button" class="info-action auth-info" data-info-key="pay_description" aria-label="Fijar descripción"><i class="bi bi-pin-angle field-pin"></i></button> Descripción</label><input type="text" class="field-input" id="fDesc"
                   value="Prueba de pago" />
               </div>
               <div class="field-group" data-info-key="pay_currency" tabindex="0">
-                <label class="field-label">Moneda</label><select class="field-select" id="fCurrency">
+                <label class="field-label"><button type="button" class="info-action auth-info" data-info-key="pay_currency" aria-label="Fijar descripción"><i class="bi bi-pin-angle field-pin"></i></button> Moneda</label><select class="field-select" id="fCurrency">
                   <option value="COP">COP — Peso colombiano</option>
                   <option value="USD">USD — Dólar (Panamá / Belize)</option>
                   <option value="CRC">CRC — Colón costarricense</option>
                 </select>
               </div>
               <div class="field-group" data-info-key="pay_amount" tabindex="0">
-                <label class="field-label">Monto <span class="req">*</span></label><input type="number"
+                <label class="field-label"><button type="button" class="info-action auth-info" data-info-key="pay_amount" aria-label="Fijar descripción"><i class="bi bi-pin-angle field-pin"></i></button> Monto <span class="req">*</span></label><input type="number"
                   class="field-input" id="fAmount" value="50000" />
               </div>
             </div>
@@ -456,8 +456,10 @@ session_start();
           <span class="auth-help-kicker">Campo seleccionado</span>
           <h2 id="authHelpTitle">Explora la autenticación</h2>
           <p id="authHelpText">
-            Selecciona una etiqueta de autenticación para ver cómo se forma el
-            campo y un ejemplo de su valor.
+            Pasa el cursor sobre un campo para ver aquí cómo se forma y un
+            ejemplo de su valor. Haz clic en el pin 📌 de un campo para fijar su
+            descripción (así no cambia al mover el mouse); vuelve a hacer clic en
+            el pin para desbloquearla.
           </p>
           <ol id="authHelpSteps" class="auth-help-steps"></ol>
           <div id="authHelpResult" class="auth-help-result"></div>

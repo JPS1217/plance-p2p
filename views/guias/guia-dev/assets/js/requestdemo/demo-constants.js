@@ -37,8 +37,9 @@ export const AUTH_FIELD_INFO = {
       "Utiliza el mismo Login en todas las peticiones realizadas desde tu integración",
     ],
     result: [
-      "Es un texto fijo: siempre el mismo para tu sitio.",
-      "Se envía dentro del objeto \"auth\".",
+      "Copiarlo con espacios o saltos de línea al pegarlo: el login debe ir tal cual, sin caracteres extra.",
+      "Confundir el login de PRUEBAS con el de PRODUCCIÓN: usa el que corresponde al ambiente al que apuntas.",
+      "Omitirlo o escribirlo mal dentro del objeto \"auth\" devuelve el error 101 (identificador de sitio no existe).",
     ],
   },
 
@@ -53,8 +54,9 @@ export const AUTH_FIELD_INFO = {
       "Úsala únicamente como ingrediente para calcular el tranKey (ver el campo TranKey); no la incluyas en el JSON que envías.",
     ],
     result: [
-      "Es un valor secreto que se queda solo en tu servidor.",
-      "Jamás aparece en la petición que se envía a Place to Pay.",
+      "Enviar la secretKey dentro del JSON: NUNCA viaja en la petición; solo se usa para calcular el tranKey.",
+      "Exponerla en el código del navegador o en repositorios públicos: debe quedarse solo en tu servidor.",
+      "Usar una secretKey que no corresponde al login/ambiente hace que el tranKey no coincida y se rechace con el error 102.",
     ],
   },
 
@@ -69,8 +71,9 @@ export const AUTH_FIELD_INFO = {
       "Envíala en el campo \"seed\". Debe coincidir con la hora real: si tu reloj está desfasado más de 5 minutos, Place to Pay rechaza la petición con el error 103.",
     ],
     result: [
-      "Una marca de tiempo como \"2023-06-21T09:56:06-05:00\".",
-      "Aquí se rellena automáticamente en cada envío.",
+      "Enviarlo sin zona horaria o en un formato distinto de ISO 8601 (p. ej. 2023-06-21T09:56:06-05:00).",
+      "Usar un seed distinto al que usaste para calcular el tranKey: deben ser EXACTAMENTE el mismo valor.",
+      "Un reloj desfasado más de 5 minutos respecto a la hora real devuelve el error 103 (semilla vencida).",
     ],
   },
 
@@ -85,8 +88,9 @@ export const AUTH_FIELD_INFO = {
       "Envía la versión en Base64 en el campo \"nonce\".",
     ],
     result: [
-      "El nonce ORIGINAL se usa para calcular el tranKey.",
-      "En el JSON viaja su versión en Base64, p. ej. \"OTI3MzQyMTk3\".",
+      "Reutilizar el mismo nonce en varias peticiones: debe ser nuevo y aleatorio en CADA envío.",
+      "Enviar en el campo \"nonce\" el valor ORIGINAL en vez de su versión en Base64: en el JSON viaja el Base64.",
+      "Calcular el tranKey con el nonce YA codificado en Base64. El tranKey usa el nonce ORIGINAL; mezclarlos hace que no coincida (error 102).",
     ],
   },
 
@@ -96,12 +100,13 @@ export const AUTH_FIELD_INFO = {
       "Se calcula de nuevo en CADA petición combinando tres datos — el nonce, el seed y tu secretKey — y aplicando dos transformaciones (SHA-256 y luego Base64). " +
       "Estos son los pasos para que lo implementes en tu desarrollo:",
     steps: [
-      "Pega los tres datos en este orden, sin espacios: primero el nonce ORIGINAL (el de antes de codificarlo en Base64), luego el seed, luego tu secretKey. Es decir el texto: nonce + seed + secretKey.",
+      "Pega los tres datos en este orden: primero el nonce ORIGINAL (el de antes de codificarlo en Base64), luego el seed, luego tu secretKey. Es decir el texto: nonce + seed + secretKey.",
       "Calcula el hash SHA-256 de ese texto. Importante: usa la salida BINARIA cruda del SHA-256 (los bytes), NO el típico texto hexadecimal.",
       "Codifica esos bytes en Base64.",
       "El texto resultante es el tranKey. Ponlo en el campo \"tranKey\" junto al login, el nonce (Base64) y el seed.",
     ],
     result: [
+      "Dejar espacios o saltos de línea al concatenar nonce + seed + secretKey: verifica que los tres valores queden pegados, sin caracteres extra, antes de aplicar el SHA-256.",
       "En la fórmula nonce + seed + secretKey, el símbolo '+' representa la operación de concatenación de tu lenguaje de programación; NO debes agregar los caracteres '+' al texto generado.",
       "Después de calcular el SHA-256, utiliza los bytes binarios originales del hash para generar el Base64.",
       {
@@ -134,8 +139,9 @@ export const AUTH_FIELD_INFO = {
       "Guárdalo: lo recibirás de vuelta en la respuesta para conciliar el pago.",
     ],
     result: [
-      "Debe ser única por cada intento de pago.",
-      "Viaja dentro del objeto \"payment\".",
+      "Repetir la misma referencia en dos cobros distintos: debe ser única por cada transacción.",
+      "Dejarla vacía o generarla al azar sin guardarla: la necesitas para conciliar el pago con tu pedido.",
+      "Colócala dentro del objeto \"payment\"; ubicarla fuera hace que el request no se arme correctamente.",
     ],
   },
 
@@ -150,8 +156,9 @@ export const AUTH_FIELD_INFO = {
       "Evita datos sensibles: es un texto visible.",
     ],
     result: [
-      "Texto libre y opcional.",
-      "Viaja dentro del objeto \"payment\".",
+      "Incluir datos sensibles: es un texto visible para el comprador durante el pago.",
+      "Usar textos demasiado largos: mantenla breve para que se lea bien en la pasarela.",
+      "Colócala dentro del objeto \"payment\"; es opcional, pero mal ubicada rompe la estructura del request.",
     ],
   },
 
@@ -166,8 +173,9 @@ export const AUTH_FIELD_INFO = {
       "Asegúrate de que el monto esté expresado en esa misma moneda.",
     ],
     result: [
-      "Viaja en payment.amount.currency.",
-      "Debe estar habilitada para tu comercio.",
+      "Usar una moneda no habilitada para tu comercio: solo funcionan las que tu sitio tiene activas.",
+      "Enviar el código en minúsculas o con más/menos de 3 letras: debe ser ISO de 3 letras en mayúsculas (COP, USD, CRC).",
+      "Que la moneda no corresponda al monto enviado: ambos deben expresarse en la misma moneda (va en payment.amount.currency).",
     ],
   },
 
@@ -182,8 +190,9 @@ export const AUTH_FIELD_INFO = {
       "No incluyas separadores de miles ni el símbolo de moneda; solo el número.",
     ],
     result: [
-      "Viaja en payment.amount.total.",
-      "Debe ser mayor que cero (un monto inválido devuelve el error 13).",
+      "Incluir separadores de miles o el símbolo de moneda: envía solo el número (50000, no \"$50.000\").",
+      "Enviar un monto en cero o negativo devuelve el error 13 (monto inválido).",
+      "Confundir monedas con y sin decimales: en COP se envía el entero; el valor va en payment.amount.total.",
     ],
   },
 };

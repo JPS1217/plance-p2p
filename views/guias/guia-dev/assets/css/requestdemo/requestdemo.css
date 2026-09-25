@@ -491,6 +491,26 @@ body {
   pointer-events: none;
 }
 
+/* Pin de fijado: apagado por defecto, se enciende al hover/enfocar el campo
+   y queda encendido cuando el campo está fijado. */
+.field-pin {
+  color: var(--text-muted, #6f7a85);
+  transition: color var(--transition-speed, 0.15s) var(--ease, ease),
+    transform var(--transition-speed, 0.15s) var(--ease, ease);
+}
+
+#secAuth .field-group[data-info-key]:hover .field-pin,
+#secPago .field-group[data-info-key]:hover .field-pin,
+#secAuth .field-group[data-info-key]:focus-visible .field-pin,
+#secPago .field-group[data-info-key]:focus-visible .field-pin {
+  color: var(--accent);
+}
+
+.field-group.is-locked .field-pin {
+  color: var(--accent);
+  transform: rotate(-8deg) scale(1.05);
+}
+
 /* Estado "fijado" del encabezado de la tarjeta de ayuda (panel 3) */
 .auth-help-kicker.is-locked {
   color: var(--accent);

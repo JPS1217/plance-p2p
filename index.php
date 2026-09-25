@@ -149,6 +149,11 @@ session_start();
                 </div>
                 <?php endforeach; ?>
             </div>
+
+            <p class="faq-guias-cta">
+                Consulta nuestras guías para más información.
+                <a href="views/guias/guia.php">Ir a las guías <i class="bi bi-arrow-right"></i></a>
+            </p>
         </section>
 
         <!-- ══════════════════════════════════════════════════════
