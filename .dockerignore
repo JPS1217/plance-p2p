@@ -1,0 +1,5 @@
+.env
+.git
+vendor
+cron/sonda.log
+php/notify_debug.log
