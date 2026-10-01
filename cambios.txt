@@ -1,7 +1,14 @@
+PRIORIDAD
+
+Montar la pagina en un servidor gratiuito y preparla para despligue
+
+---------------------------------------------------------------------------------------------------------------------
+
 PENDIENTES
 
 -Barra de busqueda donde el usuario indique su finalidad y se le brinda una opcion de integracion
 
+-Adaptar las tiendas para que el formulario concuerde con el tipo de comercio que se ejemplifica
 -El scroll bar esta interfiriendo con el borde de la tarjeta.
 -las estructuras de archivos no estan correctas.
 -Se deben habilitar una lista con los fields propios para cada request
@@ -15,6 +22,7 @@ PENDIENTES
 -Implementar la funcionalidad de claro y oscuro unificada para todas las paginas
 --Mejorar que tan intuitivo es hacer el lock de los campos
 	cambiar como se hace el lock en los fields, dando una descripcion inicial y poniendo los pines para hacer lock
+-Poner recordatorio a los comercios de apuntar al endpoint correcto
 
 --------------------------------------------------------------------------------------------------------------------
 
